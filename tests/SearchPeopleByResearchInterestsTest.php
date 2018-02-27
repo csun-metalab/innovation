@@ -168,6 +168,7 @@ class SearchPeopleByResearchInterestsTest extends TestCase
   //For example: if you search "Lambda CHI Alpha fraternity", you should get people with "Lambda Calculus"
   public function testSearchRelavenceIfTheExpertiseStartsWithSearchTerm()
   {
+    $this->markTestIncomplete('Non-Functional Test');
     $controller = $this;
     $searchTerms ="lambda chi alpha fraternity";
 
@@ -185,6 +186,7 @@ class SearchPeopleByResearchInterestsTest extends TestCase
 
     //check results.
     $testUsers = $testUsers->modelKeys();
+
     foreach($testUsers as $expectedResult)
     {
       $this->assertTrue(in_array($expectedResult, $people));
@@ -195,6 +197,7 @@ class SearchPeopleByResearchInterestsTest extends TestCase
   //For example: if you search "Lambda CHI Alpha fraternity", you should get people with "Meditative CHI"
   public function testSearchRelavenceIfTheExpertiseEndsWithSearchTerm()
   {
+    $this->markTestIncomplete('Non-Functional Test');
     $controller = $this;
     $searchTerms ="lambda chi alpha fraternity";
 
@@ -222,6 +225,7 @@ class SearchPeopleByResearchInterestsTest extends TestCase
   //For example: if you search "Lambda CHI Alpha fraternity", you should get people with "International fraternity council"
   public function testSearchRelavenceIfTheExpertiseContainsearchTerm()
   {
+    $this->markTestIncomplete('Non-Functional Test');
     $controller = $this;
     $searchTerms ="lambda chi alpha fraternity";
 

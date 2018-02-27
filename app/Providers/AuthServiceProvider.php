@@ -6,7 +6,8 @@ use Helix\Models\Person;
 use Helix\Models\Project;
 use Helix\Models\Invitation;
 use Helix\Models\NemoMembership;
-use Illuminate\Contracts\Auth\Access\Gate as GateContract;
+use Illuminate\Support\Facades\Gate;
+
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -24,17 +25,17 @@ class AuthServiceProvider extends ServiceProvider
      * @param  \Illuminate\Contracts\Auth\Access\Gate  $gate
      * @return void
      */
-    public function boot(GateContract $gate)
+    public function boot()
     {
-        $this->registerPolicies($gate);
+        $this->registerPolicies();
 
         // The auth user is the Lead Principal Investigator or Editor
-        $gate->define('is-owner', function(Person $person, Project $project){
+        Gate::define('is-owner', function(Person $person, Project $project){
             return $person->hasRoleOnProject(['Lead Principal Investigator', 'Co-Principal Investigator'], $project) || $person->hasRole('admin');
         });
 
         // The auth user can accept or reject invitations
-        $gate->define('accept-or-reject', function(Person $person, Invitation $invitation, Project $project){
+        Gate::define('accept-or-reject', function(Person $person, Invitation $invitation, Project $project){
             is_null($invitation->from_id) ? $whoSentTheInvite = 'invitation came from self' : $whoSentTheInvite = 'invitation sent by authority';
 
             switch($whoSentTheInvite)

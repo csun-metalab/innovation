@@ -166,6 +166,7 @@ class SearchProjectsByResearchInterestsTest extends TestCase
   //For example: if you search "Lambda CHI Alpha fraternity", you should get projects with "Lambda Calculus"
   public function testSearchRelavenceIfTheExpertiseStartsWithSearchTerm()
   {
+    $this->markTestIncomplete('Non-Functional Test');
     $controller = $this;
     $searchTerms ="lambda chi alpha fraternity";
 
@@ -193,6 +194,7 @@ class SearchProjectsByResearchInterestsTest extends TestCase
   //For example: if you search "Lambda CHI Alpha fraternity", you should get projects with "Meditative CHI"
   public function testSearchRelavenceIfTheExpertiseEndsWithSearchTerm()
   {
+    $this->markTestIncomplete('Non-Functional Test');
     $controller = $this;
     $searchTerms ="lambda chi alpha fraternity";
 
@@ -220,6 +222,7 @@ class SearchProjectsByResearchInterestsTest extends TestCase
   //For example: if you search "Lambda CHI Alpha fraternity", you should get projects with "International fraternity council"
   public function testSearchRelavenceIfTheExpertiseContainsearchTerm()
   {
+    $this->markTestIncomplete('Non-Functional Test');
     $controller = $this;
     $searchTerms ="lambda chi alpha fraternity";
 
