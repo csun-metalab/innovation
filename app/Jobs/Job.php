@@ -1,15 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Helix\Jobs;
-
-
-
-
-
-
-
-
-
 
 use Illuminate\Bus\Queueable;
 
