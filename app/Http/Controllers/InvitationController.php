@@ -184,7 +184,7 @@ class InvitationController extends Controller
          * url: project/{projectId}/request
          */
 
-        $project = Project::with('allMembers','attributes')->findOrFail($projectId);
+        $project = Project::with('allMembers','attribute')->findOrFail($projectId);
 
         $redirectToProjectShow = redirect()->route('project.show',['id'=>$projectId]);
         // Check if the currently logged in user is already a member.
@@ -198,7 +198,7 @@ class InvitationController extends Controller
         }
 
 
-        if($project->isPrivate() || !$project->attributes->seeking_collaborators || !$project->isRequestable())
+        if($project->isPrivate() || !$project->attribute->seeking_collaborators || !$project->isRequestable())
         {
             return $redirectToProjectShow;
         }
@@ -224,7 +224,7 @@ class InvitationController extends Controller
         $emails = $project->authorities->pluck('email')->toArray();
 
         $this->mailer->queueToMany('emails.pending-invitation', $mailData, $emails, 'Someone has requested to be part of your project!');
-
+        
         session()->flash('flash_message_self', 'Thank you for requesting to join this project.');
         return $redirectToProjectShow;
     }
@@ -302,7 +302,7 @@ class InvitationController extends Controller
      * @return Illuminate\Http\Response
      */
     public function studentRequest($projectId) {
-        $project = Project::with('attributes')->findOrFail($projectId);
+        $project = Project::with('attribute')->findOrFail($projectId);
         return view('pages.project.request-to-join', compact('project'));
     }
 
@@ -317,7 +317,7 @@ class InvitationController extends Controller
         {
             $project = Project::with('pi')
                 ->where('project_id',$projectId)
-                ->whereHas('attributes',function ($query){
+                ->whereHas('attribute',function ($query){
                    $query->where('seeking_students',1);
                 })
                 ->firstOrFail();

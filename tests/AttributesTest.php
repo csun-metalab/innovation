@@ -49,7 +49,7 @@ class AttributesTest extends TestCase
         $results = Project::with('attributes')->where('project_id', $fakeProject->project_id)->get();
         foreach ($results as $project)
         {
-            $this->assertTrue(isset($project->attributes->is_featured));
+            $this->assertTrue(isset($project->attribute->is_featured));
         }
     }
 

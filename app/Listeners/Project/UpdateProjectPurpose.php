@@ -20,7 +20,7 @@ class UpdateProjectPurpose
         $newProjectPurpose = $event->session['project_general']['project_purpose'];
         $project_id =  $event->project->project_id;
         // Project already has purposes so update them
-        $event->project->attributes()->updateOrCreate( 
+        $event->project->attribute()->updateOrCreate( 
             $attributes = [
                 'project_id' => $project_id, 
             ],

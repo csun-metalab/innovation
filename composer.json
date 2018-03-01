@@ -6,8 +6,8 @@
     "type": "project",
     "require": {
         "php": ">=5.5.9",
-        "laravel/framework": "5.3.*",
-        "laravelcollective/html": "5.3.*",
+        "laravel/framework": "5.4.*",
+        "laravelcollective/html": "5.4.*",
         "tiesa/ldap": "dev-master",
         "itsgoingd/clockwork": "~1.12",
         "tom-lingham/searchy" : "2.*",
@@ -20,7 +20,7 @@
     "require-dev": {
         "fzaninotto/faker": "~1.4",
         "mockery/mockery": "0.9.*",
-        "phpunit/phpunit": "~4.0",
+        "phpunit/phpunit": "~5.7",
         "symfony/css-selector": "3.1.*",
         "symfony/dom-crawler": "3.1.*"
     },
@@ -32,7 +32,8 @@
             "app/Mailers"
         ],
         "psr-4": {
-            "Helix\\": "app/"
+            "Helix\\": "app/",
+            "Tests\\": "tests/"
         },
         "files": [
             "app/helpers.php"

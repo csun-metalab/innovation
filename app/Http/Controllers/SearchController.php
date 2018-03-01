@@ -45,15 +45,15 @@ class SearchController extends Controller
         //If we start searching, then we shouldn't show them, and we shouldn't randomize.
         // When the request is empty, this condition is successfully met.
         if( !request()->all() ) {
-            $projects = $query->with('attributes')
-                ->whereDoesntHave('attributes', function($q) {
+            $projects = $query->with('attribute')
+                ->whereDoesntHave('attribute', function($q) {
                     $q->where('is_featured', '=', '1' );
                 })
                 ->latest()
                 ->take($recentProjectsToConsider)
                 ->get()
                 ->random($recentProjectsToRandomlyShow);
-            $featuredProjects = $featuredQuery->with('attributes')->whereHas('attributes', function($q) {
+            $featuredProjects = $featuredQuery->with('attribute')->whereHas('attribute', function($q) {
                 $q->where('is_featured', '1');
             })->get();
         }
@@ -86,9 +86,9 @@ class SearchController extends Controller
         $requestedFilters = collect($requestedFilters);
 
         // List of things from which to search.
-        $sponsor     = Award::lists('sponsor','sponsor_code')->sort()->unique();
-        $departments = AcademicDepartment::lists('display_name','entities_id')->sort();
-        $purposes    = Purpose::lists('display_name','system_name')->sort();
+        $sponsor     = Award::pluck('sponsor','sponsor_code')->sort()->unique();
+        $departments = AcademicDepartment::pluck('display_name','entities_id')->sort();
+        $purposes    = Purpose::pluck('display_name','system_name')->sort();
         $collaborators = ['student' => 'Student Contributors', 'faculty' => 'Faculty Collaborators'];
 
         // Labels for the filter tags
@@ -121,7 +121,7 @@ class SearchController extends Controller
         if ($requestedFilters->get('type'))
         {
             $projectType = $requestedFilters->get('type');
-            $filteredQuery = $filteredQuery->whereHas('attributes', function ($q) use($projectType){
+            $filteredQuery = $filteredQuery->whereHas('attribute', function ($q) use($projectType){
                 $this->searchFilter($q, 'purpose_name', $projectType);
             });
             $filters['type'] = $purposes[$requestedFilters->get('type')];
@@ -129,7 +129,7 @@ class SearchController extends Controller
         if ($requestedFilters->get('collaborators')) {
             $filters['collaborators'] = $collaborators[$requestedFilters->get('collaborators')];
             $collaboratorType = $requestedFilters['collaborators'];
-            $filteredQuery = $filteredQuery->whereHas('attributes', function ($q) use ($collaboratorType) {
+            $filteredQuery = $filteredQuery->whereHas('attribute', function ($q) use ($collaboratorType) {
                 if ($collaboratorType == "student") {
                     $this->searchFilter($q, 'seeking_students', 1);
                 }
@@ -226,6 +226,7 @@ class SearchController extends Controller
       $query->whereIn('project_id',$resultsId)
           ->orderByRaw(\DB::raw("FIELD(id, $idsImploded)"))
           ->with('pi','members','award');
+          dd($query);
       return $query;
   }
 
