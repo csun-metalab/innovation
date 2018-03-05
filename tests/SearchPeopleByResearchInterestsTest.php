@@ -86,7 +86,7 @@ class SearchPeopleByResearchInterestsTest extends TestCase
     // Create a fake expertise instance.
     $expertise = factory(Research::class)->create(['title'=>$searchTerms]);
     //Make sure the fake Research made it to the DB
-    $this->seeInDatabase('fresco.research_interests', ['attribute_id' => $expertise->attribute_id]);
+    $this->assertDatabaseHas('fresco.research_interests', ['attribute_id' => $expertise->attribute_id]);
 
     // Attach the expertise with some users for testing.
     $testUsers = $this->grabUsers(10);
@@ -113,7 +113,7 @@ class SearchPeopleByResearchInterestsTest extends TestCase
     // Create a Research Interest.
     $searchTerms = "Test Research Interest";
     $expertise = factory(Research::class)->create(['title'=>$searchTerms]);
-    $this->seeInDatabase('fresco.research_interests', ['title' => $searchTerms]);
+    $this->assertDatabaseHas('fresco.research_interests', ['title' => $searchTerms]);
 
     //Get some users, but don't give them this expertise.
     $testUsers = $this->grabUsers(10);
@@ -139,7 +139,7 @@ class SearchPeopleByResearchInterestsTest extends TestCase
 
     //Do not put create this research interest in the database.
 
-    $this->notSeeInDatabase('fresco.research_interests', ['title' => $searchTerms]);
+    $this->assertDatabaseMissing('fresco.research_interests', ['title' => $searchTerms]);
 
     //Get some users. They should not have this research interest because it doesn't exist.
     $testUsers = $this->grabUsers(10);

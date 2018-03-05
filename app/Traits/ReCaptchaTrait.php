@@ -18,7 +18,7 @@ trait ReCaptchaTrait {
      */
     public function recaptchaCheck()
     {
-        if(!request()->has('g-recaptcha-response')) {
+        if(!request()->filled('g-recaptcha-response')) {
             return false;
         }
         $response = request('g-recaptcha-response');

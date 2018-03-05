@@ -2,18 +2,18 @@
     <span class="alert alert--danger">Warning: Search function might be limited because JavaScript is disabled!</span>
 </noscript>
 
-@if(request()->has('query'))
+@if(request()->filled('query'))
     @section('title',request()->get('query'))
-@elseif(request()->has('member'))
+@elseif(request()->filled('member'))
     @section('title', $filters['member']."'s Projects")
 @endif
 
 @extends('layouts.search-layout')
 @section('search-title')
-    @if(request()->has('query'))
+    @if(request()->filled('query'))
         <h2 class="page-header">Search Results for "<span class="type--thin">{{request()->get('query')}}</span>"
         </h2>
-    @elseif(request()->has('member'))
+    @elseif(request()->filled('member'))
         <h2 class="capitalize">{{ $filters['member']}}'s Projects</h2>
     @else
         <h2 class="page-header">Explore Projects</h2>

@@ -37,7 +37,7 @@ class SearchController extends Controller
         // Query for visible projects to browse.
         $query = $this->browseProjects();
         $featuredQuery = clone $query;
-        if(request()->has('query')) {
+        if(request()->filled('query')) {
             $query = $this->searchTitlesAndAbstracts($query);
         }
 
@@ -174,7 +174,7 @@ class SearchController extends Controller
             'research-interest'  => route('search.research-interests'),
             'member'             => route('search.member-search')
         ];
-        $searchType = request()->has('searchType') ? request('searchType') : $defaultSearchType;
+        $searchType = request()->filled('searchType') ? request('searchType') : $defaultSearchType;
 
         return compact('searchType','dropdownTexts','placeholderTexts','formActions');
     }
@@ -226,7 +226,6 @@ class SearchController extends Controller
       $query->whereIn('project_id',$resultsId)
           ->orderByRaw(\DB::raw("FIELD(id, $idsImploded)"))
           ->with('pi','members','award');
-          dd($query);
       return $query;
   }
 
@@ -325,7 +324,7 @@ class SearchController extends Controller
      */
     public function getCollaboratorsList()
     {
-        if (request()->has('q')) {
+        if (request()->filled('q')) {
             $data = Searchy::driver('simple')->users('display_name','first_name','last_name','middle_name')->query( request('q') )->getQuery()->limit(10)->get();
             // $data = Person::where('display_name', 'LIKE', "%".request()->q."%")->take(5)->get();
             if($data){
@@ -346,7 +345,7 @@ class SearchController extends Controller
      * @return array
      */
     public function getPersonalInterests() {
-        if (request()->has('q')) {
+        if (request()->filled('q')) {
             $data = Searchy::driver('simple')->search('fresco.personal_interests')->fields('title')->query(request('q'))->getQuery()->limit(10)->get();
             if ($data) {
                 foreach ($data as $interest) {
@@ -374,7 +373,7 @@ class SearchController extends Controller
       $SIMILAR_SEARCH_TERMS_LIMIT = 10;
 
       //We are eagerloading to display extra data in the front end
-      if(request()->has('query'))
+      if(request()->filled('query'))
       {
         //search
         $query = request('query');
@@ -476,7 +475,7 @@ class SearchController extends Controller
           if($include == 'members'){
             $projects = $projects->with('members');
           }
-          if(request()->has('email')){
+          if(request()->filled('email')){
             $member = Person::where('email',request('email'))->firstOrFail();
             $projects = $this->filterByMember($projects, $member['user_id'])->get();
             foreach ($projects as &$project) {
@@ -484,7 +483,7 @@ class SearchController extends Controller
                                ->where('individuals_id',$member['user_id'])
                                ->firstOrFail()['role_position'];
             }
-            if(request()->has('role')){
+            if(request()->filled('role')){
               $projects = $projects->where('role_position', request('role') );
             }
           }

@@ -46,7 +46,7 @@ class AttributesTest extends TestCase
         $fakeProject = factory(Project::class)->create();
         $fakeAttribute = factory(Attribute::class)->create(['project_id'=>$fakeProject->project_id]);
 
-        $results = Project::with('attributes')->where('project_id', $fakeProject->project_id)->get();
+        $results = Project::with('attribute')->where('project_id', $fakeProject->project_id)->get();
         foreach ($results as $project)
         {
             $this->assertTrue(isset($project->attribute->is_featured));

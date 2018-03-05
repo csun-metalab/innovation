@@ -525,7 +525,7 @@ class ProjectController extends Controller
      */
     public function getCollaboratorsList()
     {
-        if (request()->has('q')) {
+        if (request()->filled('q')) {
             $data = Searchy::search('users')->fields('display_name','first_name','last_name','middle_name')->query( request('q') )->getQuery()->limit(10)->get();
             // $data = Person::where('display_name', 'LIKE', "%".request()->q."%")->take(5)->get();
 
