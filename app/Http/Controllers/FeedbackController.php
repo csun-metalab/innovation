@@ -4,6 +4,7 @@ namespace Helix\Http\Controllers;
 
 
 use Helix\Http\Requests;
+use Helix\Mail\Feedback;
 use Auth;
 use	Request;
 use	Validator;
@@ -65,19 +66,8 @@ class FeedbackController extends Controller
 		if ($validator->fails()){
 			return redirect('feedback')->withErrors($validator)->withInput();
 		}
-		// build the items to add to the email message and queue it for
-		// asynchronous sending
-		$emailItems = [
-			'name' => Request::input('name'),
-			'address' => Request::input('email'),
-			'feedback' => Request::input('body')
-		];
-
-		Mail::queue('emails.feedback.pilot', $emailItems, function($message) use ($input) {
-		    $message->from(config('mail.username'))
-		    	->to(config('app.feedback.to'))
-		    	->subject( request('title') );
-		});
+		
+		Mail::to(env('APP_FEEDBACK_TO'))->send(new Feedback(request()));
 
 		// render the success page
 		return view("feedback.success");
