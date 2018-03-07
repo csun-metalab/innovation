@@ -16,7 +16,7 @@ class Invitation extends Model
     ];
 
     public function project(){
-        return $this->belongsTo('Helix\Models\Project');
+        return $this->belongsTo('Helix\Models\Project','project_id');
     }
 
     public function invitee(){

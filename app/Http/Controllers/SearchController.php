@@ -37,7 +37,7 @@ class SearchController extends Controller
         // Query for visible projects to browse.
         $query = $this->browseProjects();
         $featuredQuery = clone $query;
-        if(request()->has('query')) {
+        if(request()->filled('query')) {
             $query = $this->searchTitlesAndAbstracts($query);
         }
 
@@ -45,15 +45,15 @@ class SearchController extends Controller
         //If we start searching, then we shouldn't show them, and we shouldn't randomize.
         // When the request is empty, this condition is successfully met.
         if( !request()->all() ) {
-            $projects = $query->with('attributes')
-                ->whereDoesntHave('attributes', function($q) {
+            $projects = $query->with('attribute')
+                ->whereDoesntHave('attribute', function($q) {
                     $q->where('is_featured', '=', '1' );
                 })
                 ->latest()
                 ->take($recentProjectsToConsider)
                 ->get()
                 ->random($recentProjectsToRandomlyShow);
-            $featuredProjects = $featuredQuery->with('attributes')->whereHas('attributes', function($q) {
+            $featuredProjects = $featuredQuery->with('attribute')->whereHas('attribute', function($q) {
                 $q->where('is_featured', '1');
             })->get();
         }
@@ -86,9 +86,9 @@ class SearchController extends Controller
         $requestedFilters = collect($requestedFilters);
 
         // List of things from which to search.
-        $sponsor     = Award::lists('sponsor','sponsor_code')->sort()->unique();
-        $departments = AcademicDepartment::lists('display_name','entities_id')->sort();
-        $purposes    = Purpose::lists('display_name','system_name')->sort();
+        $sponsor     = Award::pluck('sponsor','sponsor_code')->sort()->unique();
+        $departments = AcademicDepartment::pluck('display_name','entities_id')->sort();
+        $purposes    = Purpose::pluck('display_name','system_name')->sort();
         $collaborators = ['student' => 'Student Contributors', 'faculty' => 'Faculty Collaborators'];
 
         // Labels for the filter tags
@@ -121,7 +121,7 @@ class SearchController extends Controller
         if ($requestedFilters->get('type'))
         {
             $projectType = $requestedFilters->get('type');
-            $filteredQuery = $filteredQuery->whereHas('attributes', function ($q) use($projectType){
+            $filteredQuery = $filteredQuery->whereHas('attribute', function ($q) use($projectType){
                 $this->searchFilter($q, 'purpose_name', $projectType);
             });
             $filters['type'] = $purposes[$requestedFilters->get('type')];
@@ -129,7 +129,7 @@ class SearchController extends Controller
         if ($requestedFilters->get('collaborators')) {
             $filters['collaborators'] = $collaborators[$requestedFilters->get('collaborators')];
             $collaboratorType = $requestedFilters['collaborators'];
-            $filteredQuery = $filteredQuery->whereHas('attributes', function ($q) use ($collaboratorType) {
+            $filteredQuery = $filteredQuery->whereHas('attribute', function ($q) use ($collaboratorType) {
                 if ($collaboratorType == "student") {
                     $this->searchFilter($q, 'seeking_students', 1);
                 }
@@ -174,7 +174,7 @@ class SearchController extends Controller
             'research-interest'  => route('search.research-interests'),
             'member'             => route('search.member-search')
         ];
-        $searchType = request()->has('searchType') ? request('searchType') : $defaultSearchType;
+        $searchType = request()->filled('searchType') ? request('searchType') : $defaultSearchType;
 
         return compact('searchType','dropdownTexts','placeholderTexts','formActions');
     }
@@ -324,7 +324,7 @@ class SearchController extends Controller
      */
     public function getCollaboratorsList()
     {
-        if (request()->has('q')) {
+        if (request()->filled('q')) {
             $data = Searchy::driver('simple')->users('display_name','first_name','last_name','middle_name')->query( request('q') )->getQuery()->limit(10)->get();
             // $data = Person::where('display_name', 'LIKE', "%".request()->q."%")->take(5)->get();
             if($data){
@@ -345,7 +345,7 @@ class SearchController extends Controller
      * @return array
      */
     public function getPersonalInterests() {
-        if (request()->has('q')) {
+        if (request()->filled('q')) {
             $data = Searchy::driver('simple')->search('fresco.personal_interests')->fields('title')->query(request('q'))->getQuery()->limit(10)->get();
             if ($data) {
                 foreach ($data as $interest) {
@@ -373,7 +373,7 @@ class SearchController extends Controller
       $SIMILAR_SEARCH_TERMS_LIMIT = 10;
 
       //We are eagerloading to display extra data in the front end
-      if(request()->has('query'))
+      if(request()->filled('query'))
       {
         //search
         $query = request('query');
@@ -475,7 +475,7 @@ class SearchController extends Controller
           if($include == 'members'){
             $projects = $projects->with('members');
           }
-          if(request()->has('email')){
+          if(request()->filled('email')){
             $member = Person::where('email',request('email'))->firstOrFail();
             $projects = $this->filterByMember($projects, $member['user_id'])->get();
             foreach ($projects as &$project) {
@@ -483,7 +483,7 @@ class SearchController extends Controller
                                ->where('individuals_id',$member['user_id'])
                                ->firstOrFail()['role_position'];
             }
-            if(request()->has('role')){
+            if(request()->filled('role')){
               $projects = $projects->where('role_position', request('role') );
             }
           }

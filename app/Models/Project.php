@@ -85,7 +85,7 @@ class Project extends Model
 
     public function award()
     {
-        return $this->hasMany('Helix\Models\Award');
+        return $this->hasMany('Helix\Models\Award','project_id','project_id');
     }
 
     public function interests()
@@ -99,8 +99,8 @@ class Project extends Model
     }
 
     //One project has one set of helix-related attributes.
-    public function attributes(){
-        return $this->hasOne('Helix\Models\Attribute');
+    public function attribute(){
+        return $this->hasOne('Helix\Models\Attribute','project_id','project_id');
     }
 
     /**
@@ -114,7 +114,7 @@ class Project extends Model
     }
 
     public function isFeatured(){
-      return $this->attributes()->is_featured;
+      return $this->attribute()->is_featured;
     }
 
     /**
@@ -135,7 +135,7 @@ class Project extends Model
 
     public function policies()
     {
-      return $this->hasMany('Helix\Models\ProjectPolicy');
+      return $this->hasMany('Helix\Models\ProjectPolicy','project_id','project_id');
     }
 
     public function invitations()
@@ -145,7 +145,7 @@ class Project extends Model
 
     public function visibility()
     {
-      return $this->hasOne('Helix\Models\ProjectPolicy')->where('policy_type', 'visibility');
+      return $this->hasOne('Helix\Models\ProjectPolicy','project_id','project_id')->where('policy_type', 'visibility');
     }
 
     public function getPolicyType()

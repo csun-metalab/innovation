@@ -4,7 +4,7 @@
 
 @section('search-title')
   Explore Project Themes
-  @if(request()->has('query'))
+  @if(request()->filled('query'))
     <span class="type--thin">{{': "'.request()->get('query'). '"'}}</span>
   @endif
 @endsection

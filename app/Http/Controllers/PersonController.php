@@ -88,11 +88,11 @@ class PersonController extends Controller
         $currentInterests = auth()->user()->research_interests()->get();
 
         $categories = Research::whereNull('parent_attribute_id')
-            ->lists('title', 'attribute_id as id');
+            ->pluck('title', 'attribute_id as id');
         $subcategories = Research::where('parent_attribute_id', 'research:1')
-            ->lists('title', 'attribute_id as id');
+            ->pluck('title', 'attribute_id as id');
         $tags = Research::where('parent_attribute_id', 'research:11')
-            ->lists('title', 'attribute_id as id');
+            ->pluck('title', 'attribute_id as id');
 
         $pendingInvitations = $this->pendingInvitations()->count();
 
@@ -117,11 +117,11 @@ class PersonController extends Controller
 
         $currentInterests->load('research_interest');
         $categories = Research::whereNull('parent_attribute_id')
-            ->lists('title', 'attribute_id as id');
+            ->pluck('title', 'attribute_id as id');
         $subcategories = Research::where('parent_attribute_id', 'research:1')
-            ->lists('title', 'attribute_id as id');
+            ->pluck('title', 'attribute_id as id');
         $tags = Research::where('parent_attribute_id', 'research:11')
-            ->lists('title', 'attribute_id as id');
+            ->pluck('title', 'attribute_id as id');
 
         $pendingInvitations = $this->pendingInvitations()->count();
 

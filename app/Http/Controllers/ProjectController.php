@@ -161,9 +161,9 @@ class ProjectController extends Controller
             if($projectId)
             {
                 //could probably eager load here
-                $project = Project::with('attributes', 'link')->findOrFail($projectId);
+                $project = Project::with('attribute', 'link')->findOrFail($projectId);
 
-                if($project->attributes == null){
+                if($project->attribute == null){
                     Attribute::create([
                         'project_id' => $projectId,
                         'is_featured' => 0,
@@ -174,7 +174,7 @@ class ProjectController extends Controller
                 }
 
                 $project_general = [
-                    'project_purpose'=> $project->attributes? $project->attributes->purpose_name: '',
+                    'project_purpose'=> $project->attribute? $project->attribute->purpose_name: '',
                     'project_type'   => $project->getPolicyType(),
                     'title'          => $project->project_title,
                     'description'    => $project->abstract,
@@ -295,10 +295,10 @@ class ProjectController extends Controller
             }
         }
 
-        $categories = Research::whereNull('parent_attribute_id')->lists('title', 'attribute_id as id');
+        $categories = Research::whereNull('parent_attribute_id')->pluck('title', 'attribute_id as id');
         // Subcategories and tags are hard coded for initialization of Select2 options
-        $subcategories = Research::where('parent_attribute_id', 'research:1')->lists('title', 'attribute_id as id');
-        $tags = Research::where('parent_attribute_id', 'research:11')->lists('title', 'attribute_id as id');
+        $subcategories = Research::where('parent_attribute_id', 'research:1')->pluck('title', 'attribute_id as id');
+        $tags = Research::where('parent_attribute_id', 'research:11')->pluck('title', 'attribute_id as id');
 
 	    return view('pages.project.two', compact('categories', 'subcategories', 'tags'));
     }
@@ -365,17 +365,17 @@ class ProjectController extends Controller
 
             return $results;
         }
-        $roles = Role::orderBy('rolename_id')->roleNames()->lists('display_name', 'display_name');
+        $roles = Role::orderBy('rolename_id')->roleNames()->pluck('display_name', 'display_name');
         $seekingCollaborators = 0;
         $seekingStudents = 0;
         $studentQualifications = null; // = '';
         if(isset($projectId))
         {
-            $project = Project::with('attributes')->findOrFail($projectId);
+            $project = Project::with('attribute')->findOrFail($projectId);
             $invitations = $project->invitations()->whereNull('updated_at')->get();
-            $seekingCollaborators = $project->attributes ? $project->attributes->seeking_collaborators  : $seekingCollaborators;
-            $seekingStudents      = $project->attributes ? $project->attributes->seeking_students       : $seekingStudents;
-            $studentQualifications= $project->attributes ? $project->attributes->student_qualifications : $studentQualifications;
+            $seekingCollaborators = $project->attribute ? $project->attribute->seeking_collaborators  : $seekingCollaborators;
+            $seekingStudents      = $project->attribute ? $project->attribute->seeking_students       : $seekingStudents;
+            $studentQualifications= $project->attribute ? $project->attribute->student_qualifications : $studentQualifications;
         }
 
         return view('pages.project.three',
@@ -525,7 +525,7 @@ class ProjectController extends Controller
      */
     public function getCollaboratorsList()
     {
-        if (request()->has('q')) {
+        if (request()->filled('q')) {
             $data = Searchy::search('users')->fields('display_name','first_name','last_name','middle_name')->query( request('q') )->getQuery()->limit(10)->get();
             // $data = Person::where('display_name', 'LIKE', "%".request()->q."%")->take(5)->get();
 
@@ -547,7 +547,7 @@ class ProjectController extends Controller
      */
     public function getRolesList()
     {
-      return Role::whereIn('system_name', ['Lead Principal Investigator', 'Principal Investigator', 'Co-Principal Investigator', 'Investigator'])->lists('display_name','rolename_id')->toArray();
+      return Role::whereIn('system_name', ['Lead Principal Investigator', 'Principal Investigator', 'Co-Principal Investigator', 'Investigator'])->pluck('display_name','rolename_id')->toArray();
     }
 
     /**
@@ -821,7 +821,7 @@ class ProjectController extends Controller
         }
 
         // A laravel collection of primary keys of projects that don't have attributes";
-        $projectIds = collect(Project::whereDoesntHave('attributes')->get()->modelKeys());
+        $projectIds = collect(Project::whereDoesntHave('attribute')->get()->modelKeys());
 
         // An laravel collection of bulk-insertable values for new attributes. They will be inserted all at once.
         $newAttributeValues = $projectIds->map(function($projectId) {

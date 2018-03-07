@@ -22,7 +22,7 @@
 
 @section('search-title')
     All Search Results
-    @if(request()->has('query'))
+    @if(request()->filled('query'))
         for
         <span class="type--thin"> {{'"' . request()->get('query') . '"'}} </span>
     @endif

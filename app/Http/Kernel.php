@@ -29,11 +29,13 @@ class Kernel extends HttpKernel
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \Helix\Http\Middleware\VerifyCsrfToken::class,
         ],
 
         'api' => [
             'throttle:60,1',
+            'bindings',
         ],
     ];
 
@@ -47,6 +49,7 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         'auth' => \Helix\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        'can'       => Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \Helix\Http\Middleware\RedirectIfAuthenticated::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'invitation' => \Helix\Http\Middleware\InvitationMiddleware::class,

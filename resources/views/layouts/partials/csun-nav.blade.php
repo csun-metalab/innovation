@@ -7,9 +7,7 @@
         <div class="bar"></div>
       </div>
           <a title="California State University, Northridge - Home" href="http://www.csun.edu" class="primary-nav__brand"><span class="sr-only">California State University, Northridge (CSUN)</span></a>
-             <a title="CSUN Scholarship - Home" href="{{ url('/') }}" class="primary-nav__sub-brand">
-          @yield('navTitle', 'Scholarship<small><sub>BETA</sub></small>')
-          </a>
+             <a title="CSUN Scholarship - Home" href="{{ url('/') }}" class="primary-nav__sub-brand">Scholarship<small><sub>BETA</sub></small></a>
           <a title="Skip to main content" class="sr-only" href="#main">Skip to main content</a>
     </div>
     <ul class="primary-nav__links">

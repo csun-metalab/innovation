@@ -33,7 +33,7 @@
     </form>
     <a title="Close" class="cd-close">Close</a>
 </div>
-@if( request()->has('sponsor') || request()->has('department') || request()->has('member') )
+@if( request()->filled('sponsor') || request()->filled('department') || request()->filled('member') )
     <a title="Filters Set" class="cd-filter-trigger cd-filter-on"><i class="fa fa-filter"></i> Filters
         Set</a>
 @else

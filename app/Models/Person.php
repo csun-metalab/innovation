@@ -213,7 +213,7 @@ class Person extends MetaUser
     * @return boolean
     */
    public function hasRole($role) {
-      $roles = $this->roles()->lists('system_name')->toArray();
+      $roles = $this->roles()->pluck('system_name')->toArray();
       return in_array($role, $roles);
    }
 

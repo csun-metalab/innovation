@@ -4,7 +4,7 @@
 
 @section('search-title')
     @yield('search-kind-title','Explore Research Interests')
-  @if(request()->has('query'))
+  @if(request()->filled('query'))
     for
     <span class="type--thin">{{'"'.request()->get('query'). '"'}}</span>
   @endif

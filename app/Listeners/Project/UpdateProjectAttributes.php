@@ -24,7 +24,7 @@ class UpdateProjectAttributes
         $youtubeLink = $event->session['project_general']['youtube'];
         $project_id = $event->project->project_id;
 
-        $event->project->attributes()->updateOrCreate(
+        $event->project->attribute()->updateOrCreate(
             //Primary key
             [
                 'project_id' => $project_id,

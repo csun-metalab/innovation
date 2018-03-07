@@ -12,6 +12,8 @@ return [
     | services your application utilizes. Set this in your ".env" file.
     |
     */
+    
+    'name' => env('APP_NAME','Laravel'),
 
     'env' => env('APP_ENV', 'production'),
 
@@ -208,10 +210,12 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
+        Illuminate\Notifications\NotificationServiceProvider::class,
 
         /*
          * Application Service Providers...
          */
+        Helix\Providers\BroadcastServiceProvider::class,
         Helix\Providers\AppServiceProvider::class,
         Helix\Providers\AuthServiceProvider::class,
         Helix\Providers\EventServiceProvider::class,
@@ -265,6 +269,7 @@ return [
         'Route'     => Illuminate\Support\Facades\Route::class,
         'Schema'    => Illuminate\Support\Facades\Schema::class,
         'Response'  => Illuminate\Support\Facades\Response::class,
+        'notification' => Illuminate\Support\Facades\Notification::class,
         'Searchy' => TomLingham\Searchy\Facades\Searchy::class,
         'Session'   => Illuminate\Support\Facades\Session::class,
         'Storage'   => Illuminate\Support\Facades\Storage::class,
