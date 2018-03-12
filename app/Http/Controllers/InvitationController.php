@@ -224,7 +224,7 @@ class InvitationController extends Controller
         $emails = $project->authorities->pluck('email')->toArray();
 
         $this->mailer->queueToMany('emails.pending-invitation', $mailData, $emails, 'Someone has requested to be part of your project!');
-        
+
         session()->flash('flash_message_self', 'Thank you for requesting to join this project.');
         return $redirectToProjectShow;
     }

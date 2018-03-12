@@ -5,6 +5,7 @@ namespace Helix\Http\Controllers;
 
 use Helix\Http\Requests;
 use Helix\Mail\Feedback;
+use Helix\Mailers\Mailer;
 use Auth;
 use	Request;
 use	Validator;
@@ -17,10 +18,13 @@ use Mail;
  */
 class FeedbackController extends Controller
 {
+    protected $mailer, $feedback;
 	/**
 	 * Constructs a new FeedbackController object.
 	 */
-	public function __construct() {
+	public function __construct(Mailer $mailer) {
+        $this->mailer = $mailer;
+        $this->feedback = env('APP_FEEDBACK_TO');
 	}
 
 	/**
@@ -66,8 +70,14 @@ class FeedbackController extends Controller
 		if ($validator->fails()){
 			return redirect('feedback')->withErrors($validator)->withInput();
 		}
-		
-		Mail::to(env('APP_FEEDBACK_TO'))->send(new Feedback(request()));
+
+        $emailItems = [
+            'name' => Request::input('name'),
+            'address' => Request::input('email'),
+            'feedback' => Request::input('body')
+        ];
+
+        $this->mailer->sendToOne('emails.feedback.pilot', $emailItems, $this->feedback, request('title'));
 
 		// render the success page
 		return view("feedback.success");
