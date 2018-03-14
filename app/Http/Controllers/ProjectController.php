@@ -1,7 +1,8 @@
-<?php namespace Helix\Http\Controllers;
+<?php 
+namespace Helix\Http\Controllers;
 
 use Helix\Http\Controllers\Controller;
-use Helix\Http\Requests\Project\Create\StepOneRequest;
+use Helix\Http\Requests\ProjectStepOneCreate;
 
 use Helix\Models\Interest;
 use Helix\Models\Invitation;
@@ -199,7 +200,7 @@ class ProjectController extends Controller
      * @param string $projectId Project id or null if new project
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function step1(StepOneRequest $request, $projectId = NULL)
+    public function step1(ProjectStepOneCreate $request, $projectId = NULL)
     {
         if(session('new-project'))
         {
@@ -525,6 +526,7 @@ class ProjectController extends Controller
      */
     public function getCollaboratorsList()
     {
+        dd("test");
         if (request()->filled('q')) {
             $data = Searchy::search('users')->fields('display_name','first_name','last_name','middle_name')->query( request('q') )->getQuery()->limit(10)->get();
             // $data = Person::where('display_name', 'LIKE', "%".request()->q."%")->take(5)->get();

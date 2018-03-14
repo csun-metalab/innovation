@@ -339,6 +339,7 @@ function guzzleRequest($url, $method='GET', $assoc=true)
     try
     {
         $client = new \GuzzleHttp\Client();
+        // dd($url);
         $responseJson = $client->request($method,$url,['verify'=>false]);
 
     }
