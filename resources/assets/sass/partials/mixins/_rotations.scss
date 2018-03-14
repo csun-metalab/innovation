@@ -1,0 +1,12 @@
+@mixin rotation($degree) {
+	-webkit-transform: rotate($degree);  
+	-ms-transform: rotate($degree);
+	transform: rotate($degree);
+}
+
+@mixin origin($x, $y) {
+  -webkit-transform-origin: $x $y;
+  -moz-transform-origin:    $x $y;
+  -ms-transform-origin:     $x $y;
+  -o-transform-origin:      $x $y;
+}

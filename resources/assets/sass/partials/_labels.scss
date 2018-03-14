@@ -1,0 +1,25 @@
+//
+// Labels
+// --------------------------------------------------
+
+.label {
+  display: inline-block;
+  padding: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: .25em;
+  cursor: pointer;
+  user-select: none;
+
+  &--success{
+    background-color: #13bf63;
+  }
+  &--danger{
+    background-color: #d00d2d;
+  }
+}
