@@ -14,8 +14,9 @@ class CreateSeekingTable extends Migration
     {
         Schema::create('seeking', function (Blueprint $table) {
             $table->increments('id');
-            $table->increments('project_id');
-            $table->increments('title');
+            $table->string('project_id');
+            $table->string('title');
+            $table->boolean('filled')->default(false);
             $table->timestamps();
         });
     }

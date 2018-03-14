@@ -12,5 +12,6 @@ class Seeking extends Model
     protected $fillable = [
             'project_id',
             'title',
+            'filled',
         ];
 }
