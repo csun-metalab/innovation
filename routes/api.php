@@ -13,10 +13,6 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::get('seed','ProjectController@seeder');
 // AJAX Routes for collaborators JS component
 Route::get('collaborators','ProjectController@getCollaboratorsList');
