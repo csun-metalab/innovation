@@ -27,11 +27,11 @@ class ProjectStepOneCreate extends FormRequest
             'project_type' => 'required|in:institutional,showcase,stealth',
             'title'        => 'required|min:3|max:256',
             'start_date'   => 'date_format:m/d/Y|required',
-            'end_date'     => 'date_format:m/d/Y|after:start_date',
+            'end_date'     => 'nullable|date_format:m/d/Y|after:start_date',
             'description'  => 'required',
             'funding'      => 'numeric|min:0',
-            'url'          => 'url',
-            'youtube'      => ['re.gex' => 'regex:#(https?://(?:www\.)?youtube\.com/watch\?v=([^&]+?))|((https?://(?:www\.)?)(youtu\.be){1})|((https?://(?:www\.)?(vimeo\.com){1}))#']
+            'url'          => 'nullable|url',
+            'youtube'      => ['nullable','re.gex' => 'regex:#(https?://(?:www\.)?youtube\.com/watch\?v=([^&]+?))|((https?://(?:www\.)?)(youtu\.be){1})|((https?://(?:www\.)?(vimeo\.com){1}))#']
 
         ];
 

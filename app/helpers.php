@@ -363,7 +363,7 @@ function guzzleRequest($url, $method='GET', $assoc=true)
 function getProfileImage($email)
 {
     $defaultImage = 'http://www.csun.edu/faculty/imgs/profile-default.png';
-
+    
     // we do this here because the staging database has nr_ prepended to the emails
     if(env('APP_ENV') == 'local')
     {
