@@ -141,7 +141,7 @@ class Project extends Model
 
     public function invitations()
     {
-      return $this->hasMany('Helix\Models\Invitation');
+      return $this->hasMany('Helix\Models\Invitation','project_id');
     }
 
     public function visibility()

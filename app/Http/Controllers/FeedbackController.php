@@ -24,7 +24,7 @@ class FeedbackController extends Controller
 	 */
 	public function __construct(Mailer $mailer) {
         $this->mailer = $mailer;
-        $this->feedback = env('APP_FEEDBACK_TO');
+        $this->feedback = env('FEEDBACK_TO');
 	}
 
 	/**

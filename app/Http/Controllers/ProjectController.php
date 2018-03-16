@@ -49,6 +49,8 @@ class ProjectController extends Controller
             'updateCayuseProjects',
             'validateYoutube',
             'createAllProjectAttributes',
+            'getCollaboratorsList',
+            'getByCategoryType'
         ]]);
 
         $this->middleware(['project-write', 'helix-roles'], ['only' => [
