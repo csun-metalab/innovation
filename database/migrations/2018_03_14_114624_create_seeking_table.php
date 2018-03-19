@@ -17,6 +17,7 @@ class CreateSeekingTable extends Migration
             $table->string('project_id');
             $table->string('title');
             $table->boolean('filled')->default(false);
+            $table->softDeletes();
             $table->timestamps();
         });
     }
