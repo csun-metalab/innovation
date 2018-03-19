@@ -1,4 +1,5 @@
-<?php namespace Helix\Models;
+<?php 
+namespace Helix\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;

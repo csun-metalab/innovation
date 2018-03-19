@@ -31,7 +31,7 @@ class StepOneRequest extends Request
             'description'  => 'required',
             'funding'      => 'numeric|min:0',
             'url'          => 'url',
-            'youtube'      => ['regex' => 'regex:#(https?://(?:www\.)?youtube\.com/watch\?v=([^&]+?))|((https?://(?:www\.)?)(youtu\.be){1})|((https?://(?:www\.)?(vimeo\.com){1}))#']
+            'youtube'      => ['re.gex' => 'regex:#(https?://(?:www\.)?youtube\.com/watch\?v=([^&]+?))|((https?://(?:www\.)?)(youtu\.be){1})|((https?://(?:www\.)?(vimeo\.com){1}))#']
 
         ];
 

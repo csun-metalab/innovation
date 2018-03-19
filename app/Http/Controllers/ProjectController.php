@@ -1,7 +1,8 @@
-<?php namespace Helix\Http\Controllers;
+<?php 
+namespace Helix\Http\Controllers;
 
 use Helix\Http\Controllers\Controller;
-use Helix\Http\Requests\Project\Create\StepOneRequest;
+use Helix\Http\Requests\ProjectStepOneCreate;
 
 use Helix\Models\Interest;
 use Helix\Models\Invitation;
@@ -48,6 +49,8 @@ class ProjectController extends Controller
             'updateCayuseProjects',
             'validateYoutube',
             'createAllProjectAttributes',
+            'getCollaboratorsList',
+            'getByCategoryType'
         ]]);
 
         $this->middleware(['project-write', 'helix-roles'], ['only' => [
@@ -199,7 +202,7 @@ class ProjectController extends Controller
      * @param string $projectId Project id or null if new project
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function step1(StepOneRequest $request, $projectId = NULL)
+    public function step1(ProjectStepOneCreate $request, $projectId = NULL)
     {
         if(session('new-project'))
         {
