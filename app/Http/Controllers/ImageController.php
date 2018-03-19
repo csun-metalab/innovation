@@ -2,7 +2,7 @@
 
 namespace Helix\Http\Controllers;
 
-use Illuminate\Support\Facades\File;
+use Illuminate\Http\File;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
@@ -12,6 +12,8 @@ use Helix\Models\Image;
 use Illuminate\Http\Request;
 use Exception;
 use Image as InterventionImage;
+
+use Illuminate\Support\Facades\Storage;
 
 /**
  * This class handles the photo uploads for project banners. This closely
@@ -46,10 +48,10 @@ class ImageController extends Controller
     {
         // Takes the image from the upload form
         $image = request()->file('image');
+        
         $data = [
             'image' => $image
         ];
-
         // This section will validate the data
         $rules = [
             'image' => 'required|mimes:jpeg,jpg,png| max:1000',
@@ -61,7 +63,6 @@ class ImageController extends Controller
         if ($validator->fails()) {
             return redirect()->route('project.photo-upload', $projectId)->withErrors($validator);
         }
-
         //Obfuscate the image file name for privacy reasons.
         $idUsedToSaveImage = explode(':', $projectId);
         $obfuscatedFileName = $idUsedToSaveImage[1] . '_' . time();
@@ -72,7 +73,7 @@ class ImageController extends Controller
         $destinationPath = env("IMAGE_TEMP_UPLOAD_LOCATION");
 
         // Create the new image file
-        Input::file('image')->move($destinationPath, $completeFileName); // uploading file to given path
+        Storage::putFileAs('image', new File($destinationPath) , $completeFileName);
         $this->deleteOldTempImages();
 
         // Add the uploaded file to the session
@@ -136,7 +137,7 @@ class ImageController extends Controller
         // This will check if there is an old image to delete
         $oldImage = Image::where('imageable_id', $projectId)->first();
         if ($oldImage) {
-            File::delete(env("IMAGE_UPLOAD_LOCATION")."/".$oldImage->src);
+            Storage::delete(env("IMAGE_UPLOAD_LOCATION")."/".$oldImage->src);
         }
 
         // The Laravel way of updateOrCreate for new project image
@@ -149,7 +150,7 @@ class ImageController extends Controller
         $image->save();
 
         // Delete the old temp file
-        File::delete('imgs/temp/' . session('newImageId'));
+        Storage::delete('imgs/temp/' . session('newImageId'));
 
         // Forget the session variables used
         session()->forget([
@@ -176,7 +177,7 @@ class ImageController extends Controller
         if ($oldImage) {
             try {
                 // Delete from file system and DB
-                File::delete(env('IMAGE_UPLOAD_LOCATION').$oldImage->src);
+                Storage::delete(env('IMAGE_UPLOAD_LOCATION').$oldImage->src);
                 $oldImage->delete();
             } catch (\Exception $e) {
                 Log::error($e);
@@ -211,7 +212,7 @@ class ImageController extends Controller
             // Calculates time since file was created
             $minutesSinceCreation = (time() - filectime($uploadPath . $file)) / 60;
             if ($minutesSinceCreation > $timeLimitInMinutes) {
-                File::delete($uploadPath . $file);
+                Storage::delete($uploadPath . $file);
             }
         }
     }

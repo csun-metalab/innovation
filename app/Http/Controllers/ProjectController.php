@@ -1,7 +1,10 @@
-<?php namespace Helix\Http\Controllers;
+<?php 
+namespace Helix\Http\Controllers;
 
 use Helix\Http\Controllers\Controller;
-use Helix\Http\Requests\Project\Create\StepOneRequest;
+use Helix\Http\Requests\ProjectStepOneCreate;
+
+use Illuminate\Http\Request;
 
 use Helix\Models\Interest;
 use Helix\Models\Invitation;
@@ -23,7 +26,6 @@ use Gate;
 use Auth;
 use DB;
 use Exception;
-use Request;
 
 /**
  * Essentially the resource controller for projects. In addition, this has the
@@ -48,6 +50,8 @@ class ProjectController extends Controller
             'updateCayuseProjects',
             'validateYoutube',
             'createAllProjectAttributes',
+            'getCollaboratorsList',
+            'getByCategoryType'
         ]]);
 
         $this->middleware(['project-write', 'helix-roles'], ['only' => [
@@ -144,6 +148,8 @@ class ProjectController extends Controller
     }
 
     /**
+     * MARK FOR DELETION
+     *
      * The first step of three when creating or editing a project.
      *
      * @param string $projectId Project id or null if this is a new project
@@ -199,7 +205,7 @@ class ProjectController extends Controller
      * @param string $projectId Project id or null if new project
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function step1(StepOneRequest $request, $projectId = NULL)
+    public function step1(ProjectStepOneCreate $request, $projectId = NULL)
     {
         if(session('new-project'))
         {
@@ -304,6 +310,8 @@ class ProjectController extends Controller
     }
 
     /**
+     * MARK FOR DELETION
+     *
      * Handles the information given from step 2 and session information
      *
      * @param string $projectId Project id or null if new project
@@ -390,6 +398,8 @@ class ProjectController extends Controller
     }
 
     /**
+     * MARK FOR DELETION
+     *
      * Validates all session information and fires a ProjectCreatedOrUpdated
      * event to create/edit a project
      *
@@ -441,6 +451,56 @@ class ProjectController extends Controller
         event(new \Helix\Events\Project\ProjectCreatedOrUpdated($project, session('new-project')));
 
         session()->forget('new-project');
+
+        return view('pages.project.four', compact('project'));
+    }
+
+    public function postProjectCreation(Request $request, $projectId = NULL)
+    {
+        $collaborators = !is_null(request('collaborators')) ? array_filter(request('collaborators')) : [];
+
+        $projectData = [
+           'project_general' => [
+               'title'              => trim(request('title')),
+               'cayuse_project'     => false,
+               'project_type'       => request('project_type'),
+               'project_purpose'    => request('project_purpose'),
+               'description'        => trim(request('description')),
+               'start_date'         => request('start_date'),
+               'end_date'           => request('end_date'),
+               'url'                => trim(request('url')),
+               'youtube'            => trim(request('youtube')),
+           ],
+            'interests'     => request('tags'),
+            'collaborators' => [],
+            'seeking'       => [
+                'collaborators'     => 0,
+                'students'          => 0,
+                'qualifications'    => null,
+            ],
+        ];
+
+        if(!empty($collaborators))
+        {
+            $projectData['collaborators'] = $collaborators;
+            $projectData['seeking']['collaborators'] = request('seekingCollaborators');
+            $projectData['seeking']['students'] = request('seekingStudents');
+            if (request('seekingStudents') && request('studentQualifications')) {
+                $projectData['seeking']['qualifications'] = request('studentQualifications');
+            }
+        }
+
+        if(is_null($projectId))
+        {
+            $projectId = generateNewProjectId();
+
+            Project::create([
+                'project_id' => $projectId,
+            ]);
+        }
+
+        $project = Project::findOrFail($projectId);
+        event(new \Helix\Events\Project\ProjectCreatedOrUpdated($project, $projectData));
 
         return view('pages.project.four', compact('project'));
     }
