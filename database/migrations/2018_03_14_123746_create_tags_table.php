@@ -16,6 +16,7 @@ class CreateTagsTable extends Migration
             $table->increments('id');
             $table->string('project_id');
             $table->string('tag');
+            $table->string('category');
             $table->timestamps();
         });
     }
