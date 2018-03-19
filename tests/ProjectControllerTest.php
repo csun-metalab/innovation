@@ -1,15 +1,13 @@
 <?php
 
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Facades\Event;
+declare(strict_types=1);
+
+namespace tests;
+
+use Helix\Events\Project\ProjectCreatedOrUpdated;
 use Helix\Http\Controllers\ProjectController;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Helix\Models\FrescoExpertiseEntity;
-use Helix\Models\Project;
-use Helix\Events\Project\ProjectCreatedOrUpdated;
+use Illuminate\Support\Facades\Event;
 
 class ProjectControllerTest extends TestCase
 {
@@ -19,9 +17,7 @@ class ProjectControllerTest extends TestCase
     public function postProjectCreation_fires_off_an_event()
     {
         Event::fake();
-
         $controller = new ProjectController();
-
         $request = new Request([
             'title' => 'This is a title',
             'project_type' => 'this is a type',
@@ -31,15 +27,13 @@ class ProjectControllerTest extends TestCase
             'end_date' => 'a end date',
             'url' => 'a url',
             'youtube' => 'a youtube link',
-            'tags' => ['some','tags'],
+            'tags' => ['some', 'tags'],
             'collaborators' => ['person', 'SunRa', 'MadLib'],
             'seekingCollaborators' => 12,
             'seekingStudents' => 11,
-            'studentQualifications' => ['things', 'andMoreThings']
+            'studentQualifications' => ['things', 'andMoreThings'],
         ]);
-
         $controller->postProjectCreation($request);
-
         Event::assertDispatched(ProjectCreatedOrUpdated::class);
     }
 }
