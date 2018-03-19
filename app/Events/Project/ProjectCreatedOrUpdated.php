@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Helix\Events\Project;
 
-use Helix\Models\Project;
 use Helix\Events\Event;
+use Helix\Models\Project;
 use Illuminate\Queue\SerializesModels;
 
 class ProjectCreatedOrUpdated extends Event
@@ -13,9 +15,14 @@ class ProjectCreatedOrUpdated extends Event
 
     use SerializesModels;
 
-    public function __construct(Project $project, array $session)
+    public function __construct($projectId, array $data)
     {
-        $this->project = $project;
-        $this->session = $session;
+        if (null === $projectId) {
+            $projectId = generateNewProjectId();
+
+            Project::create([
+                'project_id' => $projectId,
+            ]);
+        }
     }
 }
