@@ -197,18 +197,15 @@ class InvitationController extends Controller
             return $redirectToProjectShow;
         }
 
-
         if($project->isPrivate() || !$project->attribute->seeking_collaborators || !$project->isRequestable())
         {
             return $redirectToProjectShow;
         }
 
-
         if(Invitation::pending($project, auth()->user())->exists())
         {
             return $redirectToProjectShow;
         }
-
         Invitation::create([
             'project_id'    => $project->project_id,
             'recipient_id'  => auth()->user()->user_id,
@@ -224,7 +221,7 @@ class InvitationController extends Controller
         $emails = $project->authorities->pluck('email')->toArray();
 
         $this->mailer->queueToMany('emails.pending-invitation', $mailData, $emails, 'Someone has requested to be part of your project!');
-        
+
         session()->flash('flash_message_self', 'Thank you for requesting to join this project.');
         return $redirectToProjectShow;
     }

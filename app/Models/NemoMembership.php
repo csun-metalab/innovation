@@ -1,5 +1,4 @@
 <?php
-
 namespace Helix\Models;
 
 use Illuminate\Database\Eloquent\Model;

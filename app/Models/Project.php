@@ -1,4 +1,5 @@
-<?php namespace Helix\Models;
+<?php 
+namespace Helix\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Helix\Models\Attribute;
@@ -140,7 +141,7 @@ class Project extends Model
 
     public function invitations()
     {
-      return $this->hasMany('Helix\Models\Invitation');
+      return $this->hasMany('Helix\Models\Invitation','project_id');
     }
 
     public function visibility()
