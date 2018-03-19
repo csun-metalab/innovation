@@ -10,19 +10,22 @@ use Illuminate\Queue\SerializesModels;
 
 class ProjectCreatedOrUpdated extends Event
 {
-    public $project;
-    public $session;
+    public $projectId;
+    public $data;
 
     use SerializesModels;
 
     public function __construct($projectId, array $data)
     {
-        if (null === $projectId) {
-            $projectId = generateNewProjectId();
+        $this->projectId = $projectId;
+        if (null === $this->projectId) {
+            $this->projectId = generateNewProjectId();
 
             Project::create([
-                'project_id' => $projectId,
+                'project_id' => $this->projectId,
             ]);
         }
+
+        $this->data = $data;
     }
 }
