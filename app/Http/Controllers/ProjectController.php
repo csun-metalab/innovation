@@ -432,17 +432,17 @@ class ProjectController extends Controller
 
         $projectData = [
            'project_general' => [
-               'title' => \trim(request('title')),
+               'title' => \trim($request->title),
                'cayuse_project' => false,
-               'project_type' => request('project_type'),
-               'project_purpose' => request('project_purpose'),
-               'description' => \trim(request('description')),
-               'start_date' => request('start_date'),
-               'end_date' => request('end_date'),
-               'url' => \trim(request('url')),
-               'youtube' => \trim(request('youtube')),
+               'project_type' => $request->project_type,
+               'project_purpose' => $request->project_purpose,
+               'description' => \trim($request->description),
+               'start_date' => $request->start_date,
+               'end_date' => $request->end_date,
+               'url' => \trim($request->url),
+               'youtube' => \trim($request->youtube),
            ],
-            'interests' => request('tags'),
+            'interests' => $request->tags,
             'collaborators' => [],
             'seeking' => [
                 'collaborators' => 0,
@@ -453,10 +453,10 @@ class ProjectController extends Controller
 
         if (!empty($collaborators)) {
             $projectData['collaborators'] = $collaborators;
-            $projectData['seeking']['collaborators'] = request('seekingCollaborators');
-            $projectData['seeking']['students'] = request('seekingStudents');
-            if (request('seekingStudents') && request('studentQualifications')) {
-                $projectData['seeking']['qualifications'] = request('studentQualifications');
+            $projectData['seeking']['collaborators'] = $request->seekingCollaborators;
+            $projectData['seeking']['students'] = $request->seekingStudents;
+            if ($request->seekingStudents && $request->studentQualifications) {
+                $projectData['seeking']['qualifications'] = $request->studentQualifications;
             }
         }
 
