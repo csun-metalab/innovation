@@ -16,6 +16,7 @@ class CreateEventsTable extends Migration
             $table->increments('id');
             $table->string('project_id');
             $table->string('event_name');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
