@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Helix\Http\Controllers;
 
+use app\Contracts\VerifyProjectIdContract;
 use Auth;
 use DB;
 use Helix\Http\Requests\ProjectStepOneCreate;
@@ -25,10 +26,14 @@ use Searchy;
  */
 class ProjectController extends Controller
 {
+    protected $projectIdVerifier = null;
+
     /**
      * ProjectController constructor.
+     *
+     * @param VerifyProjectIdContract $verifyProjectIdContract
      */
-    public function __construct()
+    public function __construct(VerifyProjectIdContract $verifyProjectIdContract)
     {
         $this->middleware('auth', ['except' => [
             'index',
@@ -50,6 +55,8 @@ class ProjectController extends Controller
             'store',
             'destroy',
         ]]);
+
+        $this->projectIdVerifier = $verifyProjectIdContract;
     }
 
     /**
@@ -460,7 +467,7 @@ class ProjectController extends Controller
             }
         }
 
-        event(new \Helix\Events\Project\ProjectCreatedOrUpdated($projectId, $projectData));
+        $projectId = $this->projectIdVerifier->verifyId($projectId);
 
         return view('pages.project.four', \compact('project'));
     }
