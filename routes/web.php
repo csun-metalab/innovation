@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -12,7 +13,6 @@
 */
 
 Route::group(['middleware' => ['web']], function () {
-
     // Helix Welcome
     Route::get('/', 'WelcomeController@index')
         ->name('welcome');
@@ -28,19 +28,11 @@ Route::group(['middleware' => ['web']], function () {
     Route::post('feedback', 'FeedbackController@postIndex');
 
     //Search
-    Route::get('search/research-interests','SearchController@searchByResearchInterest')
-        ->name('search.research-interests');
-    Route::get('search/research-interests/faculty', 'SearchController@seeMorePeopleByResearchInterests')
-        ->name("see-more-faculty");
-    Route::get('search/research-interests/projects', 'SearchController@seeMoreProjectsByResearchInterests')
-        ->name('see-more-projects');
     Route::get('search/everything', 'SearchController@allSearchResults')
         ->name('all-search-results');
     Route::get('search/members', 'SearchController@searchForMember')
         ->name('search.member-search');
 
-    Route::get('browse/research-interests','SearchController@browseAllResearchInterests')
-        ->name('browse.research-interests');
     // Authentication
     Route::get('login', 'AuthController@getLogin')
         ->name('login');
@@ -50,7 +42,7 @@ Route::group(['middleware' => ['web']], function () {
         ->name('logout');
 
     // Projects
-    Route::group(['prefix' => 'project'], function(){
+    Route::group(['prefix' => 'project'], function () {
         Route::get('/', 'SearchController@index')
             ->name('search.projects');
         Route::get('step-1/{projectId?}', 'ProjectController@create')
@@ -67,9 +59,9 @@ Route::group(['middleware' => ['web']], function () {
             ->name('project.edit.step-3.post');
         Route::get('{id}', 'ProjectController@show')
             ->name('project.show');
-        Route::get('{id}/delete','ProjectController@destroy')
+        Route::get('{id}/delete', 'ProjectController@destroy')
             ->name('project.delete');
-        Route::get('{id}/edit','ProjectController@editRedirect')
+        Route::get('{id}/edit', 'ProjectController@editRedirect')
             ->name('project.edit');
 
         // Image upload routes
@@ -81,7 +73,7 @@ Route::group(['middleware' => ['web']], function () {
             ->name('project.photo-crop');
         Route::post('{id}/crop-image', 'ImageController@postCrop')
             ->name('project.photo-post-crop');
-        Route::get('{id}/delete-image','ImageController@destroy')
+        Route::get('{id}/delete-image', 'ImageController@destroy')
             ->name('project.photo-delete');
 
         Route::put('{projectId}/toggle-featured', 'ProjectController@toggleFeatured')
@@ -103,7 +95,7 @@ Route::group(['middleware' => ['web']], function () {
         Route::get('{projectId}/student-request', 'InvitationController@studentRequest')
             ->name('student-request-form');
         // This route is called when the student submits the request form.
-        Route::post('{projectId}/student-request/sent','InvitationController@processStudentRequest')
+        Route::post('{projectId}/student-request/sent', 'InvitationController@processStudentRequest')
             ->name('student-request-sent');
     });
 
@@ -111,28 +103,10 @@ Route::group(['middleware' => ['web']], function () {
     Route::post('/validateYoutube', 'ProjectController@validateYoutube')
         ->name('validateYoutube');
 
-    Route::group(['prefix'=>'admin'],function(){
-        Route::get('dashboard','PersonController@adminPanel');
+    Route::group(['prefix' => 'admin'], function () {
+        Route::get('dashboard', 'PersonController@adminPanel');
         Route::get('dashboard/invitations', 'PersonController@dashboardInvitation')
             ->name('dashboard.invitations');
-        Route::get('dashboard/research-interests', 'PersonController@dashboardResearchInterests');
-        Route::post('dashboard/research-interests', 'PersonController@postSaveIndividualInterests')
-            ->name('research-interests.store');
-        Route::get('dashboard/academic-interests', 'PersonController@dashboardAcademicInterests');
-        Route::post('dashboard/academic-interests', 'PersonController@postSaveIndividualAcademicInterests')
-            ->name('academic-interest.store');
-        Route::get('dashboard/remove-interests/{id}', 'PersonController@removeIndividualInterest')
-            ->name('interest.destroy');
-        Route::get('dashboard/remove-academic-interests/{id}', 'PersonController@removeIndividualAcademicInterest')
-            ->name('academic-interest.destroy');
-        Route::get('dashboard/remove-personal-interest/{id}', 'PersonController@removeIndividualPersonalInterest')
-            ->name('personal-interest.destroy');
-
-        // This is the section that holds the personal interests.
-        Route::get('dashboard/personal-interests', 'PersonController@dashboardPersonalInterests')
-            ->name('personal-interest.store');
-        Route::post('dashboard/personal-interests', 'PersonController@postSaveIndividualPersonalInterests')
-            ->name('personal-interest.store');
     });
 });
 
@@ -143,19 +117,16 @@ Route::group(['middleware' => ['web']], function () {
 |---------------------------------------------------------------
 */
 
-
-if(app()->environment('local'))
-{
-
+if (app()->environment('local')) {
     // Miscellaneous routes
 
     // Todo: Delete this after uncommenting the equivalent route above.
     Route::get('init/project-attributes', 'ProjectController@createAllProjectAttributes');
 
-    Route::get('dashboard',function(){
+    Route::get('dashboard', function () {
         return view('pages.dashboard.landing');
     });
-    Route::get('see-more-projects',function(){
+    Route::get('see-more-projects', function () {
         return view('pages.search.seemoreprojects');
     });
 
@@ -166,26 +137,25 @@ if(app()->environment('local'))
             ->whereCayuseId(null)
             ->get();
         $nextCayuseId = \Helix\Models\Project::whereNotNull('cayuse_id')
-            ->orderBy('cayuse_id','desc')
+            ->orderBy('cayuse_id', 'desc')
             ->first()
             ->cayuse_id;
-        foreach ($projects as $project)
-        {
+        foreach ($projects as $project) {
             $piUserId = $project->pi->user_id;
             $project->cayuse_id = ++$nextCayuseId;
             $project->pi_pid = getNumberFromIdString($piUserId);
             $project->touch();
             $project->save();
         }
+
         return $projects;
     });
 
     // Expertise Search
 
-    Route::get('profiles', function(){
+    Route::get('profiles', function () {
         return view('pages.landing.profiles');
     });
-
 
     Route::get('profile', function () {
         return view('pages.profiles.profile');
@@ -225,7 +195,7 @@ if(app()->environment('local'))
         return view('pages.profiles.edit');
     });
 
-    Route::get('session', function(){
+    Route::get('session', function () {
         session()->forget('new-project');
         session()->forget('can-edit-project-projects:91');
         session()->forget('can-edit-project-projects:1');

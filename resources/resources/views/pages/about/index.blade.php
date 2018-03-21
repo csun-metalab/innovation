@@ -6,7 +6,7 @@
       <div class="row">
         <div class="col-sm-12">
           <h1 class="type--white type--thin type--marginless">About</h1>
-          <p class="type--white type--marginless">We have an amazing set of faculty that pursues a diverse set of activities: different pedagogical approaches, different research interests, and unique aspirations. Faculty serve the university in a variety of ways, unique to each faculty member. To more fully highlight the stories of our faculty, facilitate access to information about faculty, and facilitated collaboration among faculty and students, the Faculty App was commissioned. META+LAB, a unit within Academic Affairs, has been working on the Faculty Project, whose primary purpose is to increase the visibility of CSUN's faculty and highlight what the university represents.</p>
+          <p class="type--white type--marginless">We have an amazing set of faculty that pursues a diverse set of activities: different pedagogical approaches, and unique aspirations. Faculty serve the university in a variety of ways, unique to each faculty member. To more fully highlight the stories of our faculty, facilitate access to information about faculty, and facilitated collaboration among faculty and students, the Faculty App was commissioned. META+LAB, a unit within Academic Affairs, has been working on the Faculty Project, whose primary purpose is to increase the visibility of CSUN's faculty and highlight what the university represents.</p>
         </div>
       </div>
     </div>
