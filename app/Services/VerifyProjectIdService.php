@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace app\Services;
+namespace Helix\Services;
 
 use app\Contracts\VerifyProjectIdContract;
 use Helix\Models\Project;
