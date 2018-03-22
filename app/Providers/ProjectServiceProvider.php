@@ -20,14 +20,14 @@ class ProjectServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(
-            'App\Contracts\VerifyProjectIdContract',
-            'App\Services\VerifyProjectIdService'
+        $this->Helix->bind(
+            'Helix\Contracts\VerifyProjectIdContract',
+            'Helix\Services\VerifyProjectIdService'
         );
 
-        $this->app->bind(
-            'App\Contracts\UpdateProjectGeneralContract',
-            'App\Services\UpdateProjectGeneralService'
+        $this->Helix->bind(
+            'Helix\Contracts\UpdateProjectGeneralContract',
+            'Helix\Services\UpdateProjectGeneralService'
         );
     }
 }

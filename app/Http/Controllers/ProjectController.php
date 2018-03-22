@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Helix\Http\Controllers;
 
-use app\Contracts\UpdateProjectGeneralContract;
-use app\Contracts\VerifyProjectIdContract;
 use Auth;
 use DB;
+use Helix\Contracts\UpdateProjectGeneralContract;
+use Helix\Contracts\VerifyProjectIdContract;
 use Helix\Http\Requests\ProjectStepOneCreate;
 use Helix\Models\Attribute;
 use Helix\Models\Interest;
