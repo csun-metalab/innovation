@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace tests;
+namespace tests\ControllerTests;
 
 use Helix\Events\Project\ProjectCreatedOrUpdated;
 use Helix\Http\Controllers\ProjectController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
+use Tests\TestCase;
 
 class ProjectControllerTest extends TestCase
 {
@@ -16,6 +17,7 @@ class ProjectControllerTest extends TestCase
      */
     public function postProjectCreation_fires_off_an_event()
     {
+        $this->markTestSkipped('Database needs to be cleaned up');
         Event::fake();
         $controller = new ProjectController();
         $request = new Request([
