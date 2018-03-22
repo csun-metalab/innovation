@@ -46,7 +46,6 @@
               <li>{{ Form::label('Project Theme') }}</li>
               <li class="margin-left--5"></li>
             </ul>
-            {{ Form::select('tags[]', $tags, null, ['class' => 'select2-tags tags', 'multiple' => 'multiple']) }}
           </div>
         </div>
       </div>        

@@ -194,7 +194,6 @@ class ProjectController extends Controller
      */
     public function step1(ProjectStepOneCreate $request, $projectId = null)
     {
-
         if (session('new-project')) {
             if (\array_key_exists('project_general', session('new-project'))) {
                 // Remove everything except cayuse_project - this array key is used to run checks on back end and front end
@@ -225,7 +224,6 @@ class ProjectController extends Controller
             'new-project.project_general.url' => \trim(request('url')),
             'new-project.project_general.youtube' => \trim(request('youtube')),
         ]);
-    ;
 
         return isset($projectId) ? redirect('project/step-2/' . $projectId) : redirect('project/step-2');
     }
@@ -262,28 +260,14 @@ class ProjectController extends Controller
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View|string
      */
     public function getStep2($projectId = null)
+    {
         if (!session('new-project')) {
             return back();
         }
 
-
-        if (!session('new-project.interests')) {
-            if ($projectId) {
-                $projectInterests = Project::findOrFail($projectId)->interests->toArray();
-                if (!empty($projectInterests)) {
-                    session()->put('new-project.interests', stringifyTags($projectInterests));
-                }
-            }
-        }
-
         // TODO: refactor everything to the back end
 
-
-        $categories = Research::whereNull('parent_attribute_id')->pluck('title', 'attribute_id as id');
-        // Subcategories and tags are hard coded for initialization of Select2 options
-        $subcategories = Research::where('parent_attribute_id', 'research:1')->pluck('title', 'attribute_id as id');
-        $tags = Research::where('parent_attribute_id', 'research:11')->pluck('title', 'attribute_id as id');
-        return view('pages.project.two', \compact('categories', 'subcategories', 'tags'));
+        return view('pages.project.two', \compact('categories', 'subcategories'));
     }
 
     /**
