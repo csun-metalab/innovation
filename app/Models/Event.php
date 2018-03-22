@@ -7,7 +7,7 @@ namespace Helix\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingTrait;
 
-class event extends Model
+class Event extends Model
 {
     use SoftDeletingTrait;
     protected $table = 'events';
