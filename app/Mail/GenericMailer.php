@@ -1,24 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Helix\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Http\Request;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
 class GenericMailer extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $subject, $data, $view;
+    public $subject;
+    public $data;
+    public $view;
+
     /**
      * Create a new message instance.
      *
-     * @return void
+     * @param String $view
+     * @param array  $data
+     * @param String $subject
      */
-    public function __construct(String $view, Array $data, String $subject)
+    public function __construct(String $view, array $data, String $subject)
     {
         $this->view = $view;
         $this->subject = $subject;
