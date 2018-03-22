@@ -24,5 +24,10 @@ class ProjectServiceProvider extends ServiceProvider
             'App\Contracts\VerifyProjectIdContract',
             'App\Services\VerifyProjectIdService'
         );
+
+        $this->app->bind(
+            'App\Contracts\UpdateProjectGeneralContract',
+            'App\Services\UpdateProjectGeneralService'
+        );
     }
 }

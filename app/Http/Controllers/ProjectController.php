@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Helix\Http\Controllers;
 
+use app\Contracts\UpdateProjectGeneralContract;
 use app\Contracts\VerifyProjectIdContract;
 use Auth;
 use DB;
@@ -27,14 +28,18 @@ use Searchy;
 class ProjectController extends Controller
 {
     protected $projectIdVerifier = null;
+    protected $projectGeneralUpdater = null;
 
     /**
      * ProjectController constructor.
      *
-     * @param VerifyProjectIdContract $verifyProjectIdContract
+     * @param VerifyProjectIdContract      $verifyProjectIdContract
+     * @param UpdateProjectGeneralContract $updateProjectGeneralContract
      */
-    public function __construct(VerifyProjectIdContract $verifyProjectIdContract)
-    {
+    public function __construct(
+        VerifyProjectIdContract $verifyProjectIdContract,
+        UpdateProjectGeneralContract $updateProjectGeneralContract
+    ) {
         $this->middleware('auth', ['except' => [
             'index',
             'show',
@@ -57,6 +62,7 @@ class ProjectController extends Controller
         ]]);
 
         $this->projectIdVerifier = $verifyProjectIdContract;
+        $this->projectGeneralUpdater = $updateProjectGeneralContract;
     }
 
     /**
@@ -468,6 +474,8 @@ class ProjectController extends Controller
         }
 
         $projectId = $this->projectIdVerifier->verifyId($projectId);
+
+        $this->projectGeneralUpdater->updateProjectGeneral($projectId, $projectData);
 
         return view('pages.project.four', \compact('project'));
     }
