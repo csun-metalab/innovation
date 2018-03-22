@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Helix\Services;
 
-use app\Contracts\VerifyProjectIdContract;
+use Helix\Contracts\VerifyProjectIdContract;
 use Helix\Models\Project;
 
 class VerifyProjectIdService implements VerifyProjectIdContract

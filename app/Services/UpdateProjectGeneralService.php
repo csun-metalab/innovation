@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Helix\Services;
 
-use app\Contracts\UpdateProjectGeneralContract;
+use Helix\Contracts\UpdateProjectGeneralContract;
 use Helix\Models\Project;
 
 class UpdateProjectGeneralService implements UpdateProjectGeneralContract
