@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Helix\Providers;
 
-use Illuminate\Support\Facades\Event;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Event;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -42,12 +44,10 @@ class EventServiceProvider extends ServiceProvider
     /**
      * Register any other events for your application.
      *
-     * @param  \Illuminate\Contracts\Events  $events
-     * @return void
+     * @param \Illuminate\Contracts\Events $events
      */
     public function boot()
     {
         parent::boot();
-        //
     }
 }

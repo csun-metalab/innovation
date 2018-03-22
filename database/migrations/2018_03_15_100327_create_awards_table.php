@@ -1,9 +1,10 @@
 <?php
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePolicyTypesTable extends Migration
+class CreateAwardsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,11 +13,11 @@ class CreatePolicyTypesTable extends Migration
      */
     public function up()
     {
-        Schema::create('policy_types', function(Blueprint $table){
+        Schema::create('awards', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('policy_type');
-            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
-            $table->timestamp('updated_at')->nullable();
+            $table->integer('award_amount');
+            $table->string('sponsor');
+            $table->timestamps();
         });
     }
 
@@ -27,6 +28,6 @@ class CreatePolicyTypesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('policy_types');
+        Schema::dropIfExists('awards');
     }
 }

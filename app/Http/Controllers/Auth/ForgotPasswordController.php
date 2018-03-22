@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Helix\Http\Controllers\Auth;
 
 use Helix\Http\Controllers\Controller;
@@ -22,8 +24,6 @@ class ForgotPasswordController extends Controller
 
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct()
     {

@@ -31,5 +31,4 @@ Route::get('projects', 'SearchController@apiProjects'); // with member / email f
 Route::get('projects/{id}', 'ProjectController@apiProject'); // slug , id, cayuse id
 Route::get('{include}/projects', 'SearchController@apiProjects'); // with member / email for person
 Route::get('update/cayuse-projects', 'ProjectController@updateCayuseProjects');
-//Todo: Uncomment this after talking to Matt.
 Route::get('init/project-attributes', 'ProjectController@createAllProjectAttributes');
