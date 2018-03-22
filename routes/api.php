@@ -21,6 +21,7 @@ Route::get('roles', 'ProjectController@getRolesList');
 Route::get('projects/{id}/edit/collaborators', 'ProjectController@getCurrentCollaborators');
 Route::get('departments', 'SearchController@departmentSearch');
 
+
 // SCRIPT TO BE RUN AFTER CAYUSE IMPORT
 Route::get('update/slugs', 'ProjectController@slugsMissing');
 
@@ -31,5 +32,4 @@ Route::get('projects', 'SearchController@apiProjects'); // with member / email f
 Route::get('projects/{id}', 'ProjectController@apiProject'); // slug , id, cayuse id
 Route::get('{include}/projects', 'SearchController@apiProjects'); // with member / email for person
 Route::get('update/cayuse-projects', 'ProjectController@updateCayuseProjects');
-//Todo: Uncomment this after talking to Matt.
 Route::get('init/project-attributes', 'ProjectController@createAllProjectAttributes');

@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -28,6 +29,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::post('feedback', 'FeedbackController@postIndex');
 
     //Search
+
     Route::get('search/everything', 'SearchController@allSearchResults')
         ->name('all-search-results');
     Route::get('search/members', 'SearchController@searchForMember')
@@ -103,10 +105,17 @@ Route::group(['middleware' => ['web']], function () {
     Route::post('/validateYoutube', 'ProjectController@validateYoutube')
         ->name('validateYoutube');
 
-    Route::group(['prefix' => 'admin'], function () {
-        Route::get('dashboard', 'PersonController@adminPanel');
+
+    Route::group(['prefix'=>'admin'],function(){
+        Route::get('dashboard','PersonController@adminPanel');
         Route::get('dashboard/invitations', 'PersonController@dashboardInvitation')
             ->name('dashboard.invitations');
+    });
+    Route::get('create', function () {
+        return view('pages.project.create');
+    });
+    Route::get('test', function () {
+        return view('pages.project.test');
     });
 });
 

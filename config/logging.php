@@ -1,7 +1,8 @@
 <?php
 
-return [
+declare(strict_types=1);
 
+return [
     /*
     |--------------------------------------------------------------------------
     | Default Log Channel
@@ -66,5 +67,4 @@ return [
             'level' => 'debug',
         ],
     ],
-
 ];

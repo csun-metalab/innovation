@@ -6,6 +6,8 @@ namespace Helix\Http\Controllers;
 
 use Auth;
 use DB;
+use Helix\Contracts\UpdateProjectGeneralContract;
+use Helix\Contracts\VerifyProjectIdContract;
 use Helix\Http\Requests\ProjectStepOneCreate;
 use Helix\Models\Attribute;
 use Helix\Models\Interest;
@@ -25,11 +27,19 @@ use Searchy;
  */
 class ProjectController extends Controller
 {
+    protected $projectIdVerifier = null;
+    protected $projectGeneralUpdater = null;
+
     /**
      * ProjectController constructor.
+     *
+     * @param VerifyProjectIdContract      $verifyProjectIdContract
+     * @param UpdateProjectGeneralContract $updateProjectGeneralContract
      */
-    public function __construct()
-    {
+    public function __construct(
+        VerifyProjectIdContract $verifyProjectIdContract,
+        UpdateProjectGeneralContract $updateProjectGeneralContract
+    ) {
         $this->middleware('auth', ['except' => [
             'index',
             'show',
@@ -50,6 +60,9 @@ class ProjectController extends Controller
             'store',
             'destroy',
         ]]);
+
+        $this->projectIdVerifier = $verifyProjectIdContract;
+        $this->projectGeneralUpdater = $updateProjectGeneralContract;
     }
 
     /**
@@ -416,17 +429,17 @@ class ProjectController extends Controller
 
         $projectData = [
            'project_general' => [
-               'title' => \trim(request('title')),
+               'title' => \trim($request->title),
                'cayuse_project' => false,
-               'project_type' => request('project_type'),
-               'project_purpose' => request('project_purpose'),
-               'description' => \trim(request('description')),
-               'start_date' => request('start_date'),
-               'end_date' => request('end_date'),
-               'url' => \trim(request('url')),
-               'youtube' => \trim(request('youtube')),
+               'project_type' => $request->project_type,
+               'project_purpose' => $request->project_purpose,
+               'description' => \trim($request->description),
+               'start_date' => $request->start_date,
+               'end_date' => $request->end_date,
+               'url' => \trim($request->url),
+               'youtube' => \trim($request->youtube),
            ],
-            'interests' => request('tags'),
+            'interests' => $request->tags,
             'collaborators' => [],
             'seeking' => [
                 'collaborators' => 0,
@@ -437,14 +450,16 @@ class ProjectController extends Controller
 
         if (!empty($collaborators)) {
             $projectData['collaborators'] = $collaborators;
-            $projectData['seeking']['collaborators'] = request('seekingCollaborators');
-            $projectData['seeking']['students'] = request('seekingStudents');
-            if (request('seekingStudents') && request('studentQualifications')) {
-                $projectData['seeking']['qualifications'] = request('studentQualifications');
+            $projectData['seeking']['collaborators'] = $request->seekingCollaborators;
+            $projectData['seeking']['students'] = $request->seekingStudents;
+            if ($request->seekingStudents && $request->studentQualifications) {
+                $projectData['seeking']['qualifications'] = $request->studentQualifications;
             }
         }
 
-        event(new \Helix\Events\Project\ProjectCreatedOrUpdated($projectId, $projectData));
+        $projectId = $this->projectIdVerifier->verifyId($projectId);
+
+        $this->projectGeneralUpdater->updateProjectGeneral($projectId, $projectData);
 
         return view('pages.project.four', \compact('project'));
     }

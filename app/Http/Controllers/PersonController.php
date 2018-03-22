@@ -53,6 +53,7 @@ class PersonController extends Controller
             'pages.dashboard.projects',
             \compact('projects', 'pendingInvitations')
         );
+
     }
 
     /**

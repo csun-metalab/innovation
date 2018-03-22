@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Helix\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -24,7 +26,6 @@ class StoreBlogPost extends FormRequest
     public function rules()
     {
         return [
-            //
         ];
     }
 }
