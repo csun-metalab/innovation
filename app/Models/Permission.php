@@ -1,6 +1,8 @@
 <?php
 
-namespace Helix\models;
+declare(strict_types=1);
+
+namespace Helix\Models;
 
 use Illuminate\Database\Eloquent\Model;
 

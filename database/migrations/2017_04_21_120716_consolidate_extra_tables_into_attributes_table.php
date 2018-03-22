@@ -1,19 +1,18 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
+declare(strict_types=1);
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class ConsolidateExtraTablesIntoAttributesTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
         //refactor project purpose
-        Schema::create('purpose', function (Blueprint $table){
+        Schema::create('purpose', function (Blueprint $table) {
             $table->string('system_name');
             $table->string('display_name');
             $table->timestamp('created_at')
@@ -24,7 +23,7 @@ class ConsolidateExtraTablesIntoAttributesTable extends Migration
             $table->primary('system_name');
         });
         //create the new table
-        Schema::create('attributes', function(Blueprint $table){
+        Schema::create('attributes', function (Blueprint $table) {
             $table->string('project_id');
             //From the original 'featured_projects' table.
             $table->boolean('is_featured')
@@ -51,7 +50,6 @@ class ConsolidateExtraTablesIntoAttributesTable extends Migration
                   ->references('system_name')
                   ->on('purpose')
                   ->onDelete('set null');
-
         });
         //drop the old ones.
         Schema::dropIfExists('project_purpose');
@@ -61,13 +59,11 @@ class ConsolidateExtraTablesIntoAttributesTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
         //restore the old tables
-        Schema::create('project_purpose', function(Blueprint $table){
+        Schema::create('project_purpose', function (Blueprint $table) {
             $table->increments('id');
             $table->string('project_id');
             $table->string('purpose');
@@ -77,7 +73,7 @@ class ConsolidateExtraTablesIntoAttributesTable extends Migration
                   ->nullable();
             //$table->primary('id');
         });
-        Schema::create('featured_projects', function(Blueprint $table){
+        Schema::create('featured_projects', function (Blueprint $table) {
             $table->string('project_id');
             $table->boolean('is_featured');
             $table->timestamp('created_at')
@@ -86,7 +82,7 @@ class ConsolidateExtraTablesIntoAttributesTable extends Migration
                   ->nullable();
             $table->primary('project_id');
         });
-        Schema::create('project_seeking', function(Blueprint $table){
+        Schema::create('project_seeking', function (Blueprint $table) {
             $table->string('project_id');
             $table->boolean('collaborators');
             $table->boolean('students');
@@ -99,7 +95,7 @@ class ConsolidateExtraTablesIntoAttributesTable extends Migration
             $table->primary('project_id');
         });
         //drop the new one
-        Schema::drop('attributes');
-        Schema::drop('purpose');
+        Schema::dropIfExists('attributes');
+        Schema::dropIfExists('purpose');
     }
 }

@@ -1,5 +1,7 @@
 <!DOCTYPE HTML>
 
+
+
 <html class="no-js" data-url="{{ url('/') }}" data-token="{{ csrf_token() }}" lang="en">
   <head>
     <meta charset="utf-8">
@@ -53,5 +55,9 @@
  |_   _|   | |__   / _ \  | _ \
    |_|     |____| /_/ \_\ |___/
 -->
+
+
   </body>
 </html>
+
+
