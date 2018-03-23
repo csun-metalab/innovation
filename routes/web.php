@@ -1,8 +1,6 @@
 <?php
 
-<<<<<<< HEAD:app/Http/routes.php
 declare(strict_types=1);
-=======
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,7 +11,6 @@ declare(strict_types=1);
 | contains the "web" middleware group. Now create something great!
 |
 */
->>>>>>> 57a2b66b2d2f4b1375857d8b08e58f7080964c2e:routes/web.php
 
 Route::group(['middleware' => ['web']], function () {
     // Helix Welcome
@@ -114,7 +111,6 @@ Route::group(['middleware' => ['web']], function () {
     Route::post('/validateYoutube', 'ProjectController@validateYoutube')
         ->name('validateYoutube');
 
-<<<<<<< HEAD:app/Http/routes.php
     Route::group(['prefix' => 'api'], function () {
         Route::get('seed', 'ProjectController@seeder');
         // AJAX Routes for collaborators JS component
@@ -151,10 +147,6 @@ Route::group(['middleware' => ['web']], function () {
 
     Route::group(['prefix' => 'admin'], function () {
         Route::get('dashboard', 'PersonController@adminPanel');
-=======
-    Route::group(['prefix'=>'admin'],function(){
-        Route::get('dashboard','PersonController@adminPanel');
->>>>>>> 57a2b66b2d2f4b1375857d8b08e58f7080964c2e:routes/web.php
         Route::get('dashboard/invitations', 'PersonController@dashboardInvitation')
             ->name('dashboard.invitations');
         Route::get('dashboard/research-interests', 'PersonController@dashboardResearchInterests');
