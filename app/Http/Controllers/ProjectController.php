@@ -7,6 +7,7 @@ namespace Helix\Http\Controllers;
 use Auth;
 use DB;
 use Helix\Contracts\UpdateProjectGeneralContract;
+use Helix\Contracts\UpdateProjectPolicyContract;
 use Helix\Contracts\VerifyProjectIdContract;
 use Helix\Http\Requests\ProjectStepOneCreate;
 use Helix\Models\Attribute;
@@ -29,16 +30,19 @@ class ProjectController extends Controller
 {
     protected $projectIdVerifier = null;
     protected $projectGeneralUpdater = null;
+    protected $projectPolicyUpdater = null;
 
     /**
      * ProjectController constructor.
      *
      * @param VerifyProjectIdContract      $verifyProjectIdContract
      * @param UpdateProjectGeneralContract $updateProjectGeneralContract
+     * @param UpdateProjectPolicyContract  $updateProjectPolicyContract
      */
     public function __construct(
         VerifyProjectIdContract $verifyProjectIdContract,
-        UpdateProjectGeneralContract $updateProjectGeneralContract
+        UpdateProjectGeneralContract $updateProjectGeneralContract,
+        UpdateProjectPolicyContract $updateProjectPolicyContract
     ) {
         $this->middleware('auth', ['except' => [
             'index',
@@ -63,6 +67,7 @@ class ProjectController extends Controller
 
         $this->projectIdVerifier = $verifyProjectIdContract;
         $this->projectGeneralUpdater = $updateProjectGeneralContract;
+        $this->projectPolicyUpdater = $updateProjectPolicyContract;
     }
 
     /**
@@ -476,6 +481,7 @@ class ProjectController extends Controller
         $projectId = $this->projectIdVerifier->verifyId($projectId);
 
         $this->projectGeneralUpdater->updateProjectGeneral($projectId, $projectData);
+        $this->projectPolicyUpdater->updateProjectPolicy($projectId, $projectData);
 
         return view('pages.project.four', \compact('project'));
     }
