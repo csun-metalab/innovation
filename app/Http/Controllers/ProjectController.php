@@ -7,6 +7,7 @@ namespace Helix\Http\Controllers;
 use Auth;
 use DB;
 use Helix\Contracts\UpdateProjectGeneralContract;
+use Helix\Contracts\UpdateProjectPolicyContract;
 use Helix\Contracts\UpdateProjectPurposeContract;
 use Helix\Contracts\VerifyProjectIdContract;
 use Helix\Http\Requests\ProjectStepOneCreate;
@@ -30,6 +31,7 @@ class ProjectController extends Controller
 {
     protected $projectIdVerifier = null;
     protected $projectGeneralUpdater = null;
+    protected $projectPolicyUpdater = null;
     protected $projectPurposeUpdater = null;
 
     /**
@@ -37,11 +39,13 @@ class ProjectController extends Controller
      *
      * @param VerifyProjectIdContract      $verifyProjectIdContract
      * @param UpdateProjectGeneralContract $updateProjectGeneralContract
+     * @param UpdateProjectPolicyContract  $updateProjectPolicyContract
      * @param UpdateProjectPurposeContract $updateProjectPurposeContract
      */
     public function __construct(
         VerifyProjectIdContract $verifyProjectIdContract,
         UpdateProjectGeneralContract $updateProjectGeneralContract,
+        UpdateProjectPolicyContract $updateProjectPolicyContract,
         UpdateProjectPurposeContract $updateProjectPurposeContract
     ) {
         $this->middleware('auth', ['except' => [
@@ -67,6 +71,7 @@ class ProjectController extends Controller
 
         $this->projectIdVerifier = $verifyProjectIdContract;
         $this->projectGeneralUpdater = $updateProjectGeneralContract;
+        $this->projectPolicyUpdater = $updateProjectPolicyContract;
         $this->projectPurposeUpdater = $updateProjectPurposeContract;
     }
 
@@ -481,6 +486,7 @@ class ProjectController extends Controller
         $projectId = $this->projectIdVerifier->verifyId($projectId);
 
         $this->projectGeneralUpdater->updateProjectGeneral($projectId, $projectData);
+        $this->projectPolicyUpdater->updateProjectPolicy($projectId, $projectData);
         $this->projectPurposeUpdater->updateProjectPurpose($projectId, $projectData);
 
         return view('pages.project.four', \compact('project'));
