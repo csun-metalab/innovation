@@ -6,7 +6,11 @@ namespace Helix\Http\Controllers;
 
 use Auth;
 use DB;
+use Helix\Contracts\CreateSeekingContract;
+use Helix\Contracts\UpdateProjectAttributesContract;
 use Helix\Contracts\UpdateProjectGeneralContract;
+use Helix\Contracts\UpdateProjectPolicyContract;
+use Helix\Contracts\UpdateProjectPurposeContract;
 use Helix\Contracts\VerifyProjectIdContract;
 use Helix\Http\Requests\ProjectStepOneCreate;
 use Helix\Models\Attribute;
@@ -18,6 +22,7 @@ use Helix\Models\ProjectPolicy;
 use Helix\Models\Purpose;
 use Helix\Models\Research;
 use Helix\Models\Role;
+use Helix\Models\Seeking;
 use Illuminate\Http\Request;
 use Searchy;
 
@@ -29,16 +34,28 @@ class ProjectController extends Controller
 {
     protected $projectIdVerifier = null;
     protected $projectGeneralUpdater = null;
+    protected $projectAttributesUpdater = null;
+    protected $projectPolicyUpdater = null;
+    protected $projectPurposeUpdater = null;
+    protected $createSeekingContract = null;
 
     /**
      * ProjectController constructor.
      *
-     * @param VerifyProjectIdContract      $verifyProjectIdContract
-     * @param UpdateProjectGeneralContract $updateProjectGeneralContract
+     * @param VerifyProjectIdContract         $verifyProjectIdContract
+     * @param UpdateProjectGeneralContract    $updateProjectGeneralContract
+     * @param UpdateProjectAttributesContract $updateProjectAttributesContract
+     * @param UpdateProjectPolicyContract     $updateProjectPolicyContract
+     * @param UpdateProjectPurposeContract    $updateProjectPurposeContract
+     * @param CreateSeekingContract           $createSeekingContract
      */
     public function __construct(
         VerifyProjectIdContract $verifyProjectIdContract,
-        UpdateProjectGeneralContract $updateProjectGeneralContract
+        UpdateProjectGeneralContract $updateProjectGeneralContract,
+        UpdateProjectAttributesContract $updateProjectAttributesContract,
+        UpdateProjectPolicyContract $updateProjectPolicyContract,
+        UpdateProjectPurposeContract $updateProjectPurposeContract,
+        CreateSeekingContract $createSeekingContract
     ) {
         $this->middleware('auth', ['except' => [
             'index',
@@ -63,6 +80,9 @@ class ProjectController extends Controller
 
         $this->projectIdVerifier = $verifyProjectIdContract;
         $this->projectGeneralUpdater = $updateProjectGeneralContract;
+        $this->projectAttributesUpdater = $updateProjectAttributesContract;
+        $this->projectPolicyUpdater = $updateProjectPolicyContract;
+        $this->projectPurposeUpdater = $updateProjectPurposeContract;
     }
 
     /**
@@ -476,6 +496,9 @@ class ProjectController extends Controller
         $projectId = $this->projectIdVerifier->verifyId($projectId);
 
         $this->projectGeneralUpdater->updateProjectGeneral($projectId, $projectData);
+        $this->projectAttributesUpdater->updateProjectAttributes($projectId, $projectData);
+        $this->projectPolicyUpdater->updateProjectPolicy($projectId, $projectData);
+        $this->projectPurposeUpdater->updateProjectPurpose($projectId, $projectData);
 
         return view('pages.project.four', \compact('project'));
     }
