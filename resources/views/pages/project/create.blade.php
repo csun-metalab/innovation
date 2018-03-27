@@ -61,15 +61,13 @@
       <strong>Upload a cover photo</strong>
       <br>
       <br>
-      {{ Form::file('image') }}
+      {{ Form::label("profile_image", "Profile Image") }}
+      {{ Form::file('profile_image') }}
   </div>
   <br>
   <br>
-  {{ Form::text('video','https://') }}
-  {{--<form>
-    <label class="type--thin type--left" for="video">Video</label>
-    <input type="url" style="width: 50%" id="video" placeholder="https://">
-  </form>--}}
+  {{ Form::label("video", "Video") }}
+  {{ Form::text("video","https://") }}
   <br>
   <br>
   {{--<form>
