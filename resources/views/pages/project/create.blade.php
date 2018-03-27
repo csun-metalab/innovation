@@ -77,30 +77,22 @@
     </div>
 
     <div class="col-xl-4">
-      {{--<label class="label--required type--left type--thin" for="title">Term/Event</label>--}}
       {{ Form::label("project_event", "Term/Event") }}
       {{ Form::select("project_event", ["BR" => "Bullring", "IC" => "I-Corps", "OT" => "Other"]) }}
-      {{--<select name="projEvent" id="projEvent">
-        <option value="">Select an Event</option>
-        <option value="">Bullring</option>
-        <option value="">I-Corps</option>
-        <option value="">Other</option>
-      </select>--}}
+
     </div>
   </div>
-
-
   <br>
   <br>
   <form>
     <div class="row">
       <div class="col-xl-6">
-        <label class="label--required type--left type--thin" for="members">Team Members</label>
-        <input type="text" id="members" placeholder="Add a new member...">
+        {{ Form::label("members", "Team Members") }}
+        {{ Form::text("members", null, array("placeholder" => "Add a new member...")) }}
       </div>
       <div class="col-xl-5">
-        <label class="label--required type--left type--thin" for="role">Role</label>
-        <input type="text" id="role" placeholder="Enter a role...">
+        {{ Form::label("role", "Role") }}
+        {{ Form::text("role", null, array("placeholder" => "Enter a role...")) }}
       </div>
       <div class="col-xl-1 margin-top--20 type--center">
         <button role="button" class="btn btn-primary type--center">
