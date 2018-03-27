@@ -54,18 +54,15 @@
   <br>
   <h1 class="type--left type--thin">Create a Project</h1>
   <br>
-  {{--<div class="uploader type--center" id="upload-image">--}}
+  <div class="uploader type--center" id="upload-image">
     {!! Form::open(['url' => 'foo/bar']) !!}
-    {{--<form class="type--center">--}}
-      {{--<h1 class="fa fa-upload mega"></h1>--}}
-      {{--<br>--}}
-      {{--<strong>Upload a cover photo</strong>--}}
-      {{--<!-- <img src="" id="hide"/> -->--}}
-      {{--<br>--}}
-      {{--<input id="photoLoad" type="file" accept="image/*">--}}
-  {{--</div>--}}
-  {{--</form>--}}
-    {{ Form::file('image') }}
+      <h1 class="fa fa-upload mega"></h1>
+      <br>
+      <strong>Upload a cover photo</strong>
+      <br>
+      <br>
+      {{ Form::file('image') }}
+  </div>
   <br>
   <br>
   {{ Form::text('video','https://') }}
@@ -75,7 +72,7 @@
   </form>--}}
   <br>
   <br>
-  <form>
+  {{--<form>
     <div class="row">
       <div class="col-xl-8">
 
@@ -93,7 +90,9 @@
         </select>
       </div>
     </div>
-  </form>
+  </form>--}}
+
+
   <br>
   <br>
   <form>
