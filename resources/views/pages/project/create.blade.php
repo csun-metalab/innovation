@@ -54,21 +54,25 @@
   <br>
   <h1 class="type--left type--thin">Create a Project</h1>
   <br>
-  <div class="uploader type--center" id="upload-image">
-    <form class="type--center">
-      <h1 class="fa fa-upload mega"></h1>
-      <br>
-      <strong>Upload a cover photo</strong>
-      <!-- <img src="" id="hide"/> -->
-      <br>
-      <input id="photoLoad" type="file" accept="image/*">
-  </div>
-  </form>
+  {{--<div class="uploader type--center" id="upload-image">--}}
+    {!! Form::open(['url' => 'foo/bar']) !!}
+    {{--<form class="type--center">--}}
+      {{--<h1 class="fa fa-upload mega"></h1>--}}
+      {{--<br>--}}
+      {{--<strong>Upload a cover photo</strong>--}}
+      {{--<!-- <img src="" id="hide"/> -->--}}
+      {{--<br>--}}
+      {{--<input id="photoLoad" type="file" accept="image/*">--}}
+  {{--</div>--}}
+  {{--</form>--}}
+    {{ Form::file('image') }}
   <br>
-  <form>
+  <br>
+  {{ Form::text('video','https://') }}
+  {{--<form>
     <label class="type--thin type--left" for="video">Video</label>
     <input type="url" style="width: 50%" id="video" placeholder="https://">
-  </form>
+  </form>--}}
   <br>
   <br>
   <form>
@@ -170,6 +174,7 @@
     <button class="btn btn-primary" role="button">Submit</button>
   </div>
 </div>
+{!! Form::close() !!}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 <script>
