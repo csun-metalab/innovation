@@ -126,12 +126,8 @@
 
   <br>
 
-  <form>
-    <div>
-      <label class="label--required type--left type--thin" id="tags">Tags</label>
-      <input type="text" style="width: 50%" id="tags" placeholder="Enter a new tag...">
-    </div>
-  </form>
+    {{ Form::label("tags")}}
+    {{ Form::text("tags", null, ["placeholder" => "Enter a new tag..."])}}
 
   <br>
   <br>
