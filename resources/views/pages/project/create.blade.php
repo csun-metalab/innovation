@@ -130,10 +130,9 @@
     {{ Form::text("tags", null, ["placeholder" => "Enter a new tag..."])}}
 
   <br>
-  <br>
 
   <div class="type--center">
-    <button class="btn btn-primary" role="button">Submit</button>
+    {{ Form::submit("submit", ['class' => "btn btn-primary"]) }}
   </div>
 </div>
 {!! Form::close() !!}
