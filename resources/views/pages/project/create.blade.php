@@ -112,13 +112,10 @@
             <td>John Doe</td>
             <td>Example</td>
             <td>
-              <select name="status" id="status">Status
-                <option>Active</option>
-                <option>Inactive</option>
-              </select>
+              {{ Form::select("status", ["A" => "Active", "I" => "Inactive"])}}
             </td>
             <td>
-              <button type="button" class="btn btn-link" role="button">Remove</button>
+              {{ Form::button("Remove", ["class" => "btn btn-link"]) }}
             </td>
           </tr>
         </tbody>
