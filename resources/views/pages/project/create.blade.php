@@ -117,24 +117,17 @@
     </table>
   </div>
 
-  <br>
+  {{ Form::label("description", "Description") }}
+  {{ Form::textarea("description", null, ["placeholder" => "Enter a description...", "size" => "30x4"])}}
+
   <br>
 
   {{--<form>
-    <label class="label--required type--thin type--left">Description</label>
-    <textarea id="description" name="description" placeholder="Enter a description..."></textarea>
-  </form>--}}
-  {{ Form::label("description", "Description") }}
-  {{ Form::textarea("description", null, ["placeholder" => "Enter a description..."])}}
-  <br>
-  <br>
-
-  <form>
     <div>
       <label class="type--thin type--left">Website</label>
       <input type="url" style="width: 50%" id="website" placeholder="https://">
     </div>
-  </form>
+  </form>--}}
 
   <br>
   <br>
