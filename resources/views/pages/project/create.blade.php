@@ -95,8 +95,7 @@
         {{ Form::text("role", null, array("placeholder" => "Enter a role...")) }}
       </div>
       <div class="col-xl-1 margin-top--20 type--center">
-        <button role="button" class="btn btn-primary type--center">
-          <i class="fa fa-plus" aria-hidden="true"></i> Add</button>
+        {{ Form::button('<i class="fa fa-plus" aria-hidden="true"> Add</i>', ["class" => "btn btn-primary"]) }}
       </div>
     </div>
     <br>
