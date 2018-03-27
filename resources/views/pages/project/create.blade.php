@@ -70,25 +70,23 @@
   {{ Form::text("video","https://") }}
   <br>
   <br>
-  {{--<form>
-    <div class="row">
-      <div class="col-xl-8">
-
-        <label class="label--required type--left type--thin" for="title">Project Title</label>
-        <input type="text" id="title" placeholder="Enter a title...">
-      </div>
-
-      <div class="col-xl-4">
-        <label class="label--required type--left type--thin" for="title">Term/Event</label>
-        <select name="projEvent" id="projEvent">
-          <option value="">Select an Event</option>
-          <option value="">Bullring</option>
-          <option value="">I-Corps</option>
-          <option value="">Other</option>
-        </select>
-      </div>
+  <div class="row">
+    <div class="col-xl-8">
+      {{--<label class="label--required type--left type--thin" for="title">Project Title</label>--}}
+      {{ Form::label("title", "Project Title") }}
+      {{ Form::text("title",null, array('placeholder' => 'Enter a Title..'))}}
     </div>
-  </form>--}}
+
+    <div class="col-xl-4">
+      <label class="label--required type--left type--thin" for="title">Term/Event</label>
+      <select name="projEvent" id="projEvent">
+        <option value="">Select an Event</option>
+        <option value="">Bullring</option>
+        <option value="">I-Corps</option>
+        <option value="">Other</option>
+      </select>
+    </div>
+  </div>
 
 
   <br>
