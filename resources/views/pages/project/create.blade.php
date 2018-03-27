@@ -58,13 +58,9 @@
     {!! Form::open(['url' => 'foo/bar']) !!}
       <h1 class="fa fa-upload mega"></h1>
       <br>
-      <strong>Upload a cover photo</strong>
-      <br>
-      <br>
-      {{ Form::label("profile_image", "Profile Image") }}
+      {{ Form::label("profile_image", "Upload a Cover Photo") }}
       {{ Form::file('profile_image') }}
   </div>
-  <br>
   <br>
   {{ Form::label("video", "Video") }}
   {{ Form::text("video","https://") }}
@@ -84,53 +80,52 @@
   </div>
   <br>
   <br>
-  <form>
-    <div class="row">
-      <div class="col-xl-6">
-        {{ Form::label("members", "Team Members") }}
-        {{ Form::text("members", null, array("placeholder" => "Add a new member...")) }}
-      </div>
-      <div class="col-xl-5">
-        {{ Form::label("role", "Role") }}
-        {{ Form::text("role", null, array("placeholder" => "Enter a role...")) }}
-      </div>
-      <div class="col-xl-1 margin-top--20 type--center">
-        {{ Form::button('<i class="fa fa-plus" aria-hidden="true"> Add</i>', ["class" => "btn btn-primary"]) }}
-      </div>
+  <div class="row">
+    <div class="col-xl-6">
+      {{ Form::label("members", "Team Members") }}
+      {{ Form::text("members", null, array("placeholder" => "Add a new member...")) }}
     </div>
-    <br>
-    <div class="table--responsive">
-      <table class="table table--bordered table--striped table--padded table--hover">
-        <thead>
-          <th>Team Member</th>
-          <th>Role</th>
-          <th>Status</th>
-          <th>Action</th>
-        </thead>
-        <tbody>
-          <tr>
-            <td>John Doe</td>
-            <td>Example</td>
-            <td>
-              {{ Form::select("status", ["A" => "Active", "I" => "Inactive"])}}
-            </td>
-            <td>
-              {{ Form::button("Remove", ["class" => "btn btn-link"]) }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="col-xl-5">
+      {{ Form::label("role", "Role") }}
+      {{ Form::text("role", null, array("placeholder" => "Enter a role...")) }}
     </div>
-  </form>
+    <div class="col-xl-1 margin-top--20 type--center">
+      {{ Form::button('<i class="fa fa-plus" aria-hidden="true"> Add</i>', ["class" => "btn btn-primary"]) }}
+    </div>
+  </div>
+  <br>
+  <div class="table--responsive">
+    <table class="table table--bordered table--striped table--padded table--hover">
+      <thead>
+        <th>Team Member</th>
+        <th>Role</th>
+        <th>Status</th>
+        <th>Action</th>
+      </thead>
+      <tbody>
+        <tr>
+          <td>John Doe</td>
+          <td>Example</td>
+          <td>
+            {{ Form::select("status", ["A" => "Active", "I" => "Inactive"])}}
+          </td>
+          <td>
+            {{ Form::button("Remove", ["class" => "btn btn-link"]) }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
   <br>
   <br>
 
-  <form>
+  {{--<form>
     <label class="label--required type--thin type--left">Description</label>
     <textarea id="description" name="description" placeholder="Enter a description..."></textarea>
-  </form>
-
+  </form>--}}
+  {{ Form::label("description", "Description") }}
+  {{ Form::textarea("description", null, ["placeholder" => "Enter a description..."])}}
   <br>
   <br>
 
