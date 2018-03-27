@@ -121,15 +121,9 @@
   {{ Form::textarea("description", null, ["placeholder" => "Enter a description...", "size" => "30x4"])}}
 
   <br>
+  {{ Form::label("website") }}
+  {{ Form::text("website","https://") }}
 
-  {{--<form>
-    <div>
-      <label class="type--thin type--left">Website</label>
-      <input type="url" style="width: 50%" id="website" placeholder="https://">
-    </div>
-  </form>--}}
-
-  <br>
   <br>
 
   <form>
