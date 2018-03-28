@@ -465,6 +465,7 @@ class ProjectController extends Controller
 
         $projectData = [
            'project_general' => [
+               'project_image' => \trim($request->project_image),
                'title' => \trim($request->title),
                'cayuse_project' => false,
                //'project_type' => $request->project_type, (assumed missing)

@@ -58,8 +58,8 @@
     {!! Form::open(['url' => 'foo/bar']) !!}
       <h1 class="fa fa-upload mega"></h1>
       <br>
-      {{ Form::label("profile_image", "Upload a Cover Photo") }}
-      {{ Form::file('profile_image') }}
+      {{ Form::label("project_image", "Upload a Cover Photo") }}
+      {{ Form::file('project_image') }}
   </div>
   <br>
   {{ Form::label("video", "Video") }}
