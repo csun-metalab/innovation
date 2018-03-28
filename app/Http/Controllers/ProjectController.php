@@ -484,10 +484,11 @@ class ProjectController extends Controller
                'youtube' => \trim($request->video),
            ],
             'tags' => $request->tags,
-            'team' => [
-                'team_members' => $team_members,
-                'role'         => $request->role
-                ]
+            'seekingxxxx' => [
+                'team_members' => 0,
+                'students' => 0,
+                'qualifications' => null,
+            ],
         ];
         dd($projectData);
 
@@ -501,8 +502,8 @@ class ProjectController extends Controller
         }
         $projectId = $this->projectIdVerifier->verifyId($projectId);
 
-        /*$this->projectGeneralUpdater->updateProjectGeneral($projectId, $projectData);
-        $this->projectAttributesUpdater->updateProjectAttributes($projectId, $projectData);
+        $this->projectGeneralUpdater->updateProjectGeneral($projectId, $projectData);
+        /*$this->projectAttributesUpdater->updateProjectAttributes($projectId, $projectData);
         $this->projectPolicyUpdater->updateProjectPolicy($projectId, $projectData);
         $this->projectPurposeUpdater->updateProjectPurpose($projectId, $projectData);*/
 

@@ -16,8 +16,8 @@ class UpdateProjectGeneralService implements UpdateProjectGeneralContract
         $project->slug = slugify($data['project_general']['title']);
         $project->project_title = $data['project_general']['title'];
         $project->project_url = $data['project_general']['url'] ?: null;
-        $project->project_begin_date = timestampFormat($data['project_general']['start_date']);
-        $project->project_end_date = $data['project_general']['end_date'] ? timestampFormat($data['project_general']['end_date']) : null;
+        //$project->project_begin_date = timestampFormat($data['project_general']['start_date']);
+        //$project->project_end_date = $data['project_general']['end_date'] ? timestampFormat($data['project_general']['end_date']) : null;
         $project->abstract = $data['project_general']['description'];
         $project->is_publishable = 1;
         $project->save();
