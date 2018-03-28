@@ -50,12 +50,12 @@ class ProjectController extends Controller
      * @param CreateSeekingContract           $createSeekingContract
      */
     public function __construct(
-        VerifyProjectIdContract $verifyProjectIdContract,
-        UpdateProjectGeneralContract $updateProjectGeneralContract,
-        UpdateProjectAttributesContract $updateProjectAttributesContract,
-        UpdateProjectPolicyContract $updateProjectPolicyContract,
-        UpdateProjectPurposeContract $updateProjectPurposeContract,
-        CreateSeekingContract $createSeekingContract
+        // VerifyProjectIdContract $verifyProjectIdContract,
+        // UpdateProjectGeneralContract $updateProjectGeneralContract,
+        // UpdateProjectAttributesContract $updateProjectAttributesContract,
+        // UpdateProjectPolicyContract $updateProjectPolicyContract,
+        // UpdateProjectPurposeContract $updateProjectPurposeContract,
+        // CreateSeekingContract $createSeekingContract
     ) {
         $this->middleware('auth', ['except' => [
             'index',
@@ -78,11 +78,11 @@ class ProjectController extends Controller
             'destroy',
         ]]);
 
-        $this->projectIdVerifier = $verifyProjectIdContract;
-        $this->projectGeneralUpdater = $updateProjectGeneralContract;
-        $this->projectAttributesUpdater = $updateProjectAttributesContract;
-        $this->projectPolicyUpdater = $updateProjectPolicyContract;
-        $this->projectPurposeUpdater = $updateProjectPurposeContract;
+        // $this->projectIdVerifier = $verifyProjectIdContract;
+        // $this->projectGeneralUpdater = $updateProjectGeneralContract;
+        // $this->projectAttributesUpdater = $updateProjectAttributesContract;
+        // $this->projectPolicyUpdater = $updateProjectPolicyContract;
+        // $this->projectPurposeUpdater = $updateProjectPurposeContract;
     }
 
     /**

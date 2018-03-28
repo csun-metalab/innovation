@@ -347,7 +347,7 @@ function guzzleRequest($url, $method = 'GET', $assoc = true)
     } catch (\GuzzleHttp\Exception\RequestException $e) {
         $responseJson = \json_encode(['success' => false]);
     } finally {
-        $data = \json_decode($responseJson->getBody(), $assoc);
+        // $data = \json_decode($responseJson->getBody(), $assoc);
     }
 
     return $data;

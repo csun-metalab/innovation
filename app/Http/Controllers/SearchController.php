@@ -39,8 +39,7 @@ class SearchController extends Controller
         $searchFormProperties = $this->getSearchFormProperties('all');
 
         $filters = $this->getProjectFilters();
-        
-        if(request()) {
+        if(request()->all()) {
             $projects = $this->search();
 
         }else
@@ -187,6 +186,7 @@ class SearchController extends Controller
         $attributes = ['interests.title'];
       }
       return json_encode($attributes);
+    }
     /**
      * Use this to filter projects by sponsor, department, etc.
      * This will also create the necessary data for the View.
@@ -273,35 +273,31 @@ class SearchController extends Controller
     /**
      * Maps the system name for a search type to its form-properties.
      * Creates the necessary variables for the search form.
-     *
      * @param string $defaultSearchType (optional) The search type to use when no search type is explicitly specified. This differs from page to page.
-     *
      * @return array
      */
-    private function getSearchFormProperties($defaultSearchType = 'all')
-    {
+    private function getSearchFormProperties($defaultSearchType = 'all') {
         $dropdownTexts = [
             'all' => 'All Search Results',
             'title' => 'Titles and Abstracts',
-            'research-interest' => 'Research Interests and Themes',
+            'tags' => 'Research Interests and Themes',
             'member' => 'Members',
         ];
-
         $placeholderTexts = [
             'all' => 'Search everything',
             'title' => 'Search through Titles and Abstracts',
-            'research-interest' => 'Search through Research Interests and Themes',
+            'tags' => 'Search through Research Interests and Themes',
             'member' => 'Search through Members',
         ];
         $formActions = [
-            'all' => route('all-search-results'),
+            'all' => route('search.projects'),
             'title' => route('search.projects'),
-            'research-interest' => route('search.research-interests'),
-            'member' => route('search.member-search'),
+            'tags' => route('search.projects'),
+            'member' => route('search.projects'),
         ];
-        $searchType = request()->filled('searchType') ? request('searchType') : $defaultSearchType;
 
-        return \compact('searchType', 'dropdownTexts', 'placeholderTexts', 'formActions');
+        $searchType = request()->filled('searchType') ? request('searchType') : $defaultSearchType;
+        return compact('searchType','dropdownTexts','placeholderTexts','formActions');
     }
 
     /**
@@ -395,57 +391,6 @@ class SearchController extends Controller
         $projectRulesFilters[] = 'visibility.policy:public';
       }
       return $projectRulesFilters;
-    }
-
-
-    /**
-     * Maps the system name for a search type to its form-properties.
-     * Creates the necessary variables for the search form.
-     * @param string $defaultSearchType (optional) The search type to use when no search type is explicitly specified. This differs from page to page.
-     * @return array
-     */
-    private function getSearchFormProperties($defaultSearchType = 'all') {
-        $dropdownTexts = [
-            'all' => 'All Search Results',
-            'title' => 'Titles and Abstracts',
-            'tags' => 'Research Interests and Themes',
-            'member' => 'Members',
-        ];
-        $placeholderTexts = [
-            'all' => 'Search everything',
-            'title' => 'Search through Titles and Abstracts',
-            'tags' => 'Search through Research Interests and Themes',
-            'member' => 'Search through Members',
-        ];
-        $formActions = [
-            'all' => route('search.projects'),
-            'title' => route('search.projects'),
-            'tags' => route('search.projects'),
-            'member' => route('search.projects'),
-        ];
-
-        $searchType = request()->filled('searchType') ? request('searchType') : $defaultSearchType;
-        return compact('searchType','dropdownTexts','placeholderTexts','formActions');
-    }
-
-    /**
-     * Helper function to get all  stealth projects belonging to  the given user
-     * @param  \Helix\Models\Person $user The current user
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    private function getStealthProjectsOf($user){
-      $whereProjectIsStealth = function($query){
-          $query->whereHas('visibility', function($q){
-              $q->where('policy','private');
-          });
-      };
-      return Person::with(['projects' => $whereProjectIsStealth])
-          ->whereHas('projects', $whereProjectIsStealth)
-          ->orWhere(function ($q){
-              $q->whereDoesntHave('projects');
-          })
-          ->findOrFail($user->user_id)
-          ->projects;
     }
 
     /**
