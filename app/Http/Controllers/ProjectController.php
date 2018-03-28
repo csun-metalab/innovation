@@ -461,7 +461,7 @@ class ProjectController extends Controller
 
     public function postProjectCreation(Request $request, $projectId = null)
     {
-        $collaborators = null !== request('collaborators') ? \array_filter(request('members')) : [];
+        $team_members = null !== request('members') ? \array_filter(request('members')) : [];
 
         $projectData = [
            'project_general' => [
@@ -478,21 +478,21 @@ class ProjectController extends Controller
                'youtube' => \trim($request->video),
            ],
             'interests' => $request->tags,
-            'collaborators' => [],
+            'team_members' => [],
             'seeking' => [
-                'collaborators' => 0,
+                'team_members' => 0,
                 'students' => 0,
                 'qualifications' => null,
             ],
         ];
 
-        if (!empty($collaborators)) {
-            $projectData['collaborators'] = $collaborators;
-            $projectData['seeking']['collaborators'] = $request->seekingCollaborators;
-            $projectData['seeking']['students'] = $request->seekingStudents;
-            if ($request->seekingStudents && $request->studentQualifications) {
+        if (!empty($team_members)) {
+            $projectData['team_members'] = $team_members;
+            //$projectData['seeking']['team_members'] = $request->seekingCollaborators;
+            //$projectData['seeking']['students'] = $request->seekingStudents;
+            /*if ($request->seekingStudents && $request->studentQualifications) {
                 $projectData['seeking']['qualifications'] = $request->studentQualifications;
-            }
+            }*/
         }
 
         $projectId = $this->projectIdVerifier->verifyId($projectId);
