@@ -7,6 +7,7 @@ namespace Helix\Http\Controllers;
 use Auth;
 use DB;
 use Helix\Contracts\CreateSeekingContract;
+use Helix\Contracts\GetUniversityEventsContract;
 use Helix\Contracts\UpdateProjectAttributesContract;
 use Helix\Contracts\UpdateProjectGeneralContract;
 use Helix\Contracts\UpdateProjectPolicyContract;
@@ -38,6 +39,7 @@ class ProjectController extends Controller
     protected $projectPolicyUpdater = null;
     protected $projectPurposeUpdater = null;
     protected $createSeekingContract = null;
+    protected $getUniversityEventsContract = null;
 
     /**
      * ProjectController constructor.
@@ -48,6 +50,7 @@ class ProjectController extends Controller
      * @param UpdateProjectPolicyContract     $updateProjectPolicyContract
      * @param UpdateProjectPurposeContract    $updateProjectPurposeContract
      * @param CreateSeekingContract           $createSeekingContract
+     * @param GetUniversityEventsContract     $getUniversityEventsContract
      */
     public function __construct(
         VerifyProjectIdContract $verifyProjectIdContract,
@@ -55,7 +58,8 @@ class ProjectController extends Controller
         UpdateProjectAttributesContract $updateProjectAttributesContract,
         UpdateProjectPolicyContract $updateProjectPolicyContract,
         UpdateProjectPurposeContract $updateProjectPurposeContract,
-        CreateSeekingContract $createSeekingContract
+        CreateSeekingContract $createSeekingContract,
+        GetUniversityEventsContract $getUniversityEventsContract
     ) {
         $this->middleware('auth', ['except' => [
             'index',

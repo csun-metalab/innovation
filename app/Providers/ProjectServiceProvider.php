@@ -48,5 +48,9 @@ class ProjectServiceProvider extends ServiceProvider
             'Helix\Contracts\CreateProjectSeekingContract',
             'Helix\Services\CreateProjectSeekingService'
         );
+        $this->Helix->bind(
+            'Helix\Contracts\GetUniversityEventsContract',
+            'Helix\Services\GetUniversityEventsContract'
+        );
     }
 }
