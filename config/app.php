@@ -223,6 +223,7 @@ return [
         Helix\Providers\RouteServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
         Helix\Providers\ViewComposerServiceProvider::class,
+        Helix\Providers\ProjectServiceProvider::class,
 
 
         // META+Lab LDAP authentication service provider
