@@ -12,6 +12,7 @@ class Tag extends Model
     protected $fillable = [
         'project_id',
         'tag',
+        'relevance',
         'category',
         ];
 }
