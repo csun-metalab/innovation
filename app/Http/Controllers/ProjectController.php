@@ -487,7 +487,7 @@ class ProjectController extends Controller
         ];
 
         if (!empty($team_members)) {
-            $projectData['team_members'] = $team_members;
+            $projectData['team'] = $team_members;
             //$projectData['seeking']['team_members'] = $request->seekingCollaborators;
             //$projectData['seeking']['students'] = $request->seekingStudents;
             /*if ($request->seekingStudents && $request->studentQualifications) {
