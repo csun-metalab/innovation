@@ -65,7 +65,6 @@
   {{ Form::label("video", "Video") }}
   {{ Form::text("video","https://") }}
   <br>
-  <br>
   <div class="row">
     <div class="col-xl-8">
       {{ Form::label("title", "Project Title") }}
@@ -75,7 +74,6 @@
     <div class="col-xl-4">
       {{ Form::label("project_event", "Term/Event") }}
       {{ Form::select("project_event", ["BR" => "Bullring", "IC" => "I-Corps", "OT" => "Other"]) }}
-
     </div>
   </div>
   <br>
@@ -116,26 +114,22 @@
       </tbody>
     </table>
   </div>
-
   {{ Form::label("description", "Description") }}
   {{ Form::textarea("description", null, ["placeholder" => "Enter a description...", "size" => "30x4"])}}
-
   <br>
   {{ Form::label("website") }}
   {{ Form::text("website","https://") }}
-
   <br>
-
     {{ Form::label("tags")}}
     {{ Form::text("tags", null, ["placeholder" => "Enter a new tag..."])}}
-
   <br>
-
   <div class="type--center">
     {{ Form::submit("submit", ['class' => "btn btn-primary"]) }}
   </div>
 </div>
+
 {!! Form::close() !!}
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 <script>
