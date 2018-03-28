@@ -104,7 +104,6 @@ Route::group(['middleware' => ['web']], function () {
     // route for youtube validation
     Route::post('/validateYoutube', 'ProjectController@validateYoutube')
         ->name('validateYoutube');
-
     Route::group(['prefix' => 'admin'], function () {
         Route::get('dashboard', 'PersonController@adminPanel');
         Route::get('dashboard/invitations', 'PersonController@dashboardInvitation')
