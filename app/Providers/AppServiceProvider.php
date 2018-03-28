@@ -1,10 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Helix\Providers;
 
-use Config;
-
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
 use Laravel\Scout\EngineManager;
@@ -16,8 +15,6 @@ class AppServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap any application services.
-     *
-     * @return void
      */
     public function boot()
     {
@@ -34,8 +31,6 @@ class AppServiceProvider extends ServiceProvider
 
     /**
      * Register any application services.
-     *
-     * @return void
      */
     public function register()
     {

@@ -1,47 +1,31 @@
-<?php namespace Helix\Http\Controllers;
+<?php
 
-use Helix\Http\Controllers\Controller;
-use Helix\Http\Requests\Project\Create\StepOneRequest;
+declare(strict_types=1);
 
+namespace Helix\Http\Controllers;
+
+use Auth;
+use Helix\Events\Individual\IndividualAddAcademicInterests;
+use Helix\Events\Individual\IndividualAddInterests;
+use Helix\Events\Individual\IndividualAddPersonalInterests;
+use Helix\Models\Academic;
 use Helix\Models\Interest;
 use Helix\Models\Invitation;
-use Helix\Models\NemoMembership;
-use Helix\Models\Person;
-
-use Helix\Models\Project;
-use Helix\Models\ProjectPolicy;
-use Helix\Models\Role;
-use Helix\Models\Research;
-use Helix\Models\Academic;
 use Helix\Models\Personal;
-use Helix\Models\Purpose;
-use Helix\Models\Attribute;
-use Helix\Events\Individual\IndividualAddAcademicInterests;
-use Helix\Events\Individual\IndividualAddPersonalInterests;
-use Helix\Events\Individual\IndividualAddInterests;
-
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Helix\Models\Project;
+use Helix\Models\Research;
 use Illuminate\Support\Collection;
-use Searchy;
-use Gate;
-use Auth;
-use DB;
-use Exception;
 use Request;
 
 /**
  * Handles the functionality of a logged in faculty member which includes
  * dashboard, interests, and invitations.
- *
- * @package Helix\Http\Controllers
  */
 class PersonController extends Controller
 {
     /**
      * Implements the "auth" and "faculty" middleware. Every method should only
      * be accessed by logged in faculty members, and not staff members.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -73,8 +57,10 @@ class PersonController extends Controller
         $projects->setPath(url('admin/dashboard'));
         $pendingInvitations = $this->pendingInvitations()->count();
 
-        return view('pages.dashboard.projects',
-            compact('projects', 'pendingInvitations'));
+        return view(
+            'pages.dashboard.projects',
+            \compact('projects', 'pendingInvitations')
+        );
     }
 
     /**
@@ -96,9 +82,16 @@ class PersonController extends Controller
 
         $pendingInvitations = $this->pendingInvitations()->count();
 
-        return view('pages.dashboard.research-interests',
-            compact('categories', 'subcategories', 'tags',
-                'currentInterests', 'pendingInvitations'));
+        return view(
+            'pages.dashboard.research-interests',
+            \compact(
+                'categories',
+                'subcategories',
+                'tags',
+                'currentInterests',
+                'pendingInvitations'
+            )
+        );
     }
 
     /**
@@ -111,8 +104,11 @@ class PersonController extends Controller
     {
         $currentInterests = auth()->user()->academic_interests()->get();
         foreach ($currentInterests as $interest) {
-            $interest->expertise_id = str_replace_array(':academic', [''],
-                $interest->expertise_id);
+            $interest->expertise_id = str_replace_array(
+                ':academic',
+                [''],
+                $interest->expertise_id
+            );
         }
 
         $currentInterests->load('research_interest');
@@ -125,13 +121,16 @@ class PersonController extends Controller
 
         $pendingInvitations = $this->pendingInvitations()->count();
 
-        return view('pages.dashboard.academic-interests',
-            compact(
+        return view(
+            'pages.dashboard.academic-interests',
+            \compact(
                 'categories',
                 'subcategories',
                 'tags',
                 'currentInterests',
-                'pendingInvitations'));
+                'pendingInvitations'
+            )
+        );
     }
 
     /**
@@ -146,8 +145,10 @@ class PersonController extends Controller
 
         $pendingInvitations = $this->pendingInvitations()->count();
 
-        return view('pages.dashboard.personal-interests',
-            compact('currentInterests', 'pendingInvitations'));
+        return view(
+            'pages.dashboard.personal-interests',
+            \compact('currentInterests', 'pendingInvitations')
+        );
     }
 
     /**
@@ -161,8 +162,11 @@ class PersonController extends Controller
         try {
             if (request('tags')) {
                 event(new IndividualAddInterests(
-                    auth()->user(), request('tags')));
+                    auth()->user(),
+                    request('tags')
+                ));
             }
+
             return redirect()->back()
                 ->with('success', 'Research Interest Successfully Added');
         } catch (\Exception $e) {
@@ -183,9 +187,12 @@ class PersonController extends Controller
         // Attempt to make changes to database and return with message
         try {
             if (request('tags')) {
-                event(new IndividualAddAcademicInterests(auth()->user(),
-                    request('tags')));
+                event(new IndividualAddAcademicInterests(
+                    auth()->user(),
+                    request('tags')
+                ));
             }
+
             return redirect()->back()
                 ->with('success', 'Academic Interest Successfully Added');
         } catch (\Exception $e) {
@@ -204,9 +211,12 @@ class PersonController extends Controller
         // Attempt to make changes to database and return with message
         try {
             if (request('tags')) {
-                event(new IndividualAddPersonalInterests(auth()->user(),
-                    request('tags')));
+                event(new IndividualAddPersonalInterests(
+                    auth()->user(),
+                    request('tags')
+                ));
             }
+
             return redirect()->back()
                 ->with('success', 'Personal Interest Successfully Added');
         } catch (\Exception $e) {
@@ -219,6 +229,7 @@ class PersonController extends Controller
      * This will remove the any individual research interest based on id.
      *
      * @param string $id The research interest id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function removeIndividualInterest($id)
@@ -232,12 +243,13 @@ class PersonController extends Controller
             // Decrements the interest that was removed
             $researchInterest->decrement('count');
             auth()->user()->all_interests()->detach($id);
+
             return redirect()->back()
                 ->with('success', 'Research Interest Successfully Removed.');
-        } else {
-            return redirect()->back()
-                ->with('danger', 'An Error has Occurred.');
         }
+
+        return redirect()->back()
+                ->with('danger', 'An Error has Occurred.');
     }
 
     /**
@@ -246,6 +258,7 @@ class PersonController extends Controller
      * appended to it.
      *
      * @param string $id The research interest id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function removeIndividualAcademicInterest($id)
@@ -255,20 +268,22 @@ class PersonController extends Controller
         $currentUserInterests = auth()->user()->academic_interests()->get();
 
         // Check if the user if remove their own research interest
-        if ($currentUserInterests->contains('expertise_id', $id.':academic')) {
+        if ($currentUserInterests->contains('expertise_id', $id . ':academic')) {
             Academic::where('expertise_id', $id . ':academic')->delete();
+
             return redirect()->back()
                 ->with('success', 'Academic Interest Successfully Removed.');
-        } else {
-            return redirect()->back()
-                ->with('danger', 'An Error has Occurred.');
         }
+
+        return redirect()->back()
+                ->with('danger', 'An Error has Occurred.');
     }
 
     /**
      * This will remove the any individual personal interest based on id.
      *
      * @param string $id The personal interest id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function removeIndividualPersonalInterest($id)
@@ -280,12 +295,13 @@ class PersonController extends Controller
         // Check if the user if remove their own personal interest
         if ($currentUserInterests->contains($id)) {
             auth()->user()->all_interests()->detach($id);
+
             return redirect()->back()
                 ->with('success', 'Personal Interest Successfully Removed.');
-        } else {
-            return redirect()->back()
-                ->with('danger', 'An Error has Occurred.');
         }
+
+        return redirect()->back()
+                ->with('danger', 'An Error has Occurred.');
     }
 
     /**
@@ -298,8 +314,10 @@ class PersonController extends Controller
         $invitations = $this->pendingInvitations();
         $pendingInvitations = $invitations->count();
 
-        return view('pages.dashboard.invitations',
-            compact('invitations', 'pendingInvitations'));
+        return view(
+            'pages.dashboard.invitations',
+            \compact('invitations', 'pendingInvitations')
+        );
     }
 
     /**
@@ -318,7 +336,7 @@ class PersonController extends Controller
                     'role_position',
                     [
                         'Co-Principal Investigator',
-                        'Lead Principal Investigator'
+                        'Lead Principal Investigator',
                     ]
                 )
                 ->where('individuals_id', auth()->user()->user_id);

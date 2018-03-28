@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -12,7 +13,6 @@
 */
 
 Route::group(['middleware' => ['web']], function () {
-
     // Helix Welcome
     Route::get('/', 'WelcomeController@index')
         ->name('welcome');
@@ -51,7 +51,7 @@ Route::group(['middleware' => ['web']], function () {
         ->name('logout');
 
     // Projects
-    Route::group(['prefix' => 'project'], function(){
+    Route::group(['prefix' => 'project'], function () {
         Route::get('/', 'SearchController@index')
             ->name('search.projects');
         Route::get('/smart', 'SearchController@indexSmart')
@@ -70,9 +70,9 @@ Route::group(['middleware' => ['web']], function () {
             ->name('project.edit.step-3.post');
         Route::get('{id}', 'ProjectController@show')
             ->name('project.show');
-        Route::get('{id}/delete','ProjectController@destroy')
+        Route::get('{id}/delete', 'ProjectController@destroy')
             ->name('project.delete');
-        Route::get('{id}/edit','ProjectController@editRedirect')
+        Route::get('{id}/edit', 'ProjectController@editRedirect')
             ->name('project.edit');
 
         // Image upload routes
@@ -84,7 +84,7 @@ Route::group(['middleware' => ['web']], function () {
             ->name('project.photo-crop');
         Route::post('{id}/crop-image', 'ImageController@postCrop')
             ->name('project.photo-post-crop');
-        Route::get('{id}/delete-image','ImageController@destroy')
+        Route::get('{id}/delete-image', 'ImageController@destroy')
             ->name('project.photo-delete');
 
         Route::put('{projectId}/toggle-featured', 'ProjectController@toggleFeatured')
@@ -106,7 +106,7 @@ Route::group(['middleware' => ['web']], function () {
         Route::get('{projectId}/student-request', 'InvitationController@studentRequest')
             ->name('student-request-form');
         // This route is called when the student submits the request form.
-        Route::post('{projectId}/student-request/sent','InvitationController@processStudentRequest')
+        Route::post('{projectId}/student-request/sent', 'InvitationController@processStudentRequest')
             ->name('student-request-sent');
     });
 
@@ -114,8 +114,42 @@ Route::group(['middleware' => ['web']], function () {
     Route::post('/validateYoutube', 'ProjectController@validateYoutube')
         ->name('validateYoutube');
 
-    Route::group(['prefix'=>'admin'],function(){
-        Route::get('dashboard','PersonController@adminPanel');
+    Route::group(['prefix' => 'api'], function () {
+        Route::get('seed', 'ProjectController@seeder');
+        // AJAX Routes for collaborators JS component
+        Route::get('collaborators', 'ProjectController@getCollaboratorsList');
+        Route::get('collaborators/search', 'SearchController@getCollaboratorsList');
+        Route::get('roles', 'ProjectController@getRolesList');
+        Route::get('projects/{id}/edit/collaborators', 'ProjectController@getCurrentCollaborators');
+        Route::get('departments', 'SearchController@departmentSearch');
+        Route::get('personal-interests', 'SearchController@getPersonalInterests');
+
+        //Api calls for searching interests.
+        Route::get('search/research-interests', 'SearchController@searchByResearchInterestApi');
+
+        // Api calls for fetching project interests, might be deprecated
+        // Route::post('inters/create', 'ProjectController@newExpertise');
+        Route::get('interests/catagories', 'ProjectController@getCatagory');
+        Route::get('interests/subcatagory/{id}', 'ProjectController@getSub');
+        Route::get('interests/tags/{id}', 'ProjectController@getTags');
+        Route::get('interests/categories/{id}', 'ProjectController@getByCategoryType');
+
+        // SCRIPT TO BE RUN AFTER CAYUSE IMPORT
+        Route::get('update/slugs', 'ProjectController@slugsMissing');
+
+        // Helix API for profiles
+        Route::get('profile/image/{email}', 'ImageController@getFacultyProfileImage');
+
+        Route::get('projects', 'SearchController@apiProjects'); // with member / email for person
+        Route::get('projects/{id}', 'ProjectController@apiProject'); // slug , id, cayuse id
+        Route::get('{include}/projects', 'SearchController@apiProjects'); // with member / email for person
+        Route::get('update/cayuse-projects', 'ProjectController@updateCayuseProjects');
+        //Todo: Uncomment this after talking to Matt.
+        Route::get('init/project-attributes', 'ProjectController@createAllProjectAttributes');
+    });
+
+    Route::group(['prefix' => 'admin'], function () {
+        Route::get('dashboard', 'PersonController@adminPanel');
         Route::get('dashboard/invitations', 'PersonController@dashboardInvitation')
             ->name('dashboard.invitations');
         Route::get('dashboard/research-interests', 'PersonController@dashboardResearchInterests');
@@ -137,6 +171,12 @@ Route::group(['middleware' => ['web']], function () {
         Route::post('dashboard/personal-interests', 'PersonController@postSaveIndividualPersonalInterests')
             ->name('personal-interest.store');
     });
+    Route::get('create', function () {
+        return view('pages.project.create');
+    });
+    Route::get('test', function () {
+        return view('pages.project.test');
+    });
 });
 
 /*
@@ -146,19 +186,16 @@ Route::group(['middleware' => ['web']], function () {
 |---------------------------------------------------------------
 */
 
-
-if(app()->environment('local'))
-{
-
+if (app()->environment('local')) {
     // Miscellaneous routes
 
     // Todo: Delete this after uncommenting the equivalent route above.
     Route::get('init/project-attributes', 'ProjectController@createAllProjectAttributes');
 
-    Route::get('dashboard',function(){
+    Route::get('dashboard', function () {
         return view('pages.dashboard.landing');
     });
-    Route::get('see-more-projects',function(){
+    Route::get('see-more-projects', function () {
         return view('pages.search.seemoreprojects');
     });
 
@@ -169,26 +206,25 @@ if(app()->environment('local'))
             ->whereCayuseId(null)
             ->get();
         $nextCayuseId = \Helix\Models\Project::whereNotNull('cayuse_id')
-            ->orderBy('cayuse_id','desc')
+            ->orderBy('cayuse_id', 'desc')
             ->first()
             ->cayuse_id;
-        foreach ($projects as $project)
-        {
+        foreach ($projects as $project) {
             $piUserId = $project->pi->user_id;
             $project->cayuse_id = ++$nextCayuseId;
             $project->pi_pid = getNumberFromIdString($piUserId);
             $project->touch();
             $project->save();
         }
+
         return $projects;
     });
 
     // Expertise Search
 
-    Route::get('profiles', function(){
+    Route::get('profiles', function () {
         return view('pages.landing.profiles');
     });
-
 
     Route::get('profile', function () {
         return view('pages.profiles.profile');
@@ -228,7 +264,7 @@ if(app()->environment('local'))
         return view('pages.profiles.edit');
     });
 
-    Route::get('session', function(){
+    Route::get('session', function () {
         session()->forget('new-project');
         session()->forget('can-edit-project-projects:91');
         session()->forget('can-edit-project-projects:1');
