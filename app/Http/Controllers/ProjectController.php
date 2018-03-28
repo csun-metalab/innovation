@@ -467,8 +467,9 @@ class ProjectController extends Controller
            'project_general' => [
                'title' => \trim($request->title),
                'cayuse_project' => false,
-               'project_type' => $request->project_type,
-               'project_purpose' => $request->project_purpose,
+               //'project_type' => $request->project_type, (assumed missing)
+               //'project_purpose' => $request->project_purpose, (assumed to be project_event)
+               'project_event' => $request->project_event,
                'description' => \trim($request->description),
                'start_date' => $request->start_date,
                'end_date' => $request->end_date,
