@@ -461,13 +461,18 @@ class ProjectController extends Controller
 
     public function postProjectCreation(Request $request, $projectId = null)
     {
-        dd('here');
-        $team_members = null !== request('members') ? \array_filter(request('members')) : [];
+        //$team_members = null !== request('members') ? \array_filter(request('members')) : [];
+
+        if(request('members') != null){
+            $team_members = array_filter(array(request('members')));
+        } else{
+            $team_members = [];
+        };
 
         $projectData = [
            'project_general' => [
                'project_image' => \trim($request->project_image),
-            /*   'title' => \trim($request->title),
+               'title' => \trim($request->title),
                'cayuse_project' => false,
                //'project_type' => $request->project_type,
                //'project_purpose' => $request->project_purpose,
@@ -475,19 +480,16 @@ class ProjectController extends Controller
                'description' => \trim($request->description),
                //'start_date' => $request->start_date,
                //'end_date' => $request->end_date,
-               'url' => \trim($request->url),
+               'url' => \trim($request->website),
                'youtube' => \trim($request->video),
            ],
-            'interests' => $request->tags,
-            'team_members' => [],
-            'seekingxxxx' => [
-                'team_members' => 0,
-                'students' => 0,
-                'qualifications' => null,
-            */
-            ],
+            'tags' => $request->tags,
+            'team' => [
+                'team_members' => $team_members,
+                'role'         => $request->role
+                ]
         ];
-        dd($projectData['project_image']);
+        dd($projectData);
 
         if (!empty($team_members)) {
             $projectData['team'] = $team_members;
