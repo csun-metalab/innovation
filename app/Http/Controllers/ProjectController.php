@@ -461,21 +461,21 @@ class ProjectController extends Controller
 
     public function postProjectCreation(Request $request, $projectId = null)
     {
-        $collaborators = null !== request('collaborators') ? \array_filter(request('collaborators')) : [];
+        $collaborators = null !== request('collaborators') ? \array_filter(request('members')) : [];
 
         $projectData = [
            'project_general' => [
                'project_image' => \trim($request->project_image),
                'title' => \trim($request->title),
                'cayuse_project' => false,
-               //'project_type' => $request->project_type, (assumed missing)
-               //'project_purpose' => $request->project_purpose, (assumed to be project_event)
+               //'project_type' => $request->project_type,
+               //'project_purpose' => $request->project_purpose,
                'project_event' => $request->project_event,
                'description' => \trim($request->description),
                //'start_date' => $request->start_date,
                //'end_date' => $request->end_date,
                'url' => \trim($request->url),
-               'youtube' => \trim($request->youtube),
+               'youtube' => \trim($request->video),
            ],
             'interests' => $request->tags,
             'collaborators' => [],
