@@ -28,19 +28,20 @@ Route::group(['middleware' => ['web']], function () {
     Route::post('feedback', 'FeedbackController@postIndex');
 
     //Search
-    Route::get('search/research-interests','SearchController@searchByResearchInterest')
-        ->name('search.research-interests');
-    Route::get('search/research-interests/faculty', 'SearchController@seeMorePeopleByResearchInterests')
-        ->name("see-more-faculty");
-    Route::get('search/research-interests/projects', 'SearchController@seeMoreProjectsByResearchInterests')
-        ->name('see-more-projects');
+
+    // Route::get('search/research-interests','SearchController@searchByResearchInterest')
+    //     ->name('search.research-interests');
+    // Route::get('search/research-interests/faculty', 'SearchController@seeMorePeopleByResearchInterests')
+    //     ->name("see-more-faculty");
+    // Route::get('search/research-interests/projects', 'SearchController@seeMoreProjectsByResearchInterests')
+    //     ->name('see-more-projects');
     Route::get('search/everything', 'SearchController@allSearchResults')
         ->name('all-search-results');
     Route::get('search/members', 'SearchController@searchForMember')
         ->name('search.member-search');
 
-    Route::get('browse/research-interests','SearchController@browseAllResearchInterests')
-        ->name('browse.research-interests');
+    // Route::get('browse/research-interests','SearchController@browseAllResearchInterests')
+    //     ->name('browse.research-interests');
     // Authentication
     Route::get('login', 'AuthController@getLogin')
         ->name('login');
@@ -53,6 +54,8 @@ Route::group(['middleware' => ['web']], function () {
     Route::group(['prefix' => 'project'], function(){
         Route::get('/', 'SearchController@index')
             ->name('search.projects');
+        Route::get('/smart', 'SearchController@indexSmart')
+            ->name('smart-search-results');
         Route::get('step-1/{projectId?}', 'ProjectController@create')
             ->name('project.edit.step-1');
         Route::post('step-1/{projectId?}', 'ProjectController@step1')

@@ -6,8 +6,10 @@ use Helix\Models\Award;
 use Helix\Models\AcademicDepartment;
 use Helix\Models\Research;
 use Helix\Models\NemoMembership;
-use Searchy;
 use Helix\Models\Person;
+use Searchy;
+
+use Laravel\Scout\Searchable;
 
 /**
  * Handles the search pages, query builders for those pages, and the functions
@@ -17,6 +19,7 @@ use Helix\Models\Person;
  */
 class SearchController extends Controller
 {
+    use Searchable;
     /**
      * This creates the Titles And Abstract page and also the Featured Project page.
      * If the user visits the route for this method without any request variables, then they will
@@ -26,127 +29,200 @@ class SearchController extends Controller
      */
     public function index()
     {
-        $projects = null;
-        $appliedFilters = [];
         $projectsPerPage = 12;
         $recentProjectsToConsider = 20;
         $recentProjectsToRandomlyShow = 6;
 
         $searchFormProperties = $this->getSearchFormProperties('all');
 
-        // Query for visible projects to browse.
-        $query = $this->browseProjects();
-        $featuredQuery = clone $query;
-        if(request()->filled('query')) {
-            $query = $this->searchTitlesAndAbstracts($query);
-        }
+        $filters = $this->getProjectFilters();
+        
+        if(request()) {
+            $projects = $this->search();
 
-        //We only want to randomize projects and show featured projects  when we first land on this page.
-        //If we start searching, then we shouldn't show them, and we shouldn't randomize.
-        // When the request is empty, this condition is successfully met.
-        if( !request()->all() ) {
-            $projects = $query->with('attribute')
-                ->whereDoesntHave('attribute', function($q) {
-                    $q->where('is_featured', '=', '1' );
-                })
-                ->latest()
-                ->take($recentProjectsToConsider)
-                ->get()
-                ->random($recentProjectsToRandomlyShow);
-            $featuredProjects = $featuredQuery->with('attribute')->whereHas('attribute', function($q) {
-                $q->where('is_featured', '1');
-            })->get();
+        }else
+        {
+            $notFeatured = ['attribute.is_featured:0'];
+            $notFeatured = $this->buildAlgoliaProjectFilters($notFeatured);
+            $isFeatured  = ['attribute.is_featured:1'];
+            $isFeatured =  $this->buildAlgoliaProjectFilters($isFeatured);
+
+            $projects = Project::search('')->with($notFeatured);
+            $featuredProjects = Project::search('')->with($isFeatured)->get()->random(3);
+            $projects = $projects->take($recentProjectsToConsider)->get()->random($recentProjectsToRandomlyShow);
         }
-        else {
-            $appliedFilters = $this->applyProjectFilters($query);
-            $query = $appliedFilters['filteredQuery'];
-            $projects = $query->orderBy('updated_at','desc')->paginate($projectsPerPage)->setPath(url('project'));
-        }
-        $viewData =  compact('projects','featuredProjects');
+        $viewData =  compact('projects','featuredProjects','filters');
         $viewData += $searchFormProperties;
-        $viewData += $appliedFilters;
         return view('pages.project.index', $viewData);
+    }
+    
+    private function search()
+    {
+        $projectsPerPage = 12;
+        $searchFormProperties = $this->getSearchFormProperties('all');
+        
+        $filters = $this->buildAlgoliaProjectFilters();
+
+        $projects = Project::search( request('query'))->with($filters)->paginate($projectsPerPage);
+        $projects = $this->steralizeProjectSearchResults($projects);
+        return $projects;
+    }
+
+    private function buildAlgoliaProjectFilters(array $additionalFilters = [], array $optionalFilters = []) {
+        
+        $requestedFilters = request()->all();        
+        $requestedFilters = collect($requestedFilters);
+
+        $filters = $this->enforeceProjectRules();
+      
+        if($requestedFilters->has('member')){
+          $filters[] = 'members_id:"'.$requestedFilters->get('member').'"';
+        }
+        if($requestedFilters->get('department')){
+          $departmentNumber = $this->getDepartmentNumber($requestedFilters->get('department'));
+            $filters[] = 'department_id:"'.$departmentNumber.'"';
+        }
+        if($requestedFilters->get('sponsor')){
+            $filters[] = 'sponsor_code:"'.$requestedFilters->get('sponsor').'"';
+        }
+        if($requestedFilters->get('collaborators') == "student"){
+            $filters[] = 'attribute.seeking_students:1';
+        }elseif ($requestedFilters->get('collaborators') == "faculty") {
+            $filters[] = 'attribute.seeking_collaborators:1';
+        }
+        if($additionalFilters){
+            $filters = array_merge($filters, $additionalFilters);
+        }
+        if($optionalFilters){
+            $filters[] = "(".implode(' OR ', $filters).")";
+        }
+        $algoliaFilter = ["filters" => implode(' AND ', $filters)];
+        
+        if ($requestedFilters->has('searchType') && $requestedFilters->get('searchType') != "all")
+        {
+            $searchableAttributes = $this->restrictSearchableAttributes($requestedFilters->get('searchType'));
+            $algoliaFilter["restrictSearchableAttributes"] = $searchableAttributes;
+        }
+        return $algoliaFilter;
+    }
+    private function getProjectFilters(array $additionalFilters = [], array $optionalFilters = []) {
+        
+        $requestedFilters = request()->all();    
+        $requestedFilters = collect($requestedFilters);
+        // List of things from which to search.
+        $sponsor = Award::pluck('sponsor', 'sponsor_code')->sort()->unique();
+        $AcademicDepartments = AcademicDepartment::pluck('display_name', 'entities_id')->sort();
+        $departments = [null => 'Filter by Department'];
+        $purposes = Purpose::pluck('display_name', 'system_name')->sort();
+        $setFilters = [];
+
+        if($requestedFilters->get('department')){
+          $selectedDepartment = $AcademicDepartments[$requestedFilters->get('department')];
+          $departments[$requestedFilters->get('department')] = $selectedDepartment;
+          $setFilters['department'] = $selectedDepartment;
+        }
+        $collaborators = ['student' => 'Student Contributors', 'faculty' => 'Faculty Collaborators'];
+      
+        if($requestedFilters->get('member')){
+          $setFilters['member'] = Person::select('display_name')
+                ->findOrFail($requestedFilters->get('member'))['display_name'];
+        }
+        if ($requestedFilters->get('sponsor')) {
+            $setFilters['sponsor'] = $sponsor[$requestedFilters->get('sponsor')];
+        }
+        if ($requestedFilters->get('type')) {
+            $projectType = $requestedFilters->get('type');
+            $setFilters['type'] = $purposes[$requestedFilters->get('type')];
+        }
+        if ($requestedFilters->get('collaborators')) {
+            $setFilters['collaborators'] = $collaborators[$requestedFilters->get('collaborators')];
+        }
+        return compact('setFilters','sponsor','departments','purposes','collaborators');
+    }
+
+
+    private function steralizeProjectSearchResults($results)
+    {
+      foreach ($results as &$project) {
+          foreach($project->_highlightResult as $type => $highlight){
+              if( $type == 'pi' ){
+                $highlight = array_first($highlight);
+                $project->$type->display_name = $highlight['value'];
+              }
+              elseif($highlight['matchLevel'] != "none"){
+                $project->$type = $highlight['value'];
+              }
+          }
+          if($project->_snippetResult)
+          {
+            foreach ($project->_snippetResult as $type => $snippet) {
+              if($snippet['matchLevel'] != "none"){
+                  $project->$type = "... ".$snippet['value'];
+                }
+            }
+          }
+        }
+        return $results;
+    }
+
+    private function getDepartmentNumber($departmentId)
+    {
+        $academicDepartment = AcademicDepartment::where('entities_id', $departmentId)
+                ->with('department')
+                ->firstOrFail();
+        return $academicDepartment->department->first()->entities_id;
+    }
+
+    private function restrictSearchableAttributes($searchType)
+    {
+      $attributes = [];
+      if($searchType == "members"){
+        $attributes = ['pi','members'];
+      }else if($searchType == "title"){
+        $attributes = ['abstract','project_title'];
+      }else if($searchType == "tags"){
+        $attributes = ['interests.title'];
+      }
+      return json_encode($attributes);
     }
 
     /**
-     * Use this to filter projects by sponsor, department, etc.
-     * This will also create the necessary data for the View.
-     * Example for getting the latest projects, filtered by Purpose (also called Type):
-     *      $filterResults - $this->applyProjectFilters(Project::latest(), ['type'=>'service'];
-     *      $projects = $filterResults['filteredQuery']->get();
-     * @param \Illuminate\Database\Eloquent\Builder $query A query of projects
-     * @param array $requestedFilters (optional)An associative array keyed by which filters you want to consider.
-     *                                  Defaults to  `request()->all()`
-     * @return array An array of compacted variables. All of these are for the View except $filteredQuery.
+     * Allows the user to see appropriate projects based on visibility
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
      */
-    private function applyProjectFilters($query, $requestedFilters = []) {
-        if (empty($requestedFilters)) {
-            $requestedFilters = request()->all();
-        }
-        $requestedFilters = collect($requestedFilters);
+    private function enforeceProjectRules() {
+      // People can only browse for publishable projects
+      $projectRulesFilters[] = "is_publishable:1";
 
-        // List of things from which to search.
-        $sponsor     = Award::pluck('sponsor','sponsor_code')->sort()->unique();
-        $departments = AcademicDepartment::pluck('display_name','entities_id')->sort();
-        $purposes    = Purpose::pluck('display_name','system_name')->sort();
-        $collaborators = ['student' => 'Student Contributors', 'faculty' => 'Faculty Collaborators'];
-
-        // Labels for the filter tags
-        $filters = [];
-        // Labels for the department filter drop-down box
-        $departmentFilter = [];
-        $filteredQuery = $query; // This  will be the narrowed-down query.
-        if($requestedFilters->has('member')){
-            $filteredQuery = $this->filterByMember($filteredQuery, $requestedFilters->get('member') );
-            $filters['member'] = Person::select('display_name')
-                ->findOrFail( $requestedFilters->get('member') )['display_name'];
-        }
-        if($requestedFilters->get('department')){
-            // This is a change from department listing to academic interest, but we need to still get their department name
-            $academicDepartment = AcademicDepartment::where('entities_id', $requestedFilters->get('department'))
-                ->with('department')
-                ->firstOrFail();
-            $departmentName = $academicDepartment->department->first()->entities_id;
-            $filteredQuery = $this->searchFilter($filteredQuery ,'department_id', $departmentName);
-            $filters['department'] = $departments[$requestedFilters->get('department')];
-            $departmentFilter = [
-                NULL=>'Filter by Department' ,
-                $requestedFilters->get('department') => $filters['department']
-            ];
-        }
-        if($requestedFilters->get('sponsor')){
-            $filteredQuery = $this->searchFilter($filteredQuery ,'sponsor_code', $requestedFilters->get('sponsor'));
-            $filters['sponsor'] = $sponsor[ $requestedFilters->get('sponsor')] ;
-        }
-        if ($requestedFilters->get('type'))
+      if( auth()->check() )
+      {
+        //if the logged-in user is an Admin, they can see all projects:
+        if (auth()->user()->hasRole('admin'))
         {
-            $projectType = $requestedFilters->get('type');
-            $filteredQuery = $filteredQuery->whereHas('attribute', function ($q) use($projectType){
-                $this->searchFilter($q, 'purpose_name', $projectType);
-            });
-            $filters['type'] = $purposes[$requestedFilters->get('type')];
+          return null;
         }
-        if ($requestedFilters->get('collaborators')) {
-            $filters['collaborators'] = $collaborators[$requestedFilters->get('collaborators')];
-            $collaboratorType = $requestedFilters['collaborators'];
-            $filteredQuery = $filteredQuery->whereHas('attribute', function ($q) use ($collaboratorType) {
-                if ($collaboratorType == "student") {
-                    $this->searchFilter($q, 'seeking_students', 1);
-                }
-                if ($collaboratorType == "faculty") {
-                    $this->searchFilter($q, 'seeking_collaborators', 1);
-                }
-            });
-        }
-        return compact(
-            'filteredQuery',
-            'filters',
-            'departmentFilter',
-            'sponsor',
-            'purposes',
-            'collaborators'
-        );
+
+        // Other Logged-in users can see public (showcase), internal (institutional), and their own stealth projects.
+        // We need to wrap this in an advanced query because we are mixing
+        // "where"- and 'orWhere'- clauses together in $query.
+        // $query = $query->where(function($qry){
+        //   // Retrieve the stealth projects that belong to the currently logged-in user.
+        //   $stealthProjects =  $this->getStealthProjectsOf(auth()->user())->modelKeys();
+        //   // Logged in users can  see their own stealth projects.
+        //   $qry->whereIn('project_id',$stealthProjects)
+        //   // Logged in users can also see public and internal projects.
+        //   ->orWhereHas('visibility', function($q){
+        //     $q->whereIn('policy', ['public', 'internal']);
+        //   });
+        // });
+      }
+      else {
+        $projectRulesFilters[] = 'visibility.policy:public';
+      }
+      return $projectRulesFilters;
     }
+
 
     /**
      * Maps the system name for a search type to its form-properties.
@@ -156,144 +232,46 @@ class SearchController extends Controller
      */
     private function getSearchFormProperties($defaultSearchType = 'all') {
         $dropdownTexts = [
-            'all'                => 'All Search Results',
-            'title'              => 'Titles and Abstracts',
-            'research-interest'  => 'Research Interests and Themes',
-            'member'             => 'Members'
+            'all' => 'All Search Results',
+            'title' => 'Titles and Abstracts',
+            'tags' => 'Research Interests and Themes',
+            'member' => 'Members',
         ];
-
         $placeholderTexts = [
-            'all'                => 'Search everything',
-            'title'              => 'Search through Titles and Abstracts',
-            'research-interest'  => 'Search through Research Interests and Themes',
-            'member'             => 'Search through Members'
+            'all' => 'Search everything',
+            'title' => 'Search through Titles and Abstracts',
+            'tags' => 'Search through Research Interests and Themes',
+            'member' => 'Search through Members',
         ];
         $formActions = [
-            'all'                => route('all-search-results'),
-            'title'              => route('search.projects'),
-            'research-interest'  => route('search.research-interests'),
-            'member'             => route('search.member-search')
+            'all' => route('search.projects'),
+            'title' => route('search.projects'),
+            'tags' => route('search.projects'),
+            'member' => route('search.projects'),
         ];
-        $searchType = request()->filled('searchType') ? request('searchType') : $defaultSearchType;
 
+        $searchType = request()->filled('searchType') ? request('searchType') : $defaultSearchType;
         return compact('searchType','dropdownTexts','placeholderTexts','formActions');
     }
 
-  /**
-   * Helper function to get all  stealth projects belonging to  the given user
-   * @param  \Helix\Models\Person $user The current user
-   * @return \Illuminate\Database\Eloquent\Collection
-   */
-  private function getStealthProjectsOf($user){
-    $whereProjectIsStealth = function($query){
-        $query->whereHas('visibility', function($q){
-            $q->where('policy','private');
-        });
-    };
-    return Person::with(['projects' => $whereProjectIsStealth])
-        ->whereHas('projects', $whereProjectIsStealth)
-        ->orWhere(function ($q){
-            $q->whereDoesntHave('projects');
-        })
-        ->findOrFail($user->user_id)
-        ->projects;
-  }
-
     /**
-     * Returns a query builder for searching through titles and abstracts
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query A project query builder
-     * @return \Illuminate\Database\Eloquent\Builder
+     * Helper function to get all  stealth projects belonging to  the given user
+     * @param  \Helix\Models\Person $user The current user
+     * @return \Illuminate\Database\Eloquent\Collection
      */
-  private function searchTitlesAndAbstracts($query)
-  {
-      $detailSearch = Searchy::search('exploration.projects')
-          ->fields('project_title','abstract')
-          ->query(request('query'))
-          ->select('project_id')
-          ->get();
-
-      $resultsId = collect($detailSearch)
-          ->sortByDesc('relevance')
-          ->unique()
-          ->pluck('project_id');
-
-      $idList=[];
-      foreach ($resultsId as $projectId){
-          $idList[] = explode(':',$projectId)[1];
-      }
-      $idsImploded = implode(',', $idList);
-      $query->whereIn('project_id',$resultsId)
-          ->orderByRaw(\DB::raw("FIELD(id, $idsImploded)"))
-          ->with('pi','members','award');
-      return $query;
-  }
-
-    /**
-     * Allows the user to see appropriate projects based on visibility
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-  private function browseProjects() {
-    // People can only browse for publishable projects
-    $query = Project::with('pi')->where('is_publishable', true);
-
-    if( auth()->check() )
-    {
-      //if the logged-in user is an Admin, they can see all projects:
-      if (auth()->user()->hasRole('admin'))
-      {
-        return $query;
-      }
-
-      // Other Logged-in users can see public (showcase), internal (institutional), and their own stealth projects.
-
-      // We need to wrap this in an advanced query because we are mixing
-      // "where"- and 'orWhere'- clauses together in $query.
-      $query = $query->where(function($qry){
-        // Retrieve the stealth projects that belong to the currently logged-in user.
-        $stealthProjects =  $this->getStealthProjectsOf(auth()->user())->modelKeys();
-        // Logged in users can  see their own stealth projects.
-        $qry->whereIn('project_id',$stealthProjects)
-        // Logged in users can also see public and internal projects.
-        ->orWhereHas('visibility', function($q){
-          $q->whereIn('policy', ['public', 'internal']);
-        });
-      });
-    }
-    // Everyone else can only see public projects.
-    else {
-      $query = $query->whereHas('visibility', function($q){
-          //Showcase projects
-        $q->where('policy', 'public');
-      });
-    }
-    return $query;
-  }
-
-    /**
-     *  Another method that does a where call.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query The user's query builder
-     * @param string $type The type of search based on column
-     * @param string $filter The user's query
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-   private function searchFilter($query, $type, $filter)
-   {
-      return $query->where($type , $filter);
-   }
-
-    /**
-     * @param \Illuminate\Database\Eloquent\Builder $query User's query for member
-     * @param string $search Member's id
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    private function filterByMember($query, $search)
-    {
-        return $query->whereHas('allMembers', function($q) use ($search){
-            $q->where('user_id', $search);
-        });
+    private function getStealthProjectsOf($user){
+      $whereProjectIsStealth = function($query){
+          $query->whereHas('visibility', function($q){
+              $q->where('policy','private');
+          });
+      };
+      return Person::with(['projects' => $whereProjectIsStealth])
+          ->whereHas('projects', $whereProjectIsStealth)
+          ->orWhere(function ($q){
+              $q->whereDoesntHave('projects');
+          })
+          ->findOrFail($user->user_id)
+          ->projects;
     }
 
     /**
@@ -304,7 +282,7 @@ class SearchController extends Controller
      */
    public function departmentSearch()
    {
-      $data = Searchy::driver('simple')->search('nemo.academicDepartments')->fields('display_name')->query( request('q') )->getQuery()->limit(10)->get();
+      $data = AcademicDepartment::search(request('q'))->get()->take(10);
       if($data){
           foreach ($data as $department) {
               $tmp['id'] = $department->entities_id;
@@ -324,9 +302,8 @@ class SearchController extends Controller
      */
     public function getCollaboratorsList()
     {
-        if (request()->filled('q')) {
-            $data = Searchy::driver('simple')->users('display_name','first_name','last_name','middle_name')->query( request('q') )->getQuery()->limit(10)->get();
-            // $data = Person::where('display_name', 'LIKE', "%".request()->q."%")->take(5)->get();
+        if(request()->filled('q')){
+            $data = Person::search(request('q'))->get()->take(10);
             if($data){
                 foreach ($data as $person) {
                     $tmp['id'] = $person->user_id;
@@ -358,104 +335,6 @@ class SearchController extends Controller
         }
     }
 
-    /**
-     * Returns the view for searching by research interests and themes
-     *
-     * @return \Illuminate\View\View
-     */
-    public function searchByResearchInterest()
-    {
-      $limit = env('SEARCH_RESULTS_LIMIT');
-      // Character limit on the front end
-      $RELATED_INTEREST_CHAR_LIMIT = 30;
-
-      // Number of similar research interests shown
-      $SIMILAR_SEARCH_TERMS_LIMIT = 10;
-
-      //We are eagerloading to display extra data in the front end
-      if(request()->filled('query'))
-      {
-        //search
-        $query = request('query');
-
-        $matchingInterests = Research::getAllLeavesInHierarchy($query);
-        $interestIds = $matchingInterests->pluck('attribute_id');
-
-        $people = Person::with('academicDepartments.department')
-            ->has('academicDepartments')
-            ->withResearchInterestsIn($interestIds)
-            ->orderBy('last_name', 'asc');
-
-        $projects = $this->browseProjects()
-          ->withResearchInterestsIn($interestIds)
-          ->has('interests') // Ensures that there aren't projects with no research interests
-          ->latest();
-
-        // Let's remove all the stop words from the query
-        $queryWithoutStopWords = $this->removeStopWords($query);
-
-        // With stop words removed, go ahead and search based on words given
-        $similarSearchTerms = $this->getSimilarSearchTerms($queryWithoutStopWords, $SIMILAR_SEARCH_TERMS_LIMIT);
-      }
-      else
-      { //Just get the latest results if they dont type anything.
-        $query = null;
-        $people = Person::with('academicDepartments.department', 'research_interests')
-            ->has('research_interests') // Checks to see if user has research interests
-            ->whereHas('academicDepartments', function($q){})
-            ->orderBy('last_name', 'asc');
-
-        $projects = $this->browseProjects()
-            ->has('interests') // Ensures that there aren't projects with no research interests
-            ->latest();
-      }
-
-        $people = $people
-            ->paginate($limit);
-        $projects = $projects
-            ->paginate($limit);
-
-
-
-        // Each person will have resulting research interests filtered by query if there is one
-        foreach ($people as $person) {
-            if (request('query')) {
-                $relatedSearchResults = $person->research_interests->intersect($matchingInterests);
-            } else {
-                $relatedSearchResults = $person->research_interests;
-            }
-            $person->relatedSearchTerms = $relatedSearchResults;
-        }
-
-        // For each project, let's assign related search terms that match with the query and hierarchy
-        foreach ($projects as $project) {
-            if (request('query')) {
-                $relatedSearchResults = $project->interests->intersect($matchingInterests);
-            } else {
-                $relatedSearchResults = $project->interests;
-            }
-            $project->relatedSearchTerms = $relatedSearchResults;
-        }
-
-        //Get the form properties of the search bar for the view.
-        extract($this->getSearchFormProperties('research-interest'));
-
-        //return a view from the results.
-        return view('pages.search.searchresults', compact(
-            'people',
-            'projects',
-            'query',
-            'limit',
-            'formActions',
-            'dropdownTexts',
-            'placeholderTexts',
-            'searchType',
-            'RELATED_INTEREST_CHAR_LIMIT',
-            'similarSearchTerms'
-        ));
-
-    }
-
     /* --------------------------------------------------*/
     /* Routes used by the PUBLIC API.
     /*---------------------------------------------------*/
@@ -467,7 +346,7 @@ class SearchController extends Controller
      * @return array
      */
     public function apiProjects($include = NULL)
-    {
+    {   
         $projects = Project::where('is_publishable', true)
             ->whereHas('visibility', function($q){
                 $q->where('policy', 'public');
@@ -487,10 +366,9 @@ class SearchController extends Controller
               $projects = $projects->where('role_position', request('role') );
             }
           }
-          else $projects = $projects->get();
+          else $projects = $projects->searchable();
           return $this->sendResponse($projects, 'projects');
       }
-
     /**
      * Returns the view for searching by research interests and themes
      *
@@ -582,83 +460,6 @@ class SearchController extends Controller
     }
 
     /**
-     * Return a view tha has all the pages. Search by titles and abstracts,
-     * research interests and themes, members.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function allSearchResults() {
-        $RELATED_INTEREST_CHAR_LIMIT = 30;
-        $SIMILAR_SEARCH_TERMS_LIMIT = 10;
-        $limit = env('SEARCH_RESULTS_LIMIT');
-        $query = request('query');
-        extract($this->getSearchFormProperties('all'));
-
-        $matchingInterests = Research::getAllLeavesInHierarchy($query);
-        $interestIds = $matchingInterests->pluck('attribute_id');
-
-        $peopleByResearchInterest = Person::with('academicDepartments.department')
-            ->whereHas('academicDepartments', function($q){})
-            ->withResearchInterestsIn($interestIds)
-            ->orderBy('last_name', 'asc')
-            ->paginate($limit);
-        $peopleAsMembers = Person::with('academicDepartments.department')
-            ->has('academicDepartments.department')
-            ->facultyWithDepartment($query)
-            ->orderBy('last_name', 'asc')
-            ->paginate($limit);
-        $projectsByTheme = $this->browseProjects()
-            ->withResearchInterestsIn($interestIds)
-            ->latest()
-            ->paginate($limit);
-        $projectsByTitleAndAbstract = $this->searchTitlesAndAbstracts($this->browseProjects())
-            ->latest()
-            ->paginate($limit);
-
-        foreach ($peopleByResearchInterest as $person) {
-            if (request('query')) {
-                $relatedSearchResults = $person->research_interests->intersect($matchingInterests);
-            } else {
-                $relatedSearchResults = $person->research_interests;
-            }
-            $person->relatedSearchTerms = $relatedSearchResults;
-        }
-
-        foreach ($projectsByTheme as $project) {
-            if (request('query')) {
-                $relatedSearchResults = $project->interests->intersect($matchingInterests);
-            } else {
-                $relatedSearchResults = $project->interests;
-            }
-            $project->relatedSearchTerms = $relatedSearchResults;
-        }
-
-        if (request('query')) {
-            // Let's remove all the stop words from the query
-            $queryWithoutStopWords = $this->removeStopWords($query);
-
-            // With stop words removed, go ahead and search based on words given
-            $similarSearchTerms = $this->getSimilarSearchTerms($queryWithoutStopWords, $SIMILAR_SEARCH_TERMS_LIMIT);
-        }
-
-        return view(
-            'pages.search.all-search-results',
-            compact(
-                'peopleAsMembers',
-                'projectsByTitleAndAbstract',
-                'projectsByTheme',
-                'peopleByResearchInterest',
-                'query',
-                'limit',
-                'searchType',
-                'dropdownTexts',
-                'formActions',
-                'RELATED_INTEREST_CHAR_LIMIT',
-                'similarSearchTerms'
-            )
-        );
-    }
-    /**
      * This will search for faculty members just like the Faculty Application.
      * NOTE: This leads to a test route for now because the actually faculty individual page.
      * For now, the page just displays the name of the user and their primary department.
@@ -670,12 +471,7 @@ class SearchController extends Controller
     public function searchForMember() {
         $NUM_CARDS_DISPLAYED = 12;
         $search_query = request('query');
-        $people = Person::with('academicDepartments.department')
-            ->has('academicDepartments.department')
-            ->facultyWithDepartment($search_query)
-            ->orderBy('last_name', 'asc')
-            ->paginate($NUM_CARDS_DISPLAYED);
-        $people->setPath(url('search/members'));
+        $projects = $this->findPersonsProjects($search_query, $NUM_CARDS_DISPLAYED);
 
         //Get the form properties of the search bar for the view.
         extract($this->getSearchFormProperties('member'));
@@ -683,23 +479,21 @@ class SearchController extends Controller
         return view('pages.search.members', compact('people', 'searchType', 'dropdownTexts', 'formActions'));
     }
 
-    /**
-     * This function, given a query, returns a string that has no stop words (e.g. and, or, of).
-     * NOTE: I left this in the search controller because I don't really see this being used elsewhere. On the off
-     * chance that is it used outside this controller, this should be moved to the helpers file.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query User's query builder
-     * @return string
-     */
-    private function removeStopWords($query) {
-        // Let's make the query in an array so that we can get the difference.
-        $queryWithoutStopWords = explode(' ', $query);
-        $queryWithoutStopWords = array_diff($queryWithoutStopWords, getListOfStopWords());
-
-        // Now, let's make it a string again.
-        $queryWithoutStopWords = implode(' ', $queryWithoutStopWords);
-
-        return $queryWithoutStopWords;
+    private function findPersonsProjects($search_query, int $paginate)
+    {
+      $people = Person::with('academicDepartments.department','projects')
+            ->has('academicDepartments.department')
+            ->facultyWithDepartment($search_query)->get();
+        $projects = [];
+        foreach ($people as $person) {
+          $projects += array_column ( $person->projects->toArray() , 'project_id' );
+        }
+        $results = Project::with('pi')->whereIn('project_id',$projects);
+        $results = $this
+        ->browseProjectsRules($results)
+                        ->paginate($paginate)
+                        ->setPath(url('search/members'));
+        return $results;
     }
 
     /**

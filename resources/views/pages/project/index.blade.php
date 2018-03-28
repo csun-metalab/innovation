@@ -20,34 +20,32 @@
     @endif
 @endsection
 @section('filter-tags')
-    @if($searchType=='title')
         <div class="row">
-            @if(!empty($filters))
+            @if(request()->filled('department') || request()->filled('sponsor') || request()->filled('type') || request()->filled('collaborators'))
                 <h5 class="text--center"><b>Filters set:</b>
-                    @if(array_has($filters,'department'))
+                    @if(request()->filled('department'))
                         Department: <a class="tag tag--danger tag--removable"
                                        href="{{  url("project?".str_replace( "department=".urlencode(Request::input('department')),'', parse_url( $_SERVER['REQUEST_URI'], PHP_URL_QUERY )))  }}"
-                                       title="Remove Department Filter">{{$filters['department']}}</a>
+                                       title="Remove Department Filter">{{$filters['setFilters']['department']}}</a>
                     @endif
-                    @if(array_has($filters,'sponsor'))
+                    @if(request()->filled('sponsor'))
                         Sponsor: <a class="tag tag--danger tag--removable"
                                     href="{{  url("project?".str_replace( "sponsor=".urlencode(Request::input('sponsor')),'', parse_url( $_SERVER['REQUEST_URI'], PHP_URL_QUERY )))  }}"
-                                    title="Remove Sponsor Filter">{{$filters['sponsor']}}</a>
+                                    title="Remove Sponsor Filter">{{$filters['setFilters']['sponsor']}}</a>
                     @endif
-                    @if(array_has($filters,'type'))
+                    @if(request()->filled('type'))
                         Type: <a class="tag tag--danger tag--removable"
                                     href="{{  url("project?".str_replace( "type=".urlencode(Request::input('type')),'', parse_url( $_SERVER['REQUEST_URI'], PHP_URL_QUERY )))  }}"
-                                    title="Remove Type Filter">{{$filters['type']}}</a>
+                                    title="Remove Type Filter">{{$filters['setFilters']['type']}}</a>
                     @endif
-                    @if(array_has($filters,'collaborators'))
+                    @if(request()->filled('collaborators'))
                         Collaborators: <a class="tag tag--danger tag--removable"
                                     href="{{  url("project?".str_replace( "collaborators=".urlencode(Request::input('collaborators')),'', parse_url( $_SERVER['REQUEST_URI'], PHP_URL_QUERY )))  }}"
-                                    title="Remove Collaborator Filter">{{$filters['collaborators']}}</a>
+                                    title="Remove Collaborator Filter">{{$filters['setFilters']['collaborators']}}</a>
                     @endif
                 </h5>
             @endif
         </div>
-    @endif
 @endsection
 @section('session-flashes')
     @if(session('success'))
@@ -128,14 +126,7 @@
     @endsection
 @endif
 @section('filter-selection-and-new-project-button')
-    {{-- Only show this section when we are explicitly searching titles and abstracts.
-        At the time of writing this, we are using Laravel 5.2, but in the future, if we update,
-        I would change this section to the following:
-         @includeWhen($searchType=='title','layouts.partials.filter-selection-and-new-project-button')
-    --}}
-    @if($searchType=='title')
-        @include('layouts.partials.filter-selection-and-new-project-button')
-    @endif
+    @include('layouts.partials.filter-selection-and-new-project-button')
 @endsection
 
 @section('page-specific-scripts')

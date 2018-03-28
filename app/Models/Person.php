@@ -1,6 +1,7 @@
 <?php 
 namespace Helix\Models;
 
+use Laravel\Scout\Searchable;
 use Illuminate\Database\Eloquent\Model;
 use METALab\Auth\MetaUser;
 use GuzzleHttp\Exception\RequestException;
@@ -8,6 +9,8 @@ use Illuminate\Support\Collection;
 
 class Person extends MetaUser
 {
+   use Searchable;
+
    protected $table = 'users';
    protected $primaryKey = 'user_id';
    /**
@@ -35,14 +38,24 @@ class Person extends MetaUser
 
    // This is used to keep track of related search terms
    public $relatedSearchTerms;
-
+   
+   public function toSearchableArray()
+   {
+        $this->department_academicDepartments;
+        $array = $this->toArray();
+        if($array['department_academic_departments']){
+          dd($array);
+          return $array;
+        }
+        return [];
+    }
    /**
     * Constructs a new Person object. This constructor has to be added because
     * this model is subclassed from the MetaUser class and therefore its parent
     * constructor has to be invoked.
     */
    public function __construct() {
-      parent::__construct($this->table, $this->primaryKey);
+       parent::__construct($this->table, $this->primaryKey);
    }
 
   public function profile_image()
@@ -119,6 +132,10 @@ class Person extends MetaUser
     public function academicDepartments() {
         return $this->hasMany('Helix\Models\NemoMembership', 'individuals_id')
             ->where('parent_entities_id', 'LIKE', 'academic_departments:%');
+    }
+    public function department_academicDepartments()
+    {
+      return $this->hasManyThrough('Helix\Models\NemoMembership','\Helix\Models\AcademicDepartment', 'parent_entities_id', 'individuals_id' ,'entities_id');
     }
 
     /**

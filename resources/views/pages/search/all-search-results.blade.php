@@ -27,35 +27,10 @@
         <span class="type--thin"> {{'"' . request()->get('query') . '"'}} </span>
     @endif
 @endsection
-@section('results-faculty-members')
-    @if(!$peopleAsMembers->isEmpty())
-        @include('layouts.partials.people-search-results-section', [
-             'people'            => $peopleAsMembers,
-             'sectionHeading'    => "Faculty Members",
-             'buttonHref'        => route('search.member-search')
-                                     .'?'
-                                     // Force the search type on the destination page to be "Members"
-                                     .http_build_query(['searchType'=>'member'] + request()->all()),
-
-         ])
-    @endif
-@endsection
-
-
-@section('results-members-research-interests')
-    @if(!$peopleByResearchInterest->isEmpty())
-        @include('layouts.partials.people-search-results-section', [
-        'people'            => $peopleByResearchInterest,
-        'sectionHeading'    => "Faculty by Research Interests",
-        'buttonHref'        => route('see-more-faculty').'?'. http_build_query(request()->except('searchType')),
-        ])
-    @endif
-@endsection
-
 @section('results-titles-and-abstracts')
-    @if(!$projectsByTitleAndAbstract->isEmpty())
+    @if(!$projects->isEmpty())
         @include('layouts.partials.project-search-results-section', [
-            'projects'          => $projectsByTitleAndAbstract,
+            'projects'          => $projects,
             'sectionHeading'    => "Projects",
             'buttonHref'        => route('search.projects')
                                     .'?'
@@ -64,7 +39,6 @@
         ])
     @endif
 @endsection
-
 @section('results-projects-research-interests')
     @if(!$projectsByTheme->isEmpty())
         @include('layouts.partials.project-search-results-section', [
@@ -74,11 +48,23 @@
         ])
     @endif
 @endsection
-
-@section('no-results-message')
-    @if($projectsByTitleAndAbstract->isEmpty())
+@section('results-faculty-members')
+    @if(!$peoplesProjects->isEmpty())
         @include('layouts.partials.project-search-results-section', [
-            'projects'          => $projectsByTitleAndAbstract,
+             'projects'            => $peoplesProjects,
+             'sectionHeading'    => "Projects Members",
+             'buttonHref'        => route('search.member-search')
+                                     .'?'
+                                     // Force the search type on the destination page to be "Members"
+                                     .http_build_query(['searchType'=>'member'] + request()->all()),
+
+         ])
+    @endif
+@endsection
+@section('no-results-message')
+    @if($projects->isEmpty())
+        @include('layouts.partials.project-search-results-section', [
+            'projects'          => $projects,
             'sectionHeading'    => "Projects",
             'buttonHref'        => route('search.projects')
                                     .'?'
@@ -93,17 +79,10 @@
             'buttonHref'        => route('see-more-projects').'?'.http_build_query(request()->except('searchType')),
         ])
     @endif
-    @if($peopleByResearchInterest->isEmpty())
-        @include('layouts.partials.people-search-results-section', [
-        'people'            => $peopleByResearchInterest,
-        'sectionHeading'    => "Faculty by Research Interests",
-        'buttonHref'        => route('see-more-faculty').'?'. http_build_query(request()->except('searchType')),
-        ])
-    @endif
-    @if($peopleAsMembers->isEmpty())
-        @include('layouts.partials.people-search-results-section', [
-             'people'            => $peopleAsMembers,
-             'sectionHeading'    => "Faculty Members",
+    @if($peoplesProjects->isEmpty())
+        @include('layouts.partials.project-search-results-section', [
+             'projects'            => $peoplesProjects,
+             'sectionHeading'    => "Projects Members",
              'buttonHref'        => route('search.member-search')
                                      .'?'
                                      // Force the search type on the destination page to be "Members"
