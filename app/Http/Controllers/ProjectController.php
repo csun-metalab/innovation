@@ -461,12 +461,13 @@ class ProjectController extends Controller
 
     public function postProjectCreation(Request $request, $projectId = null)
     {
+        dd('here');
         $team_members = null !== request('members') ? \array_filter(request('members')) : [];
 
         $projectData = [
            'project_general' => [
                'project_image' => \trim($request->project_image),
-               'title' => \trim($request->title),
+            /*   'title' => \trim($request->title),
                'cayuse_project' => false,
                //'project_type' => $request->project_type,
                //'project_purpose' => $request->project_purpose,
@@ -479,12 +480,14 @@ class ProjectController extends Controller
            ],
             'interests' => $request->tags,
             'team_members' => [],
-            'seeking' => [
+            'seekingxxxx' => [
                 'team_members' => 0,
                 'students' => 0,
                 'qualifications' => null,
+            */
             ],
         ];
+        dd($projectData['project_image']);
 
         if (!empty($team_members)) {
             $projectData['team'] = $team_members;
@@ -494,7 +497,6 @@ class ProjectController extends Controller
                 $projectData['seeking']['qualifications'] = $request->studentQualifications;
             }*/
         }
-
         $projectId = $this->projectIdVerifier->verifyId($projectId);
 
         $this->projectGeneralUpdater->updateProjectGeneral($projectId, $projectData);
