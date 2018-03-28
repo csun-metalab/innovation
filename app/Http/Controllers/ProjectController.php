@@ -6,7 +6,7 @@ namespace Helix\Http\Controllers;
 
 use Auth;
 use DB;
-use Helix\Contracts\CreateSeekingContract;
+//use Helix\Contracts\CreateSeekingContract;
 use Helix\Contracts\UpdateProjectAttributesContract;
 use Helix\Contracts\UpdateProjectGeneralContract;
 use Helix\Contracts\UpdateProjectPolicyContract;
@@ -37,7 +37,7 @@ class ProjectController extends Controller
     protected $projectAttributesUpdater = null;
     protected $projectPolicyUpdater = null;
     protected $projectPurposeUpdater = null;
-    protected $createSeekingContract = null;
+    //protected $createSeekingContract = null;
 
     /**
      * ProjectController constructor.
@@ -54,8 +54,8 @@ class ProjectController extends Controller
         UpdateProjectGeneralContract $updateProjectGeneralContract,
         UpdateProjectAttributesContract $updateProjectAttributesContract,
         UpdateProjectPolicyContract $updateProjectPolicyContract,
-        UpdateProjectPurposeContract $updateProjectPurposeContract,
-        CreateSeekingContract $createSeekingContract
+        UpdateProjectPurposeContract $updateProjectPurposeContract
+        //CreateSeekingContract $createSeekingContract
     ) {
         $this->middleware('auth', ['except' => [
             'index',
@@ -499,10 +499,10 @@ class ProjectController extends Controller
         }
         $projectId = $this->projectIdVerifier->verifyId($projectId);
 
-        $this->projectGeneralUpdater->updateProjectGeneral($projectId, $projectData);
+        /*$this->projectGeneralUpdater->updateProjectGeneral($projectId, $projectData);
         $this->projectAttributesUpdater->updateProjectAttributes($projectId, $projectData);
         $this->projectPolicyUpdater->updateProjectPolicy($projectId, $projectData);
-        $this->projectPurposeUpdater->updateProjectPurpose($projectId, $projectData);
+        $this->projectPurposeUpdater->updateProjectPurpose($projectId, $projectData);*/
 
         return view('pages.project.four', \compact('project'));
     }

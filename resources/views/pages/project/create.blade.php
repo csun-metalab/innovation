@@ -55,7 +55,7 @@
   <h1 class="type--left type--thin">Create a Project</h1>
   <br>
   <div class="uploader type--center" id="upload-image">
-    {!! Form::open(['url' => 'foo/bar']) !!}
+    {!! Form::open(['url' => '/test']) !!}
       <h1 class="fa fa-upload mega"></h1>
       <br>
       {{ Form::label("project_image", "Upload a Cover Photo") }}

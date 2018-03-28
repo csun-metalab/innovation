@@ -171,9 +171,8 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('create', function () {
         return view('pages.project.create');
     });
-    Route::get('test', function () {
-        return view('pages.project.test');
-    });
+
+    Route::post('test', 'ProjectController@PostProjectCreation');
 });
 
 /*
