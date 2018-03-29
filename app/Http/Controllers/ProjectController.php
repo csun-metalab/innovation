@@ -7,6 +7,7 @@ namespace Helix\Http\Controllers;
 use Auth;
 use DB;
 use Helix\Contracts\CreateSeekingContract;
+use Helix\Contracts\UpdateCollaboratorsContract;
 use Helix\Contracts\UpdateProjectAttributesContract;
 use Helix\Contracts\UpdateProjectGeneralContract;
 use Helix\Contracts\UpdateProjectPolicyContract;
@@ -38,6 +39,7 @@ class ProjectController extends Controller
     protected $projectPolicyUpdater = null;
     protected $projectPurposeUpdater = null;
     protected $createSeekingContract = null;
+    protected $collaboratorsUpdater = null;
 
     /**
      * ProjectController constructor.
@@ -48,6 +50,7 @@ class ProjectController extends Controller
      * @param UpdateProjectPolicyContract     $updateProjectPolicyContract
      * @param UpdateProjectPurposeContract    $updateProjectPurposeContract
      * @param CreateSeekingContract           $createSeekingContract
+     * @param UpdateCollaboratorsContract     $updateCollaboratorsContract
      */
     public function __construct(
         VerifyProjectIdContract $verifyProjectIdContract,
@@ -55,7 +58,8 @@ class ProjectController extends Controller
         UpdateProjectAttributesContract $updateProjectAttributesContract,
         UpdateProjectPolicyContract $updateProjectPolicyContract,
         UpdateProjectPurposeContract $updateProjectPurposeContract,
-        CreateSeekingContract $createSeekingContract
+        CreateSeekingContract $createSeekingContract,
+        UpdateCollaboratorsContract $updateCollaboratorsContract
     ) {
         $this->middleware('auth', ['except' => [
             'index',
@@ -83,6 +87,7 @@ class ProjectController extends Controller
         $this->projectAttributesUpdater = $updateProjectAttributesContract;
         $this->projectPolicyUpdater = $updateProjectPolicyContract;
         $this->projectPurposeUpdater = $updateProjectPurposeContract;
+        $this->collaboratorsUpdater = $updateCollaboratorsContract;
     }
 
     /**
@@ -499,6 +504,7 @@ class ProjectController extends Controller
         $this->projectAttributesUpdater->updateProjectAttributes($projectId, $projectData);
         $this->projectPolicyUpdater->updateProjectPolicy($projectId, $projectData);
         $this->projectPurposeUpdater->updateProjectPurpose($projectId, $projectData);
+        $this->collaboratorsUpdater->updateCollaborators($projectId, $projectData);
 
         return view('pages.project.four', \compact('project'));
     }
