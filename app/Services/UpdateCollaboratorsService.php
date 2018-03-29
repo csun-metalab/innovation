@@ -8,6 +8,7 @@ use Helix\Contracts\UpdateCollaboratorsContract;
 use Helix\Mailers\Mailer;
 use Helix\Models\Invitation;
 use Helix\Models\Person;
+use Helix\Models\Project;
 
 class UpdateCollaboratorsService implements UpdateCollaboratorsContract
 {
@@ -18,16 +19,17 @@ class UpdateCollaboratorsService implements UpdateCollaboratorsContract
         $this->mailer = $mailer;
     }
 
-    public function updateCollaborators($session, $project)
+    public function updateCollaborators($projectId, array $data)
     {
+        $project = Project::findOrFail($projectId);
         // If user has included collaborators
-        if (\array_key_exists('collaborators', $session)) {
+        if (\array_key_exists('collaborators', $data)) {
             // Grab the project's members, if any
             $projectMembers = \array_column($project->allMembers->toArray(), 'user_id');
             $existingMembers = $invitations = $memberIds = [];
 
             // $collaborator comes in as a string in the format: "name,members:XXXXXXX,role_position"
-            foreach ($session['collaborators'] as $collaborator) {
+            foreach ($data['collaborators'] as $collaborator) {
                 // $result[0] = display_name, $result[1] = members:XXXXXX, $result[2] = role_position
                 $result = \explode(',', $collaborator);
                 // Create collab array with intelligible keys for readability purposes
@@ -80,8 +82,8 @@ class UpdateCollaboratorsService implements UpdateCollaboratorsContract
                 $emails = Person::whereIn('user_id', $memberIds)->pluck('email')->toArray();
 
                 $mailData = [
-                    'title' => $session['project_general']['title'],
-                    'description' => $session['project_general']['description'],
+                    'title' => $data['project_general']['title'],
+                    'description' => $data['project_general']['description'],
                     'feedbackurl' => url('feedback'),
                     'link' => url('project/' . $project->project_id),
                 ];

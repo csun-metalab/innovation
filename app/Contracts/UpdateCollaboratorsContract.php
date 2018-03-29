@@ -6,5 +6,5 @@ namespace Helix\Contracts;
 
 interface UpdateCollaboratorsContract
 {
-    public function updateCollaborators($session, $project);
+    public function updateCollaborators($projectId, array $data);
 }

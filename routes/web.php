@@ -1,8 +1,6 @@
 <?php
 
-<<<<<<< HEAD:app/Http/routes.php
 declare(strict_types=1);
-=======
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,7 +11,6 @@ declare(strict_types=1);
 | contains the "web" middleware group. Now create something great!
 |
 */
->>>>>>> 57a2b66b2d2f4b1375857d8b08e58f7080964c2e:routes/web.php
 
 Route::group(['middleware' => ['web']], function () {
     // Helix Welcome
@@ -114,47 +111,8 @@ Route::group(['middleware' => ['web']], function () {
     Route::post('/validateYoutube', 'ProjectController@validateYoutube')
         ->name('validateYoutube');
 
-<<<<<<< HEAD:app/Http/routes.php
-    Route::group(['prefix' => 'api'], function () {
-        Route::get('seed', 'ProjectController@seeder');
-        // AJAX Routes for collaborators JS component
-        Route::get('collaborators', 'ProjectController@getCollaboratorsList');
-        Route::get('collaborators/search', 'SearchController@getCollaboratorsList');
-        Route::get('roles', 'ProjectController@getRolesList');
-        Route::get('projects/{id}/edit/collaborators', 'ProjectController@getCurrentCollaborators');
-        Route::get('departments', 'SearchController@departmentSearch');
-        Route::get('personal-interests', 'SearchController@getPersonalInterests');
-
-        //Api calls for searching interests.
-        Route::get('search/research-interests', 'SearchController@searchByResearchInterestApi');
-
-        // Api calls for fetching project interests, might be deprecated
-        // Route::post('inters/create', 'ProjectController@newExpertise');
-        Route::get('interests/catagories', 'ProjectController@getCatagory');
-        Route::get('interests/subcatagory/{id}', 'ProjectController@getSub');
-        Route::get('interests/tags/{id}', 'ProjectController@getTags');
-        Route::get('interests/categories/{id}', 'ProjectController@getByCategoryType');
-
-        // SCRIPT TO BE RUN AFTER CAYUSE IMPORT
-        Route::get('update/slugs', 'ProjectController@slugsMissing');
-
-        // Helix API for profiles
-        Route::get('profile/image/{email}', 'ImageController@getFacultyProfileImage');
-
-        Route::get('projects', 'SearchController@apiProjects'); // with member / email for person
-        Route::get('projects/{id}', 'ProjectController@apiProject'); // slug , id, cayuse id
-        Route::get('{include}/projects', 'SearchController@apiProjects'); // with member / email for person
-        Route::get('update/cayuse-projects', 'ProjectController@updateCayuseProjects');
-        //Todo: Uncomment this after talking to Matt.
-        Route::get('init/project-attributes', 'ProjectController@createAllProjectAttributes');
-    });
-
     Route::group(['prefix' => 'admin'], function () {
         Route::get('dashboard', 'PersonController@adminPanel');
-=======
-    Route::group(['prefix'=>'admin'],function(){
-        Route::get('dashboard','PersonController@adminPanel');
->>>>>>> 57a2b66b2d2f4b1375857d8b08e58f7080964c2e:routes/web.php
         Route::get('dashboard/invitations', 'PersonController@dashboardInvitation')
             ->name('dashboard.invitations');
         Route::get('dashboard/research-interests', 'PersonController@dashboardResearchInterests');
