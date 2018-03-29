@@ -29,5 +29,24 @@ class ProjectServiceProvider extends ServiceProvider
             'Helix\Contracts\UpdateProjectGeneralContract',
             'Helix\Services\UpdateProjectGeneralService'
         );
+
+        $this->Helix->bind(
+            'Helix\Contracts\UpdateProjectAttributesContract',
+            'Helix\Services\UpdateProjectAttributesService'
+        );
+
+        $this->Helix->bind(
+            'Helix\Contracts\UpdateProjectPolicyContract',
+            'Helix\Services\UpdateProjectPolicyService'
+        );
+
+        $this->Helix->bind(
+            'Helix\Contracts\UpdateProjectPurposeContract',
+            'Helix\Services\UpdateProjectPurposeService'
+        );
+        $this->Helix->bind(
+            'Helix\Contracts\CreateProjectSeekingContract',
+            'Helix\Services\CreateProjectSeekingService'
+        );
     }
 }
