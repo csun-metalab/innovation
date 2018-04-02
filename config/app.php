@@ -183,6 +183,8 @@ return [
         Clockwork\Support\Laravel\ClockworkServiceProvider::class,
         TomLingham\Searchy\SearchyServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
+        Algolia\Settings\ServiceProvider::class,
+        Algolia\ScoutMacros\ServiceProvider::class,
 
         /*
          * Laravel Framework Service Providers...
@@ -225,6 +227,7 @@ return [
 
         // META+Lab LDAP authentication service provider
         METALab\Auth\Provider\AuthServiceProvider::class,
+
 
         // META+Lab load balancer service provider
         CSUNMetaLab\ProxyPass\Providers\ProxyPassServiceProvider::class,

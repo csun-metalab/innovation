@@ -36,7 +36,6 @@
                 @yield('results-titles-and-abstracts')
                 @yield('results-projects-research-interests')
                 @yield('results-members-research-interests')
-                @yield('results-faculty-members')
                 @yield('pagination-links')
                 @yield('no-results-message')
             </section>
