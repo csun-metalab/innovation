@@ -1,0 +1,62 @@
+{
+    "minWordSizefor1Typo": 4,
+    "minWordSizefor2Typos": 8,
+    "hitsPerPage": 20,
+    "maxValuesPerFacet": 100,
+    "version": 2,
+    "attributesToIndex": [
+        "abstract",
+        "project_title",
+        "members",
+        "pi",
+        "interests.title"
+    ],
+    "numericAttributesToIndex": null,
+    "attributesToRetrieve": [],
+    "advancedSyntax": true,
+    "unretrievableAttributes": null,
+    "optionalWords": null,
+    "attributesForFaceting": [
+        "department_id",
+        "sponsor_code",
+        "is_publishable",
+        "visibility.policy",
+        "attribute.is_featured",
+        "attribute.seeking_students",
+        "attribute.seeking_collaborators"
+    ],
+    "attributesToSnippet": [
+        "abstract:100"
+    ],
+    "attributesToHighlight": [
+        "abstract",
+        "project_title",
+        "pi.display_name"
+    ],
+    "paginationLimitedTo": 1000,
+    "attributeForDistinct": null,
+    "exactOnSingleWordQuery": "attribute",
+    "ranking": [
+        "typo",
+        "geo",
+        "words",
+        "filters",
+        "proximity",
+        "attribute",
+        "exact",
+        "custom"
+    ],
+    "customRanking": [
+        "desc(updated_at)"
+    ],
+    "separatorsToIndex": "",
+    "removeWordsIfNoResults": "none",
+    "queryType": "prefixLast",
+    "highlightPreTag": "<b><mark>",
+    "highlightPostTag": "<\/b><\/mark>",
+    "snippetEllipsisText": "",
+    "alternativesAsExact": [
+        "ignorePlurals",
+        "singleWordSynonym"
+    ]
+}

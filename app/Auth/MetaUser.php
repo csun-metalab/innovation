@@ -2,7 +2,6 @@
 
 use Schema;
 use METALab\Auth\Interfaces\MetaAuthenticatableContract;
-
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -42,6 +41,7 @@ class MetaUser extends Model implements AuthenticatableContract, MetaAuthenticat
 	 * @param string $primaryKey The optional primary key name to use
 	 */
 	public function __construct($table="users", $primaryKey="user_id") {
+		parent::__construct();
 		$this->table = $table;
 		$this->primaryKey = $primaryKey;
 	}

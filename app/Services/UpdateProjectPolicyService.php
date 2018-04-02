@@ -39,6 +39,6 @@ class UpdateProjectPolicyService implements UpdateProjectPolicyContract
                 new ProjectPolicy(['policy_type' => 'approval',   'policy' => $projectPolicies['approval']]),
                 new ProjectPolicy(['policy_type' => 'visibility', 'policy' => $projectPolicies['visibility']])
             ]);
-        }R
+        }
     }
 }
