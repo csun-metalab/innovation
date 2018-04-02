@@ -8,6 +8,8 @@ use Auth;
 use DB;
 use Helix\Contracts\CreateSeekingContract;
 use Helix\Contracts\CreateTagContract;
+use Helix\Contracts\GetUniversityEventsContract;
+use Helix\Contracts\UpdateCollaboratorsContract;
 use Helix\Contracts\UpdateProjectAttributesContract;
 use Helix\Contracts\UpdateProjectGeneralContract;
 use Helix\Contracts\UpdateProjectPolicyContract;
@@ -40,6 +42,8 @@ class ProjectController extends Controller
     protected $projectPurposeUpdater = null;
     protected $createSeekingContract = null;
     protected $createTagContract = null;
+    protected $getUniversityEventsContract = null;
+    protected $collaboratorsUpdater = null;
 
     /**
      * ProjectController constructor.
@@ -51,6 +55,8 @@ class ProjectController extends Controller
      * @param UpdateProjectPurposeContract    $updateProjectPurposeContract
      * @param CreateSeekingContract           $createSeekingContract
      * @param CreateTagContract               $createTagContract
+     * @param GetUniversityEventsContract     $getUniversityEventsContract
+     * @param UpdateCollaboratorsContract     $updateCollaboratorsContract
      */
     public function __construct(
         VerifyProjectIdContract $verifyProjectIdContract,
@@ -60,6 +66,8 @@ class ProjectController extends Controller
         UpdateProjectPurposeContract $updateProjectPurposeContract,
         CreateSeekingContract $createSeekingContract,
         CreateTagContract $createTagContract
+        GetUniversityEventsContract $getUniversityEventsContract
+        UpdateCollaboratorsContract $updateCollaboratorsContract
     ) {
         $this->middleware('auth', ['except' => [
             'index',
@@ -87,6 +95,7 @@ class ProjectController extends Controller
         $this->projectAttributesUpdater = $updateProjectAttributesContract;
         $this->projectPolicyUpdater = $updateProjectPolicyContract;
         $this->projectPurposeUpdater = $updateProjectPurposeContract;
+        $this->collaboratorsUpdater = $updateCollaboratorsContract;
     }
 
     /**
@@ -503,6 +512,7 @@ class ProjectController extends Controller
         $this->projectAttributesUpdater->updateProjectAttributes($projectId, $projectData);
         $this->projectPolicyUpdater->updateProjectPolicy($projectId, $projectData);
         $this->projectPurposeUpdater->updateProjectPurpose($projectId, $projectData);
+        $this->collaboratorsUpdater->updateCollaborators($projectId, $projectData);
 
         return view('pages.project.four', \compact('project'));
     }
