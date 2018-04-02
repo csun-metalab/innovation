@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Helix\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 use METALab\Auth\MetaUser;
 
 class Person extends MetaUser
 {
+    use Searchable;
+
     protected $table = 'users';
     protected $primaryKey = 'user_id';
     /**
@@ -36,6 +39,19 @@ class Person extends MetaUser
 
     // This is used to keep track of related search terms
     public $relatedSearchTerms;
+
+    public function toSearchableArray()
+    {
+        $this->department_academicDepartments;
+        $array = $this->toArray();
+        if ($array['department_academic_departments']) {
+            dd($array);
+
+            return $array;
+        }
+
+        return [];
+    }
 
     /**
      * Constructs a new Person object. This constructor has to be added because
@@ -131,6 +147,11 @@ class Person extends MetaUser
             ->where('parent_entities_id', 'LIKE', 'academic_departments:%');
     }
 
+    public function department_academicDepartments()
+    {
+        return $this->hasManyThrough('Helix\Models\NemoMembership', '\Helix\Models\AcademicDepartment', 'parent_entities_id', 'individuals_id', 'entities_id');
+    }
+
     /**
      * This will grab from academicDepartments eager-load the primary department.
      * Note: this is similar to how faculty retrieves the primary department.
@@ -213,7 +234,7 @@ class Person extends MetaUser
      * is used primarily by custom authentication service providers.
      *
      * @param string $identifier The identifier to use for retrieval
-     * @param string $token The token to use for retrieval
+     * @param string $token      The token to use for retrieval
      *
      * @return User
      */
@@ -260,7 +281,7 @@ class Person extends MetaUser
      * Returns whether the person has the specified role name within the
      * specified department entities ID.
      *
-     * @param string $role The system name of the role
+     * @param string $role   The system name of the role
      * @param string $deptId The department entities ID to check
      *
      * @return boolean
@@ -328,7 +349,7 @@ class Person extends MetaUser
      * Query Scope to find email address from URI.
      *
      * @param string $email string from email before \@ symbol (ie: john.smith.123)
-     * @param mixed $query
+     * @param mixed  $query
      *
      * @return Builder
      */

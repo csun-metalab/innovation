@@ -2,16 +2,16 @@
   <div class="panel bg--white">
     <div class="panel__content mh--400">
       <p><strong><a title="{{ ("$project->project_title") }}" class="color--grey"
-                    href="{{ url("project/$project->slug") }}">{{ $project->project_title }}</a></strong></p>
+                    href="{{ url("project/$project->slug") }}">{!! $project->project_title !!}</a></strong></p>
       {{-- This is an attempt to fill up the card as much as possible. --}}
-      <p>{{ str_limit($project->abstract, 500 - strlen($project->project_title), '...') }}</p>
+      <p>{!! str_limit($project->abstract, 500 - strlen($project->project_title), '...') !!}</p>
       <div>
         @if(isset($project->relatedSearchTerms))
           {{-- Added this just in case there's a long word that exceeds the card's borders --}}
           <p style="overflow-wrap: break-word">
             Project {{ str_plural('Theme', $project->relatedSearchTerms->count()) }}:
             {{-- Display related research interests if there is a query --}}
-            {{ str_limit($project->relatedSearchTerms->sortByDesc('count')->implode('title', ', ')) }}
+            {!! str_limit($project->relatedSearchTerms->sortByDesc('count')->implode('title', ', ')) !!}
           </p>
         @endif
       </div>
@@ -31,17 +31,17 @@
               hidden
             />&nbsp;&nbsp;
             <i class="fa fa-spinner fa-spin fa-3x" style="color:#d00d2d"></i>
-            {{$project->pi->display_name}}
+            {!!$project->pi->display_name!!}
           </a>
           <div class="dropdown-content">
             <li>
               <a title="View projects by {{ $project->pi->display_name }}"
                  href="{{ route('search.projects', ['member' => $project->pi->user_id]) }}"
-                 class="color--grey nodeco">View <b>{{ $project->pi->display_name }}</b>'s Projects</a>
+                 class="color--grey nodeco">View <b>{!! $project->pi->display_name !!}</b>'s Projects</a>
             </li>
             <li>
               <a title="View Profile" href="{{$project->pi->profile_url()}}" class="color--grey nodeco">View
-                <b>{{ $project->pi->display_name }}</b>'s Profile</a>
+                <b>{!! $project->pi->display_name !!}</b>'s Profile</a>
             </li>
           </div>
         </div>

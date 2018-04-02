@@ -183,6 +183,8 @@ return [
         Clockwork\Support\Laravel\ClockworkServiceProvider::class,
         TomLingham\Searchy\SearchyServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
+        Algolia\Settings\ServiceProvider::class,
+        Algolia\ScoutMacros\ServiceProvider::class,
 
         /*
          * Laravel Framework Service Providers...

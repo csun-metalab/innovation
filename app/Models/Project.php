@@ -5,10 +5,22 @@ declare(strict_types=1);
 namespace Helix\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 
 //Project related details
 class Project extends Model
 {
+    use Searchable;
+
+    public static function boot()
+    {
+        static::updated(function ($model) {
+            $model->user->touch();
+        });
+
+        parent::boot();
+    }
+
     protected $table = 'exploration.projects';
     protected $primaryKey = 'project_id';
     protected $fillable = [
@@ -24,6 +36,20 @@ class Project extends Model
 
     // This is used to keep track of related search terms
     public $relatedSearchTerms;
+
+    public function toSearchableArray()
+    {
+        $this->interests;
+        $this->pi;
+        $this->department;
+        $this->sponsor;
+        $this->members;
+        $this->visibility;
+        $this->attribute;
+        $array = $this->toArray();
+
+        return $array;
+    }
 
     public function image()
     {
@@ -100,7 +126,7 @@ class Project extends Model
 
     public function department()
     {
-        return $this->belongsTo('Helix\Models\Departments');
+        return $this->belongsTo('Helix\Models\Departments', 'entities_id', 'entities_id');
     }
 
     //One project has one set of helix-related attributes.
