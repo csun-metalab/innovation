@@ -225,7 +225,6 @@ return [
         Helix\Providers\ViewComposerServiceProvider::class,
         Helix\Providers\ProjectServiceProvider::class,
 
-
         // META+Lab LDAP authentication service provider
         METALab\Auth\Provider\AuthServiceProvider::class,
 

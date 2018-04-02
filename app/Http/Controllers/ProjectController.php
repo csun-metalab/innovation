@@ -7,6 +7,8 @@ namespace Helix\Http\Controllers;
 use Auth;
 use DB;
 use Helix\Contracts\CreateSeekingContract;
+use Helix\Contracts\GetUniversityEventsContract;
+use Helix\Contracts\UpdateCollaboratorsContract;
 use Helix\Contracts\UpdateProjectAttributesContract;
 use Helix\Contracts\UpdateProjectGeneralContract;
 use Helix\Contracts\UpdateProjectPolicyContract;
@@ -38,6 +40,8 @@ class ProjectController extends Controller
     protected $projectPolicyUpdater = null;
     protected $projectPurposeUpdater = null;
     protected $createSeekingContract = null;
+    protected $getUniversityEventsContract = null;
+    protected $collaboratorsUpdater = null;
 
     /**
      * ProjectController constructor.
@@ -48,14 +52,18 @@ class ProjectController extends Controller
      * @param UpdateProjectPolicyContract     $updateProjectPolicyContract
      * @param UpdateProjectPurposeContract    $updateProjectPurposeContract
      * @param CreateSeekingContract           $createSeekingContract
+     * @param GetUniversityEventsContract     $getUniversityEventsContract
+     * @param UpdateCollaboratorsContract     $updateCollaboratorsContract
      */
     public function __construct(
-        // VerifyProjectIdContract $verifyProjectIdContract,
-        // UpdateProjectGeneralContract $updateProjectGeneralContract,
-        // UpdateProjectAttributesContract $updateProjectAttributesContract,
-        // UpdateProjectPolicyContract $updateProjectPolicyContract,
-        // UpdateProjectPurposeContract $updateProjectPurposeContract,
-        // CreateSeekingContract $createSeekingContract
+        VerifyProjectIdContract $verifyProjectIdContract,
+        UpdateProjectGeneralContract $updateProjectGeneralContract,
+        UpdateProjectAttributesContract $updateProjectAttributesContract,
+        UpdateProjectPolicyContract $updateProjectPolicyContract,
+        UpdateProjectPurposeContract $updateProjectPurposeContract,
+        CreateSeekingContract $createSeekingContract,
+        GetUniversityEventsContract $getUniversityEventsContract
+        UpdateCollaboratorsContract $updateCollaboratorsContract
     ) {
         $this->middleware('auth', ['except' => [
             'index',
@@ -78,11 +86,12 @@ class ProjectController extends Controller
             'destroy',
         ]]);
 
-        // $this->projectIdVerifier = $verifyProjectIdContract;
-        // $this->projectGeneralUpdater = $updateProjectGeneralContract;
-        // $this->projectAttributesUpdater = $updateProjectAttributesContract;
-        // $this->projectPolicyUpdater = $updateProjectPolicyContract;
-        // $this->projectPurposeUpdater = $updateProjectPurposeContract;
+        $this->projectIdVerifier = $verifyProjectIdContract;
+        $this->projectGeneralUpdater = $updateProjectGeneralContract;
+        $this->projectAttributesUpdater = $updateProjectAttributesContract;
+        $this->projectPolicyUpdater = $updateProjectPolicyContract;
+        $this->projectPurposeUpdater = $updateProjectPurposeContract;
+        $this->collaboratorsUpdater = $updateCollaboratorsContract;
     }
 
     /**
@@ -499,6 +508,7 @@ class ProjectController extends Controller
         $this->projectAttributesUpdater->updateProjectAttributes($projectId, $projectData);
         $this->projectPolicyUpdater->updateProjectPolicy($projectId, $projectData);
         $this->projectPurposeUpdater->updateProjectPurpose($projectId, $projectData);
+        $this->collaboratorsUpdater->updateCollaborators($projectId, $projectData);
 
         return view('pages.project.four', \compact('project'));
     }
