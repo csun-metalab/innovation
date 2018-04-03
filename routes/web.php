@@ -12,7 +12,6 @@ declare(strict_types=1);
 | contains the "web" middleware group. Now create something great!
 |
 */
-
 Route::group(['middleware' => ['web']], function () {
     // Helix Welcome
     Route::get('/', 'WelcomeController@index')
@@ -23,18 +22,23 @@ Route::group(['middleware' => ['web']], function () {
         ->name('about.browsers');
     // Route::get('about/faq', 'WelcomeController@aboutIndex');
     // Route::get('about/api', 'WelcomeController@aboutIndex');
-
     // FEEDBACK
     Route::get('feedback', 'FeedbackController@getIndex');
     Route::post('feedback', 'FeedbackController@postIndex');
-
     //Search
 
+    // Route::get('search/research-interests','SearchController@searchByResearchInterest')
+    //     ->name('search.research-interests');
+    // Route::get('search/research-interests/faculty', 'SearchController@seeMorePeopleByResearchInterests')
+    //     ->name("see-more-faculty");
+    // Route::get('search/research-interests/projects', 'SearchController@seeMoreProjectsByResearchInterests')
+    //     ->name('see-more-projects');
     Route::get('search/everything', 'SearchController@allSearchResults')
         ->name('all-search-results');
     Route::get('search/members', 'SearchController@searchForMember')
         ->name('search.member-search');
-
+    // Route::get('browse/research-interests','SearchController@browseAllResearchInterests')
+    //     ->name('browse.research-interests');
     // Authentication
     Route::get('login', 'AuthController@getLogin')
         ->name('login');
@@ -42,11 +46,12 @@ Route::group(['middleware' => ['web']], function () {
         ->name('login.post');
     Route::get('logout', 'AuthController@getLogout')
         ->name('logout');
-
     // Projects
     Route::group(['prefix' => 'project'], function () {
         Route::get('/', 'SearchController@index')
             ->name('search.projects');
+        Route::get('/smart', 'SearchController@indexSmart')
+            ->name('smart-search-results');
         Route::get('step-1/{projectId?}', 'ProjectController@create')
             ->name('project.edit.step-1');
         Route::post('step-1/{projectId?}', 'ProjectController@step1')
@@ -65,7 +70,6 @@ Route::group(['middleware' => ['web']], function () {
             ->name('project.delete');
         Route::get('{id}/edit', 'ProjectController@editRedirect')
             ->name('project.edit');
-
         // Image upload routes
         Route::get('{id}/upload-image', 'ImageController@create')
             ->name('project.photo-upload');
@@ -77,10 +81,8 @@ Route::group(['middleware' => ['web']], function () {
             ->name('project.photo-post-crop');
         Route::get('{id}/delete-image', 'ImageController@destroy')
             ->name('project.photo-delete');
-
         Route::put('{projectId}/toggle-featured', 'ProjectController@toggleFeatured')
             ->name('project.toggle-featured');
-
         // Invitations
         Route::get('{projectId}/invitation/{inviteId}/accept', 'InvitationController@acceptInvitation')
             ->name('dashboard.invitations.accept');
@@ -92,7 +94,6 @@ Route::group(['middleware' => ['web']], function () {
             ->name('project.request-to-join');
         // IMPORTANT: Client has requested not to allow auto joining projects. Leave route alone for now.
         // Route::get('{projectId}/join', 'InvitationController@joinProject');
-
         // This is the route for when a student requests to join a project
         Route::get('{projectId}/student-request', 'InvitationController@studentRequest')
             ->name('student-request-form');
@@ -100,7 +101,6 @@ Route::group(['middleware' => ['web']], function () {
         Route::post('{projectId}/student-request/sent', 'InvitationController@processStudentRequest')
             ->name('student-request-sent');
     });
-
     // route for youtube validation
     Route::post('/validateYoutube', 'ProjectController@validateYoutube')
         ->name('validateYoutube');
@@ -116,27 +116,22 @@ Route::group(['middleware' => ['web']], function () {
         return view('pages.project.test');
     });
 });
-
 /*
 |---------------------------------------------------------------
 | TEST ROUTES
 | Please write function within if statement
 |---------------------------------------------------------------
 */
-
 if (app()->environment('local')) {
     // Miscellaneous routes
-
     // Todo: Delete this after uncommenting the equivalent route above.
     Route::get('init/project-attributes', 'ProjectController@createAllProjectAttributes');
-
     Route::get('dashboard', function () {
         return view('pages.dashboard.landing');
     });
     Route::get('see-more-projects', function () {
         return view('pages.search.seemoreprojects');
     });
-
     Route::get('test/HELIX-756/fake-cayuse', function () {
         //Get all non-cayuse test projects for this ticket.
         $projects = \Helix\Models\Project::with('pi')
@@ -157,41 +152,31 @@ if (app()->environment('local')) {
 
         return $projects;
     });
-
     // Expertise Search
-
     Route::get('profiles', function () {
         return view('pages.landing.profiles');
     });
-
     Route::get('profile', function () {
         return view('pages.profiles.profile');
     });
-
     Route::get('profile_template', function () {
         return view('profile_template');
     });
-
     Route::get('faculty_profile', function () {
         return view('pages.profiles.faculty_profile');
     });
-
     Route::get('home', function () {
         return view('pages.profiles.home');
     });
-
     Route::get('Profiles', function () {
         return view('Profiles');
     });
-
     Route::get('classes', function () {
         return view('pages.profiles.classes');
     });
-
     Route::get('projects', function () {
         return view('pages.profiles.projects');
     });
-
     Route::get('publications', function () {
         return view('pages.profiles.publications');
     });
@@ -201,7 +186,6 @@ if (app()->environment('local')) {
     Route::get('edit', function () {
         return view('pages.profiles.edit');
     });
-
     Route::get('session', function () {
         session()->forget('new-project');
         session()->forget('can-edit-project-projects:91');
@@ -209,7 +193,6 @@ if (app()->environment('local')) {
 
         return redirect('project');
     });
-
     /**
      * This is the test route for member searching. This is going to be get replaced
      * when the page is created.

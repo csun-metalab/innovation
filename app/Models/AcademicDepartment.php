@@ -3,9 +3,11 @@
 namespace Helix\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 
 class AcademicDepartment extends Model
 {
+    use Searchable;
     protected $table = 'nemo.academicDepartments';
     protected $primaryKey = 'entities_id';
     public $incrementing = false;
@@ -19,7 +21,12 @@ class AcademicDepartment extends Model
      * created_at,
      * updated_at
      */
-
+    public function toSearchableArray()
+    {
+        $this->department;
+        $array = $this->toArray();
+        return $array;
+    }
     public function people(){
         return $this->belongsToMany(
             $relatedto = 'Helix\Models\Person',

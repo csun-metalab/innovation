@@ -555,6 +555,7 @@ hr {
 
 .mh--400 {
   min-height: 400px;
+  max-height: 400px;
 }
 
 .mh--58 {
