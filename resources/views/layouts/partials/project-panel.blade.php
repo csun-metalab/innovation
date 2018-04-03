@@ -5,7 +5,12 @@
                         href="{{ url("project/$project->slug") }}">{!! $project->project_title !!}</a></strong></p>
           {{-- This is an attempt to fill up the card as much as possible. --}}
           <p>{!! str_limit($project->abstract, 450 - strlen($project->project_title), '...') !!}</p>
-          <p><strong>Seeking:</strong> (Students/Professors)</p> <!--Added Seeking section ~Alec -->
+          @if($project->attribute->seeking_students)
+          <p><strong>Seeking: </strong>Students</p>
+          @endif
+          @if($project->attribute->seeking_collaborators)
+          <p><strong>Seeking: </strong>Professors</p>
+          @endif
           <div>
             @if(isset($project->relatedSearchTerms))
               {{-- Added this just in case there's a long word that exceeds the card's borders --}}
