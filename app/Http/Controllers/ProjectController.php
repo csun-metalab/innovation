@@ -62,7 +62,7 @@ class ProjectController extends Controller
         UpdateProjectPolicyContract $updateProjectPolicyContract,
         UpdateProjectPurposeContract $updateProjectPurposeContract,
         CreateSeekingContract $createSeekingContract,
-        GetUniversityEventsContract $getUniversityEventsContract
+        GetUniversityEventsContract $getUniversityEventsContract,
         UpdateCollaboratorsContract $updateCollaboratorsContract
     ) {
         $this->middleware('auth', ['except' => [
@@ -92,6 +92,7 @@ class ProjectController extends Controller
         $this->projectPolicyUpdater = $updateProjectPolicyContract;
         $this->projectPurposeUpdater = $updateProjectPurposeContract;
         $this->collaboratorsUpdater = $updateCollaboratorsContract;
+        $this->getUniversityEventsContract = $getUniversityEventsContract;
     }
 
     /**

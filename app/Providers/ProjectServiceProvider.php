@@ -52,9 +52,9 @@ class ProjectServiceProvider extends ServiceProvider
             'Helix\Contracts\UpdateCollaboratorsContract',
             'Helix\Services\UpdateCollaboratorsService'
         );
-        $this->Helix->bind(
+        $this->app->bind(
             'Helix\Contracts\GetUniversityEventsContract',
-            'Helix\Services\GetUniversityEventsContract'
+            'Helix\Services\GetUniversityEventsService'
         );
     }
 }
