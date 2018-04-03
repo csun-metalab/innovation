@@ -363,19 +363,6 @@
                 <div class="article">
                     <p class="intro">{!! nl2br(e($project->abstract)) !!}</p>
                 </div>
-                @if(count($project->interests))
-                    <div>
-                        <p><strong>Project Themes:</strong></p>
-                        @foreach($project->interests as $interest)
-                            <a href="{{ route('search.research-interests', ['query' => $interest->title]) }}"
-                               title="{{ $interest->title }}"
-                               class="btn btn-primary btn-sm">
-                              {{$interest->title}}
-                            </a>
-                        @endforeach
-                    </div>
-                    <br><br><br><br><br>
-                @endif
                 <br><br><br><br><br>
             </div>
         </div>

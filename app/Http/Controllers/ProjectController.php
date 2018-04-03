@@ -255,6 +255,7 @@ class ProjectController extends Controller
                 ]);
             }
         }
+
         // Title is always editable if you are an admin, otherwise it's editable if the project is not from cayuse.
         if (!session('new-project.project_general.cayuse_project') || auth()->user()->hasRole('admin')) {
             session()->put([
@@ -262,7 +263,6 @@ class ProjectController extends Controller
                 'new-project.project_general.cayuse_project' => false,
             ]);
         }
-
         session()->put([
             'new-project.project_general.project_type' => request('project_type'),
             'new-project.project_general.project_purpose' => request('project_purpose'),
@@ -313,29 +313,9 @@ class ProjectController extends Controller
             return back();
         }
 
-        if (!session('new-project.interests')) {
-            if ($projectId) {
-                $projectInterests = Project::findOrFail($projectId)->interests->toArray();
-                if (!empty($projectInterests)) {
-                    session()->put('new-project.interests', stringifyTags($projectInterests));
-                }
-            }
-        }
-
         // TODO: refactor everything to the back end
 
-        if (request()->wantsJson()) {
-            if (\array_key_exists('interests', session('new-project'))) {
-                return jsonEncodeTags(session('new-project')['interests']['tags']);
-            }
-        }
-
-        $categories = Research::whereNull('parent_attribute_id')->pluck('title', 'attribute_id as id');
-        // Subcategories and tags are hard coded for initialization of Select2 options
-        $subcategories = Research::where('parent_attribute_id', 'research:1')->pluck('title', 'attribute_id as id');
-        $tags = Research::where('parent_attribute_id', 'research:11')->pluck('title', 'attribute_id as id');
-
-        return view('pages.project.two', \compact('categories', 'subcategories', 'tags'));
+        return view('pages.project.two', \compact('categories', 'subcategories'));
     }
 
     /**
@@ -349,18 +329,6 @@ class ProjectController extends Controller
      */
     public function step2($projectId = null)
     {
-        if (\array_key_exists('interests', session('new-project'))) {
-            session()->forget('new-project.interests');
-        }
-
-        if (request('tags')) {
-            session()->put('new-project.interests', request()->only('tags'));
-        }
-
-        if (request('action') == 'back') {
-            return isset($projectId) ? redirect('project/step-1/' . $projectId) : redirect('project/step-1');
-        }
-
         return redirect('project/step-3/' . $projectId ?: '');
     }
 

@@ -97,21 +97,11 @@ class Person extends MetaUser
     /**
      * Returns the academic interest model for a user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return Builder
      */
-    public function academic_interests()
+    public function expertise()
     {
-        return $this->hasMany('Helix\Models\Academic', 'entities_id', 'user_id');
-    }
-
-    /**
-     * Returns the personal interest modals for a user.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function personal_interests()
-    {
-        return $this->belongsToMany('Helix\Models\Personal', 'fresco.expertise_entity', 'entities_id', 'expertise_id');
+        return $this->belongsToMany('Helix\Models\Expertise', 'person_expertise', 'individuals_id', 'expertise_id');
     }
 
     /**
@@ -224,7 +214,7 @@ class Person extends MetaUser
      * is used primarily by custom authentication service providers.
      *
      * @param string $identifier The identifier to use for retrieval
-     * @param string $token The token to use for retrieval
+     * @param string $token      The token to use for retrieval
      *
      * @return User
      */
@@ -271,7 +261,7 @@ class Person extends MetaUser
      * Returns whether the person has the specified role name within the
      * specified department entities ID.
      *
-     * @param string $role The system name of the role
+     * @param string $role   The system name of the role
      * @param string $deptId The department entities ID to check
      *
      * @return boolean
@@ -339,7 +329,7 @@ class Person extends MetaUser
      * Query Scope to find email address from URI.
      *
      * @param string $email string from email before \@ symbol (ie: john.smith.123)
-     * @param mixed $query
+     * @param mixed  $query
      *
      * @return Builder
      */
