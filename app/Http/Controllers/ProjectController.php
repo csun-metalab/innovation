@@ -65,6 +65,7 @@ class ProjectController extends Controller
         UpdateProjectPolicyContract $updateProjectPolicyContract,
         UpdateProjectPurposeContract $updateProjectPurposeContract,
         CreateSeekingContract $createSeekingContract,
+
         CreateTagContract $createTagContract
         GetUniversityEventsContract $getUniversityEventsContract
         UpdateCollaboratorsContract $updateCollaboratorsContract
@@ -96,6 +97,7 @@ class ProjectController extends Controller
         $this->projectPolicyUpdater = $updateProjectPolicyContract;
         $this->projectPurposeUpdater = $updateProjectPurposeContract;
         $this->collaboratorsUpdater = $updateCollaboratorsContract;
+        $this->getUniversityEventsContract = $getUniversityEventsContract;
     }
 
     /**
