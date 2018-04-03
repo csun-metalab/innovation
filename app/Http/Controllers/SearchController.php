@@ -11,6 +11,7 @@ use Helix\Models\Person;
 use Helix\Models\Project;
 use Helix\Models\Purpose;
 use Helix\Models\Research;
+
 use Laravel\Scout\Searchable;
 use Searchy;
 
@@ -78,6 +79,7 @@ class SearchController extends Controller
         $requestedFilters = collect($requestedFilters);
 
         $filters = $this->enforeceProjectRules();
+
 
         if ($requestedFilters->has('member')) {
             $filters[] = 'members_id:"' . $requestedFilters->get('member') . '"';

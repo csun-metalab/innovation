@@ -5,7 +5,6 @@ namespace Helix\Listeners\Project;
 use Helix\Events\Project\ProjectCreatedOrUpdated;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Helix\Models\Research;
 
 class UpdateInterests
 {
