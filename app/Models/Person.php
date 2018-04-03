@@ -81,10 +81,10 @@ class Person extends MetaUser
     /**
      * Relates this person to all their Interests.
      */
-    public function all_interests()
-    {
-        return $this->belongsToMany('Helix\Models\Research', 'fresco.expertise_entity', 'entities_id', 'expertise_id');
-    }
+    // public function all_interests()
+    // {
+    //     return $this->belongsToMany('Helix\Models\Research', 'fresco.expertise_entity', 'entities_id', 'expertise_id');
+    // }
 
     /**
      * Relates this person to their research interests.
@@ -94,15 +94,6 @@ class Person extends MetaUser
         return $this->all_interests()->where('expertise_id', 'LIKE', 'research:%');
     }
 
-    /**
-     * Returns the academic interest model for a user.
-     *
-     * @return Builder
-     */
-    public function expertise()
-    {
-        return $this->belongsToMany('Helix\Models\Expertise', 'person_expertise', 'individuals_id', 'expertise_id');
-    }
 
     /**
      * Relates this Person to all its associated Department models. This also

@@ -117,10 +117,10 @@ class Project extends Model
         return $this->hasMany('Helix\Models\Award', 'project_id', 'project_id');
     }
 
-    public function interests()
-    {
-        return $this->belongsToMany('Helix\Models\Research', 'fresco.expertise_entity', 'entities_id', 'expertise_id');
-    }
+    // public function interests()
+    // {
+    //     return $this->belongsToMany('Helix\Models\Research', 'fresco.expertise_entity', 'entities_id', 'expertise_id');
+    // }
 
     public function department()
     {
@@ -218,13 +218,13 @@ class Project extends Model
         return \array_search($project_type, $projectTypes);
     }
 
-    public function scopeWithInterestsLike($query, $searchStr)
-    {
-        return $query->with('interests')
-            ->whereHas('interests', function ($q) use ($searchStr) {
-                $q->where('title', $searchStr);
-            });
-    }
+    // public function scopeWithInterestsLike($query, $searchStr)
+    // {
+    //     return $query->with('interests')
+    //         ->whereHas('interests', function ($q) use ($searchStr) {
+    //             $q->where('title', $searchStr);
+    //         });
+    // }
 
     /**
      * Queries Projects that have any of the given Research interests by ID.

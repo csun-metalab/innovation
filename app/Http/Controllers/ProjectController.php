@@ -23,7 +23,6 @@ use Helix\Models\Person;
 use Helix\Models\Project;
 use Helix\Models\ProjectPolicy;
 use Helix\Models\Purpose;
-use Helix\Models\Research;
 use Helix\Models\Role;
 use Helix\Models\Seeking;
 use Illuminate\Http\Request;
@@ -65,9 +64,8 @@ class ProjectController extends Controller
         UpdateProjectPolicyContract $updateProjectPolicyContract,
         UpdateProjectPurposeContract $updateProjectPurposeContract,
         CreateSeekingContract $createSeekingContract,
-
-        CreateTagContract $createTagContract
-        GetUniversityEventsContract $getUniversityEventsContract
+        CreateTagContract $createTagContract,
+        GetUniversityEventsContract $getUniversityEventsContract,
         UpdateCollaboratorsContract $updateCollaboratorsContract
     ) {
         $this->middleware('auth', ['except' => [
@@ -98,6 +96,7 @@ class ProjectController extends Controller
         $this->projectPurposeUpdater = $updateProjectPurposeContract;
         $this->collaboratorsUpdater = $updateCollaboratorsContract;
         $this->getUniversityEventsContract = $getUniversityEventsContract;
+        $this->createTagContract = $createTagContract;
     }
 
     /**
@@ -115,12 +114,12 @@ class ProjectController extends Controller
 
             return redirect("project/$project->slug");
         } elseif (str_contains($id, 'projects:')) {
-            $project = Project::with('pi', 'members', 'award', 'interests', 'link', 'image', 'visibility')->findOrFail($id);
+            $project = Project::with('pi', 'members', 'award', 'link', 'image', 'visibility')->findOrFail($id);
 
             return redirect("project/$project->slug");
         }
 
-        $project = Project::with('pi', 'members', 'award', 'interests', 'link', 'image', 'visibility')->where('slug', $id)->firstOrFail();
+        $project = Project::with('pi', 'members', 'award', 'link', 'image', 'visibility')->where('slug', $id)->firstOrFail();
 
         // This is to check if there is a row in the attributes table corresponding to this project
         $attributes = Attribute::with('purpose')->findOrNew($project->project_id);
@@ -674,10 +673,10 @@ class ProjectController extends Controller
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getCatagory()
-    {
-        return Research::whereNull('parent_attribute_id')->get();
-    }
+    // public function getCatagory()
+    // {
+    //     return Research::whereNull('parent_attribute_id')->get();
+    // }
 
     /**
      * ???
@@ -686,11 +685,11 @@ class ProjectController extends Controller
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getSub($id)
-    {
-        return Research::where('parent_attribute_id', $id)->select('title', 'attribute_id as id')->get();
-        return Research::where('parent_attribute_id', $id)->select('attribute_id as id', 'title')->get();
-    }
+    // public function getSub($id)
+    // {
+    //     return Research::where('parent_attribute_id', $id)->select('title', 'attribute_id as id')->get();
+    //     return Research::where('parent_attribute_id', $id)->select('attribute_id as id', 'title')->get();
+    // }
 
     /**
      * ???
@@ -699,21 +698,21 @@ class ProjectController extends Controller
      *
      * @return array
      */
-    public function getTags($id)
-    {
-        $subcatagories = Research::where('parent_attribute_id', $id)->with('children')->get();
-        $tags = [];
-        foreach ($subcatagories as $child) {
-            \array_push($tags, $child->children);
-        }
+    // public function getTags($id)
+    // {
+    //     $subcatagories = Research::where('parent_attribute_id', $id)->with('children')->get();
+    //     $tags = [];
+    //     foreach ($subcatagories as $child) {
+    //         \array_push($tags, $child->children);
+    //     }
 
-        return $tags = array_collapse($tags);
-        // return $tags = array_pluck($tags,'title','attribute_id');
+    //     return $tags = array_collapse($tags);
+    //     // return $tags = array_pluck($tags,'title','attribute_id');
 
-        $tags = array_collapse($tags);
+    //     $tags = array_collapse($tags);
 
-        return $tags;
-    }
+    //     return $tags;
+    // }
 
     /**
      * ???
@@ -722,40 +721,40 @@ class ProjectController extends Controller
      *
      * @return array|\Illuminate\Http\JsonResponse
      */
-    public function getByCategoryType($id)
-    {
-        switch (request('type')) {
-            // A category was selected, so grab the subcategory and that subcategories tags
-            case 'category':
-                $subcategories = Research::where('parent_attribute_id', $id)
-                                    ->select('title', 'attribute_id as id')
-                                    ->orderBy('title', 'ASC')
-                                    ->get();
+    // public function getByCategoryType($id)
+    // {
+    //     switch (request('type')) {
+    //         // A category was selected, so grab the subcategory and that subcategories tags
+    //         case 'category':
+    //             $subcategories = Research::where('parent_attribute_id', $id)
+    //                                 ->select('title', 'attribute_id as id')
+    //                                 ->orderBy('title', 'ASC')
+    //                                 ->get();
 
-                $tags = Research::where('parent_attribute_id', $subcategories[0]->id)
-                                    ->select('title', 'attribute_id as id')
-                                    ->orderBy('title', 'ASC')
-                                    ->get();
+    //             $tags = Research::where('parent_attribute_id', $subcategories[0]->id)
+    //                                 ->select('title', 'attribute_id as id')
+    //                                 ->orderBy('title', 'ASC')
+    //                                 ->get();
 
-                return [
-                    'subcategories' => $subcategories,
-                    'tags' => $tags,
-                    'type' => request('type'),
-                ];
-            break;
-            // A subcategory was selected so grab its tags
-            case 'subcategory':
-                $tags = Research::where('parent_attribute_id', $id)->select('title', 'attribute_id as id')->get();
+    //             return [
+    //                 'subcategories' => $subcategories,
+    //                 'tags' => $tags,
+    //                 'type' => request('type'),
+    //             ];
+    //         break;
+    //         // A subcategory was selected so grab its tags
+    //         case 'subcategory':
+    //             $tags = Research::where('parent_attribute_id', $id)->select('title', 'attribute_id as id')->get();
 
-                return [
-                    'tags' => $tags,
-                    'type' => request('type'),
-                ];
-            break;
-            default:
-                return response()->json(['status' => 'There was an error with your request.'], 422);
-        }
-    }
+    //             return [
+    //                 'tags' => $tags,
+    //                 'type' => request('type'),
+    //             ];
+    //         break;
+    //         default:
+    //             return response()->json(['status' => 'There was an error with your request.'], 422);
+    //     }
+    // }
 
     /**
      * This will be called via AJAX by an admin to toggle a project's isFeatured flag.

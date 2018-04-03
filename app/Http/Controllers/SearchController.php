@@ -10,7 +10,6 @@ use Helix\Models\NemoMembership;
 use Helix\Models\Person;
 use Helix\Models\Project;
 use Helix\Models\Purpose;
-use Helix\Models\Research;
 
 use Laravel\Scout\Searchable;
 use Searchy;
@@ -79,7 +78,9 @@ class SearchController extends Controller
         $filters = $this->enforeceProjectRules();
       
         if($requestedFilters->has('member')){
-          $filters[] = 'members_id:"'.$requestedFilters->get('member').'"';
+          $member = '(members.user_id:"'.$requestedFilters->get('member').'"';
+          $member .= 'OR pi.user_id:"'.$requestedFilters->get('member').'")';
+          $filters[] = $member;
         }
         if($requestedFilters->get('department')){
           $departmentNumber = $this->getDepartmentNumber($requestedFilters->get('department'));
