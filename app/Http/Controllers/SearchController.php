@@ -51,7 +51,9 @@ class SearchController extends Controller
             $featuredProjects = Project::search('')->with($isFeatured)->get()->random(3);
             $projects = $projects->take($recentProjectsToConsider)->get()->random($recentProjectsToRandomlyShow);
         }
+
         $viewData = \compact('projects', 'featuredProjects', 'filters');
+
         $viewData += $searchFormProperties;
 
         return view('pages.project.index', $viewData);

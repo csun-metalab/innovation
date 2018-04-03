@@ -4,7 +4,7 @@
     <div class="col-md-12">
       <ul class="list--inline">
         @if (count($similarSearchTerms) > 0)
-          Similar Research Interests and Themes:
+          Similar Research Themes:
         @endif
         @foreach($similarSearchTerms as $term)
           {{-- This is the code to return it back to a state where number of search hits are not displayed--}}

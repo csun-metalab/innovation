@@ -1,20 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Helix\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class Academic
+ * Class Academic.
  *
  * Note: This class is interesting to say the least. This class represents a "model" that's only represented in the
  * pivot table. So, that's why you might see that the table is expertise_entity. We're doing this because the model
  * is just a mapping to the research interest tree. So, throughout the application, you're going to see string
  * manipulation that appends ":academic to table", and whenever there is need to modify the pivot or research table,
  * you'll see the removal of that string.
- *
- * @package Helix\Models
  */
 class Academic extends Model
 {
@@ -25,7 +25,7 @@ class Academic extends Model
     {
         parent::boot();
 
-        static::addGlobalScope('academic', function(Builder $builder) {
+        static::addGlobalScope('academic', function (Builder $builder) {
             $builder->where('expertise_id', 'LIKE', '%:academic');
         });
     }
@@ -38,10 +38,6 @@ class Academic extends Model
     public function people()
     {
         return $this->belongsToMany('Helix\Models\Person', 'fresco.expertise_entity', 'expertise_id', 'entities_id')
-            ->where('entities_id', "LIKE", "members:%");
-    }
-
-    public function research_interest() {
-        return $this->belongsTo('Helix\Models\Research', 'expertise_id', 'attribute_id');
+            ->where('entities_id', 'LIKE', 'members:%');
     }
 }

@@ -106,21 +106,11 @@ class Person extends MetaUser
     /**
      * Returns the academic interest model for a user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return Builder
      */
-    public function academic_interests()
+    public function expertise()
     {
-        return $this->hasMany('Helix\Models\Academic', 'entities_id', 'user_id');
-    }
-
-    /**
-     * Returns the personal interest modals for a user.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function personal_interests()
-    {
-        return $this->belongsToMany('Helix\Models\Personal', 'fresco.expertise_entity', 'entities_id', 'expertise_id');
+        return $this->belongsToMany('Helix\Models\Expertise', 'person_expertise', 'individuals_id', 'expertise_id');
     }
 
     /**
@@ -250,7 +240,7 @@ class Person extends MetaUser
      *
      * @param string $role The system name of the role to check
      *
-     * @return boolean
+     * @return bool
      */
     public function hasRole($role)
     {
@@ -264,7 +254,7 @@ class Person extends MetaUser
      *
      * @param array $roles An array of system role names to check
      *
-     * @return boolean
+     * @return bool
      */
     public function hasAnyRole($roles)
     {
@@ -284,7 +274,7 @@ class Person extends MetaUser
      * @param string $role   The system name of the role
      * @param string $deptId The department entities ID to check
      *
-     * @return boolean
+     * @return bool
      */
     public function hasRoleInDepartment($role, $deptId)
     {
@@ -304,7 +294,7 @@ class Person extends MetaUser
     /**
      * Returns whether this person is a faculty member in any department.
      *
-     * @return boolean
+     * @return bool
      */
     public function isFaculty()
     {
@@ -411,7 +401,7 @@ class Person extends MetaUser
      *
      * @param Project $project - The project to check.
      *
-     * @return boolean
+     * @return bool
      */
     public function isMember(Project $project)
     {
