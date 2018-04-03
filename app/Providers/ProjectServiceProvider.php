@@ -56,9 +56,13 @@ class ProjectServiceProvider extends ServiceProvider
             'Helix\Contracts\GetUniversityEventsContract',
             'Helix\Services\GetUniversityEventsService'
         );
-        $this->Helix->bind(
+        $this->app->bind(
             'Helix\Contracts\CreateProjectTagContract',
             'Helix\Services\CreateProjectTagService'
+        );
+        $this->app->bind(
+            'Helix\Contracts\CreateTagContract',
+            'Helix\Services\CreateTagService'
         );
     }
 }
