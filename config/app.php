@@ -226,7 +226,7 @@ return [
         Helix\Providers\ProjectServiceProvider::class,
 
         // META+Lab LDAP authentication service provider
-        METALab\Auth\Provider\AuthServiceProvider::class,
+        CSUNMetaLab\Authentication\Providers\AuthServiceProvider::class,
 
         // META+Lab load balancer service provider
         CSUNMetaLab\ProxyPass\Providers\ProxyPassServiceProvider::class,

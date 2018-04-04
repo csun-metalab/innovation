@@ -6,7 +6,7 @@ namespace Helix\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Searchable;
-use METALab\Auth\MetaUser;
+use CSUNMetaLab\Authentication\MetaUser;
 
 class Person extends MetaUser
 {
@@ -53,15 +53,6 @@ class Person extends MetaUser
         return [];
     }
 
-    /**
-     * Constructs a new Person object. This constructor has to be added because
-     * this model is subclassed from the MetaUser class and therefore its parent
-     * constructor has to be invoked.
-     */
-    public function __construct()
-    {
-        parent::__construct($this->table, $this->primaryKey);
-    }
 
     public function profile_image()
     {
