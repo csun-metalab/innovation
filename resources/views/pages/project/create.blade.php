@@ -1,4 +1,5 @@
-@extends('layouts.master') @section('content')
+@extends('layouts.master')
+@section('content')
     <style>
         .uploader {
             position: relative;
@@ -10,13 +11,13 @@
             border: dashed rgba(0, 0, 0, 0.1);
         }
 
-        #upload:hover{
+        #upload:hover {
             color: red;
             cursor: pointer;
         }
 
         /*hides default upload button*/
-        #photoLoad{
+        #photoLoad {
             display: none;
             padding-top: 10px;
             text-align: center;
@@ -29,23 +30,23 @@
         <br>
         <h1 class="type--left type--thin">Create a Project</h1>
         <br>
-        <div class="uploader type--center" id="upload-image">
-            <form class="type--center">
-                <h1 class="fa fa-upload mega"></h1>
-                <br>
-                <strong id="upload">Upload a cover photo</strong>
-                <!-- <img src="" id="hide"/> -->
-                <br>
-                <input id="photoLoad" type="file" accept="image/*" onload="fileName()">
-                <div id="filePreview"></div>
-            </form>
-        </div>
+        {{--<div class="uploader type--center" id="upload-image">--}}
+        {{--<form class="type--center">--}}
+        {{--<h1 class="fa fa-upload mega"></h1>--}}
+        {{--<br>--}}
+        {{--<strong id="upload">Upload a cover photo</strong>--}}
+        {{--<!-- <img src="" id="hide"/> -->--}}
+        {{--<br>--}}
+        {{--<input id="photoLoad" type="file" accept="image/*" onload="fileName()">--}}
+        {{--<div id="filePreview"></div>--}}
+        {{--</form>--}}
+        {{--</div>--}}
 
-        <br>
-        <form>
-            <label class="type--thin type--left" for="video">Video</label>
-            <input type="url" style="width: 50%" id="video" placeholder="https://">
-        </form>
+        {{--<br>--}}
+        {{--<form>--}}
+        {{--<label class="type--thin type--left" for="video">Video</label>--}}
+        {{--<input type="url" style="width: 50%" id="video" placeholder="https://">--}}
+        {{--</form>--}}
         <br>
         <br>
         <form>
@@ -81,7 +82,8 @@
                 </div>
                 <div class="col-xl-1 margin-top--20 type--center">
                     <button role="button" class="btn btn-primary type--center">
-                        <i class="fa fa-plus" aria-hidden="true"></i> Add</button>
+                        <i class="fa fa-plus" aria-hidden="true"></i> Add
+                    </button>
                 </div>
             </div>
             <br>
@@ -147,26 +149,28 @@
             <button class="btn btn-primary" role="button">Submit</button>
         </div>
     </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
-    <script>
-        //changes default upload button to the Upload text
-        $(function(){
-            $("#upload").on('click', function(e){
-                e.preventDefault();
-                $("#photoLoad:hidden").trigger('click');
-            });
+@stop
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<script>
+    //changes default upload button to the Upload text
+    $(function () {
+        $("#upload").on('click', function (e) {
+            e.preventDefault();
+            $("#photoLoad:hidden").trigger('click');
         });
+    });
 
-        //preview cover photo filename
-        var input = document.getElementById( 'photoLoad' );
-        var infoArea = document.getElementById( 'filePreview' );
+    //preview cover photo filename
+    var input = document.getElementById('photoLoad');
+    var infoArea = document.getElementById('filePreview');
 
-        input.addEventListener( 'change', showFileName );
+    input.addEventListener('change', showFileName);
 
-        function showFileName( event ) {
-            var input = event.srcElement;
-            var fileName = input.files[0].name;
-            infoArea.textContent ='Uploaded ' + fileName + '!';
-        }
-    </script>
+    function showFileName(event) {
+        var input = event.srcElement;
+        var fileName = input.files[0].name;
+        infoArea.textContent = 'Uploaded ' + fileName + '!';
+    }
+</script>

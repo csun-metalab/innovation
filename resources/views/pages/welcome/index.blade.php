@@ -16,7 +16,7 @@
     <h2 class="type--thin type--gray">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
     <br>
     <p><a title="Explore Projects" href="{{ url('project') }}" class="btn btn-primary-outline btn-lg">Explore Projects</a></p>
-    <p class="milli type--uppercase type--gray type--marginless">v1.6.1-Public-Beta</p>
+    {{--<p class="milli type--uppercase type--gray type--marginless">v1.6.1-Public-Beta</p>--}}
   </div>
 </div>
 
