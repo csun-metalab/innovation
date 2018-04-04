@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Helix\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +13,7 @@ class AcademicDepartment extends Model
     protected $table = 'nemo.academicDepartments';
     protected $primaryKey = 'entities_id';
     public $incrementing = false;
+
     /*
      * entities_id,
      * parent_entities_id,
@@ -25,9 +28,12 @@ class AcademicDepartment extends Model
     {
         $this->department;
         $array = $this->toArray();
+
         return $array;
     }
-    public function people(){
+
+    public function people()
+    {
         return $this->belongsToMany(
             $relatedto = 'Helix\Models\Person',
             $through = 'department_user',
@@ -36,7 +42,8 @@ class AcademicDepartment extends Model
         );
     }
 
-    public function department() {
+    public function department()
+    {
         return $this->belongsToMany(
             'Helix\Models\Departments',
             'nemo.academicDepartment_department',

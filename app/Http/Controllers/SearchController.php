@@ -10,6 +10,7 @@ use Helix\Models\NemoMembership;
 use Helix\Models\Person;
 use Helix\Models\Project;
 use Helix\Models\Purpose;
+use Helix\Models\Research;
 
 use Laravel\Scout\Searchable;
 use Searchy;
@@ -21,6 +22,7 @@ use Searchy;
 class SearchController extends Controller
 {
     use Searchable;
+
     /**
      * This creates the Titles And Abstract page and also the Featured Project page.
      * If the user visits the route for this method without any request variables, then they will
@@ -38,80 +40,81 @@ class SearchController extends Controller
         $searchFormProperties = $this->getSearchFormProperties('all');
 
         $filters = $this->getProjectFilters();
-        if(request()->all()) {
+        if (request()->all()) {
             $projects = $this->search();
-
-        }else
-        {
+        } else {
             $notFeatured = ['attribute.is_featured:0'];
             $notFeatured = $this->buildAlgoliaProjectFilters($notFeatured);
-            $isFeatured  = ['attribute.is_featured:1'];
-            $isFeatured =  $this->buildAlgoliaProjectFilters($isFeatured);
+            $isFeatured = ['attribute.is_featured:1'];
+            $isFeatured = $this->buildAlgoliaProjectFilters($isFeatured);
 
             $projects = Project::search('')->with($notFeatured);
             $featuredProjects = Project::search('')->with($isFeatured)->get()->random(3);
             $projects = $projects->take($recentProjectsToConsider)->get()->random($recentProjectsToRandomlyShow);
         }
-    
-        $viewData =  compact('projects','featuredProjects','filters');
+
+        $viewData = \compact('projects', 'featuredProjects', 'filters');
+
         $viewData += $searchFormProperties;
+
         return view('pages.project.index', $viewData);
     }
-    
+
     private function search()
     {
         $projectsPerPage = 12;
         $searchFormProperties = $this->getSearchFormProperties('all');
-        
+
         $filters = $this->buildAlgoliaProjectFilters();
 
-        $projects = Project::search( request('query'))->with($filters)->paginate($projectsPerPage);
+        $projects = Project::search(request('query'))->with($filters)->paginate($projectsPerPage);
         $projects = $this->steralizeProjectSearchResults($projects);
+
         return $projects;
     }
 
-    private function buildAlgoliaProjectFilters(array $additionalFilters = [], array $optionalFilters = []) {
-        
-        $requestedFilters = request()->all();        
+    private function buildAlgoliaProjectFilters(array $additionalFilters = [], array $optionalFilters = [])
+    {
+        $requestedFilters = request()->all();
         $requestedFilters = collect($requestedFilters);
 
         $filters = $this->enforeceProjectRules();
-      
-        if($requestedFilters->has('member')){
-          $member = '(members.user_id:"'.$requestedFilters->get('member').'"';
-          $member .= 'OR pi.user_id:"'.$requestedFilters->get('member').'")';
-          $filters[] = $member;
+
+
+        if ($requestedFilters->has('member')) {
+            $filters[] = 'members_id:"' . $requestedFilters->get('member') . '"';
         }
-        if($requestedFilters->get('department')){
-          $departmentNumber = $this->getDepartmentNumber($requestedFilters->get('department'));
-            $filters[] = 'department_id:"'.$departmentNumber.'"';
+        if ($requestedFilters->get('department')) {
+            $departmentNumber = $this->getDepartmentNumber($requestedFilters->get('department'));
+            $filters[] = 'department_id:"' . $departmentNumber . '"';
         }
-        if($requestedFilters->get('sponsor')){
-            $filters[] = 'sponsor_code:"'.$requestedFilters->get('sponsor').'"';
+        if ($requestedFilters->get('sponsor')) {
+            $filters[] = 'sponsor_code:"' . $requestedFilters->get('sponsor') . '"';
         }
-        if($requestedFilters->get('collaborators') == "student"){
+        if ($requestedFilters->get('collaborators') == 'student') {
             $filters[] = 'attribute.seeking_students:1';
-        }elseif ($requestedFilters->get('collaborators') == "faculty") {
+        } elseif ($requestedFilters->get('collaborators') == 'faculty') {
             $filters[] = 'attribute.seeking_collaborators:1';
         }
-        if($additionalFilters){
-            $filters = array_merge($filters, $additionalFilters);
+        if ($additionalFilters) {
+            $filters = \array_merge($filters, $additionalFilters);
         }
-        if($optionalFilters){
-            $filters[] = "(".implode(' OR ', $filters).")";
+        if ($optionalFilters) {
+            $filters[] = '(' . \implode(' OR ', $filters) . ')';
         }
-        $algoliaFilter = ["filters" => implode(' AND ', $filters)];
-        
-        if ($requestedFilters->has('searchType') && $requestedFilters->get('searchType') != "all")
-        {
+        $algoliaFilter = ['filters' => \implode(' AND ', $filters)];
+
+        if ($requestedFilters->has('searchType') && $requestedFilters->get('searchType') != 'all') {
             $searchableAttributes = $this->restrictSearchableAttributes($requestedFilters->get('searchType'));
-            $algoliaFilter["restrictSearchableAttributes"] = $searchableAttributes;
+            $algoliaFilter['restrictSearchableAttributes'] = $searchableAttributes;
         }
+
         return $algoliaFilter;
     }
-    private function getProjectFilters(array $additionalFilters = [], array $optionalFilters = []) {
-        
-        $requestedFilters = request()->all();    
+
+    private function getProjectFilters(array $additionalFilters = [], array $optionalFilters = [])
+    {
+        $requestedFilters = request()->all();
         $requestedFilters = collect($requestedFilters);
         // List of things from which to search.
         $sponsor = Award::pluck('sponsor', 'sponsor_code')->sort()->unique();
@@ -120,15 +123,15 @@ class SearchController extends Controller
         $purposes = Purpose::pluck('display_name', 'system_name')->sort();
         $setFilters = [];
 
-        if($requestedFilters->get('department')){
-          $selectedDepartment = $AcademicDepartments[$requestedFilters->get('department')];
-          $departments[$requestedFilters->get('department')] = $selectedDepartment;
-          $setFilters['department'] = $selectedDepartment;
+        if ($requestedFilters->get('department')) {
+            $selectedDepartment = $AcademicDepartments[$requestedFilters->get('department')];
+            $departments[$requestedFilters->get('department')] = $selectedDepartment;
+            $setFilters['department'] = $selectedDepartment;
         }
         $collaborators = ['student' => 'Student Contributors', 'faculty' => 'Faculty Collaborators'];
-      
-        if($requestedFilters->get('member')){
-          $setFilters['member'] = Person::select('display_name')
+
+        if ($requestedFilters->get('member')) {
+            $setFilters['member'] = Person::select('display_name')
                 ->findOrFail($requestedFilters->get('member'))['display_name'];
         }
         if ($requestedFilters->get('sponsor')) {
@@ -141,31 +144,30 @@ class SearchController extends Controller
         if ($requestedFilters->get('collaborators')) {
             $setFilters['collaborators'] = $collaborators[$requestedFilters->get('collaborators')];
         }
-        return compact('setFilters','sponsor','departments','purposes','collaborators');
-    }
 
+        return \compact('setFilters', 'sponsor', 'departments', 'purposes', 'collaborators');
+    }
 
     private function steralizeProjectSearchResults($results)
     {
-      foreach ($results as &$project) {
-          foreach($project->_highlightResult as $type => $highlight){
-              if( $type == 'pi' ){
-                $highlight = array_first($highlight);
-                $project->$type->display_name = $highlight['value'];
-              }
-              elseif($highlight['matchLevel'] != "none"){
-                $project->$type = $highlight['value'];
-              }
-          }
-          if($project->_snippetResult)
-          {
-            foreach ($project->_snippetResult as $type => $snippet) {
-              if($snippet['matchLevel'] != "none"){
-                  $project->$type = "... ".$snippet['value'];
+        foreach ($results as &$project) {
+            foreach ($project->_highlightResult as $type => $highlight) {
+                if ($type == 'pi') {
+                    $highlight = array_first($highlight);
+                    $project->$type->display_name = $highlight['value'];
+                } elseif ($highlight['matchLevel'] != 'none') {
+                    $project->$type = $highlight['value'];
                 }
             }
-          }
+            if ($project->_snippetResult) {
+                foreach ($project->_snippetResult as $type => $snippet) {
+                    if ($snippet['matchLevel'] != 'none') {
+                        $project->$type = '... ' . $snippet['value'];
+                    }
+                }
+            }
         }
+
         return $results;
     }
 
@@ -174,21 +176,24 @@ class SearchController extends Controller
         $academicDepartment = AcademicDepartment::where('entities_id', $departmentId)
                 ->with('department')
                 ->firstOrFail();
+
         return $academicDepartment->department->first()->entities_id;
     }
 
     private function restrictSearchableAttributes($searchType)
     {
-      $attributes = [];
-      if($searchType == "members"){
-        $attributes = ['pi','members'];
-      }else if($searchType == "title"){
-        $attributes = ['abstract','project_title'];
-      }else if($searchType == "tags"){
-        $attributes = ['interests.title'];
-      }
-      return json_encode($attributes);
+        $attributes = [];
+        if ($searchType == 'members') {
+            $attributes = ['pi', 'members'];
+        } elseif ($searchType == 'title') {
+            $attributes = ['abstract', 'project_title'];
+        } elseif ($searchType == 'tags') {
+            $attributes = ['interests.title'];
+        }
+
+        return \json_encode($attributes);
     }
+
     /**
      * Use this to filter projects by sponsor, department, etc.
      * This will also create the necessary data for the View.
@@ -275,10 +280,13 @@ class SearchController extends Controller
     /**
      * Maps the system name for a search type to its form-properties.
      * Creates the necessary variables for the search form.
+     *
      * @param string $defaultSearchType (optional) The search type to use when no search type is explicitly specified. This differs from page to page.
+     *
      * @return array
      */
-    private function getSearchFormProperties($defaultSearchType = 'all') {
+    private function getSearchFormProperties($defaultSearchType = 'all')
+    {
         $dropdownTexts = [
             'all' => 'All Search Results',
             'title' => 'Titles and Abstracts',
@@ -299,7 +307,8 @@ class SearchController extends Controller
         ];
 
         $searchType = request()->filled('searchType') ? request('searchType') : $defaultSearchType;
-        return compact('searchType','dropdownTexts','placeholderTexts','formActions');
+
+        return \compact('searchType', 'dropdownTexts', 'placeholderTexts', 'formActions');
     }
 
     /**
@@ -363,19 +372,18 @@ class SearchController extends Controller
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    private function enforeceProjectRules() {
-      // People can only browse for publishable projects
-      $projectRulesFilters[] = "is_publishable:1";
+    private function enforeceProjectRules()
+    {
+        // People can only browse for publishable projects
+        $projectRulesFilters[] = 'is_publishable:1';
 
-      if( auth()->check() )
-      {
-        //if the logged-in user is an Admin, they can see all projects:
-        if (auth()->user()->hasRole('admin'))
-        {
-          return null;
-        }
+        if (auth()->check()) {
+            //if the logged-in user is an Admin, they can see all projects:
+            if (auth()->user()->hasRole('admin')) {
+                return null;
+            }
 
-        // Other Logged-in users can see public (showcase), internal (institutional), and their own stealth projects.
+            // Other Logged-in users can see public (showcase), internal (institutional), and their own stealth projects.
         // We need to wrap this in an advanced query because we are mixing
         // "where"- and 'orWhere'- clauses together in $query.
         // $query = $query->where(function($qry){
@@ -388,11 +396,11 @@ class SearchController extends Controller
         //     $q->whereIn('policy', ['public', 'internal']);
         //   });
         // });
-      }
-      else {
-        $projectRulesFilters[] = 'visibility.policy:public';
-      }
-      return $projectRulesFilters;
+        } else {
+            $projectRulesFilters[] = 'visibility.policy:public';
+        }
+
+        return $projectRulesFilters;
     }
 
     /**
@@ -401,18 +409,19 @@ class SearchController extends Controller
      *
      * @return array
      */
-   public function departmentSearch()
-   {
-      $data = AcademicDepartment::search(request('q'))->get()->take(10);
-      if($data){
-          foreach ($data as $department) {
-              $tmp['id'] = $department->entities_id;
-              $tmp['text'] = $department->display_name;
-              $results[] = $tmp;
-          }
-          return $results;
-      }
-   }
+    public function departmentSearch()
+    {
+        $data = AcademicDepartment::search(request('q'))->get()->take(10);
+        if ($data) {
+            foreach ($data as $department) {
+                $tmp['id'] = $department->entities_id;
+                $tmp['text'] = $department->display_name;
+                $results[] = $tmp;
+            }
+
+            return $results;
+        }
+    }
 
     /**
      * Returns a members list based on a query. This is the target an AJAX call
@@ -423,9 +432,9 @@ class SearchController extends Controller
      */
     public function getCollaboratorsList()
     {
-        if(request()->filled('q')){
+        if (request()->filled('q')) {
             $data = Person::search(request('q'))->get()->take(10);
-            if($data){
+            if ($data) {
                 foreach ($data as $person) {
                     $tmp['id'] = $person->user_id;
                     $tmp['text'] = $person->common_name;
@@ -459,7 +468,6 @@ class SearchController extends Controller
         }
     }
 
-
     /* --------------------------------------------------*/
     /* Routes used by the PUBLIC API.
     /*---------------------------------------------------*/
@@ -471,8 +479,8 @@ class SearchController extends Controller
      *
      * @return array
      */
-    public function apiProjects($include = NULL)
-    {   
+    public function apiProjects($include = null)
+    {
         $projects = Project::where('is_publishable', true)
             ->whereHas('visibility', function ($q) {
                 $q->where('policy', 'public');
@@ -693,18 +701,19 @@ class SearchController extends Controller
 
     private function findPersonsProjects($search_query, int $paginate)
     {
-      $people = Person::with('academicDepartments.department','projects')
+        $people = Person::with('academicDepartments.department', 'projects')
             ->has('academicDepartments.department')
             ->facultyWithDepartment($search_query)->get();
         $projects = [];
         foreach ($people as $person) {
-          $projects += array_column ( $person->projects->toArray() , 'project_id' );
+            $projects += \array_column($person->projects->toArray(), 'project_id');
         }
-        $results = Project::with('pi')->whereIn('project_id',$projects);
+        $results = Project::with('pi')->whereIn('project_id', $projects);
         $results = $this
         ->browseProjectsRules($results)
                         ->paginate($paginate)
                         ->setPath(url('search/members'));
+
         return $results;
     }
 

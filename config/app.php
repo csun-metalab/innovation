@@ -228,7 +228,6 @@ return [
         // META+Lab LDAP authentication service provider
         METALab\Auth\Provider\AuthServiceProvider::class,
 
-
         // META+Lab load balancer service provider
         CSUNMetaLab\ProxyPass\Providers\ProxyPassServiceProvider::class,
     ],

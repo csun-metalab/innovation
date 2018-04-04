@@ -6,24 +6,24 @@ namespace Helix\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Searchable;
-use Helix\Models\Attribute;
+
 //Project related details
 class Project extends Model
 {
-  use Searchable;
+    use Searchable;
 
-  public static function boot() {
-    
-    static::updated(function ($model) {
-      $model->user->touch();
-    });
-    
-    parent::boot();
-  }
+    public static function boot()
+    {
+        static::updated(function ($model) {
+            $model->user->touch();
+        });
 
-	protected $table = 'exploration.projects';
-  protected $primaryKey = 'project_id';
-  protected $fillable = [
+        parent::boot();
+    }
+
+    protected $table = 'exploration.projects';
+    protected $primaryKey = 'project_id';
+    protected $fillable = [
         'project_id',
         'project_title',
         'project_url',
@@ -40,18 +40,20 @@ class Project extends Model
     public function toSearchableArray()
     {
         $this->interests;
-        $this->pi;  
+        $this->pi;
         $this->department;
         $this->sponsor;
         $this->members;
         $this->visibility;
         $this->attribute;
         $array = $this->toArray();
-        return $array;
-     }
 
-    public function image() {
-      return $this->hasOne('Helix\Models\Image', 'imageable_id', 'project_id');
+        return $array;
+    }
+
+    public function image()
+    {
+        return $this->hasOne('Helix\Models\Image', 'imageable_id', 'project_id');
     }
 
     public function pi()
@@ -124,7 +126,7 @@ class Project extends Model
 
     public function department()
     {
-      return $this->belongsTo('Helix\Models\Departments','entities_id','entities_id');
+        return $this->belongsTo('Helix\Models\Departments', 'entities_id', 'entities_id');
     }
 
     //One project has one set of helix-related attributes.

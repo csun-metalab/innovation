@@ -4,80 +4,89 @@ declare(strict_types=1);
 
 namespace Helix\Models;
 
-use Laravel\Scout\Searchable;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 use METALab\Auth\MetaUser;
 
 class Person extends MetaUser
 {
-   use Searchable;
+    use Searchable;
 
-   protected $table = 'users';
-   protected $primaryKey = 'user_id';
-   /**
-    * user_id,
-    * first_name,
-    * middle_name,
-    * last_name,
-    * common_name,
-    * display_name,
-    * email,
-    * gender,
-    * confidential,
-    * deceased,
-    * affiliation,
-    * rank,
-    * affiliation_status,
-    * biography,
-    * profile_image,
-    * orcid_id,
-    * created_at,
-    * updated_at,
-    */
-   // this must be set for models that do not use an auto-incrementing PK
-   public $incrementing = false;
+    protected $table = 'users';
+    protected $primaryKey = 'user_id';
+    /**
+     * user_id,
+     * first_name,
+     * middle_name,
+     * last_name,
+     * common_name,
+     * display_name,
+     * email,
+     * gender,
+     * confidential,
+     * deceased,
+     * affiliation,
+     * rank,
+     * affiliation_status,
+     * biography,
+     * profile_image,
+     * orcid_id,
+     * created_at,
+     * updated_at,.
+     */
+    // this must be set for models that do not use an auto-incrementing PK
+    public $incrementing = false;
 
-   // This is used to keep track of related search terms
-   public $relatedSearchTerms;
-   
-   public function toSearchableArray()
-   {
+    // This is used to keep track of related search terms
+    public $relatedSearchTerms;
+
+    public function toSearchableArray()
+    {
         $this->department_academicDepartments;
         $array = $this->toArray();
-        if($array['department_academic_departments']){
-          dd($array);
-          return $array;
+        if ($array['department_academic_departments']) {
+            dd($array);
+
+            return $array;
         }
+
         return [];
     }
-   /**
-    * Constructs a new Person object. This constructor has to be added because
-    * this model is subclassed from the MetaUser class and therefore its parent
-    * constructor has to be invoked.
-    */
-   public function __construct() {
-       parent::__construct($this->table, $this->primaryKey);
-   }
 
-  public function profile_image()
-  {
-    $email = $this->email;
-    $imageUrl = getProfileImage($email);
-    return $this->image =$imageUrl;
-  }
-  public function profile_url()
-  {
-      return config("app.faculty_profile_url").$this->emailURI;
-  }
+    /**
+     * Constructs a new Person object. This constructor has to be added because
+     * this model is subclassed from the MetaUser class and therefore its parent
+     * constructor has to be invoked.
+     */
+    public function __construct()
+    {
+        parent::__construct($this->table, $this->primaryKey);
+    }
 
-   /**
-   * Relates this person to their associated expertise.
-   * //Don't use this.
-   * @return Builder
-   */
-   public function expertise() {
-      return $this->belongsToMany('Helix\Models\Expertise', 'person_expertise', 'individuals_id', 'expertise_id');
-   }
+    public function profile_image()
+    {
+        $email = $this->email;
+        $imageUrl = getProfileImage($email);
+
+        return $this->image = $imageUrl;
+    }
+
+    public function profile_url()
+    {
+        return config('app.faculty_profile_url') . $this->emailURI;
+    }
+
+    /**
+     * Relates this person to their associated expertise.
+     * //Don't use this.
+     *
+     * @return Builder
+     */
+    public function expertise()
+    {
+        return $this->belongsToMany('Helix\Models\Expertise', 'person_expertise', 'individuals_id', 'expertise_id');
+    }
+
     /**
      * Relates this person to all their Interests.
      */
@@ -118,9 +127,10 @@ class Person extends MetaUser
         return $this->hasMany('Helix\Models\NemoMembership', 'individuals_id')
             ->where('parent_entities_id', 'LIKE', 'academic_departments:%');
     }
+
     public function department_academicDepartments()
     {
-      return $this->hasManyThrough('Helix\Models\NemoMembership','\Helix\Models\AcademicDepartment', 'parent_entities_id', 'individuals_id' ,'entities_id');
+        return $this->hasManyThrough('Helix\Models\NemoMembership', '\Helix\Models\AcademicDepartment', 'parent_entities_id', 'individuals_id', 'entities_id');
     }
 
     /**
@@ -221,7 +231,7 @@ class Person extends MetaUser
      *
      * @param string $role The system name of the role to check
      *
-     * @return boolean
+     * @return bool
      */
     public function hasRole($role)
     {
@@ -235,7 +245,7 @@ class Person extends MetaUser
      *
      * @param array $roles An array of system role names to check
      *
-     * @return boolean
+     * @return bool
      */
     public function hasAnyRole($roles)
     {
@@ -255,7 +265,7 @@ class Person extends MetaUser
      * @param string $role   The system name of the role
      * @param string $deptId The department entities ID to check
      *
-     * @return boolean
+     * @return bool
      */
     public function hasRoleInDepartment($role, $deptId)
     {
@@ -275,7 +285,7 @@ class Person extends MetaUser
     /**
      * Returns whether this person is a faculty member in any department.
      *
-     * @return boolean
+     * @return bool
      */
     public function isFaculty()
     {
@@ -382,7 +392,7 @@ class Person extends MetaUser
      *
      * @param Project $project - The project to check.
      *
-     * @return boolean
+     * @return bool
      */
     public function isMember(Project $project)
     {
