@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "ac99f99a7ccb7c4af32cf6e10b916f7f",
+    "content-hash": "5bc943c876a4877a57641d06d617ca4a",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -228,6 +228,45 @@
                 "webprofiler"
             ],
             "time": "2018-03-06T08:35:31+00:00"
+        },
+        {
+            "name": "csun-metalab/laravel-directory-authentication",
+            "version": "1.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/csun-metalab/laravel-directory-authentication.git",
+                "reference": "356e5f6b98c97734e065db9f996147c6350ecf2d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/csun-metalab/laravel-directory-authentication/zipball/356e5f6b98c97734e065db9f996147c6350ecf2d",
+                "reference": "356e5f6b98c97734e065db9f996147c6350ecf2d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.9"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/Authentication/"
+                ],
+                "psr-4": {
+                    "CSUNMetaLab\\Authentication\\": "src/Authentication/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Matthew Fritz",
+                    "email": "mattf@burbankparanormal.com"
+                }
+            ],
+            "description": "Composer package for Laravel 5.0 and above to allow for directory-based authentication",
+            "time": "2018-03-15T19:50:51+00:00"
         },
         {
             "name": "csun-metalab/laravel-proxypass",

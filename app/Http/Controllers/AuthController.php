@@ -66,6 +66,9 @@ class AuthController extends Controller
           if (Auth::user()->isStaffBasedOnAffiliation()) {
             return redirect()->intended('/');
           }
+          if (Auth::user()) {
+            return redirect()->intended('/');
+          }
 
           // other individuals not matching the above cases are not
           // allowed to authenticate
@@ -86,6 +89,7 @@ class AuthController extends Controller
       }
       catch (SearchException $e)
       {
+        
         return redirect('login')->with('error','Incorrect username or password');
       }
     }
