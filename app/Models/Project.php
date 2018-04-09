@@ -5,10 +5,22 @@ declare(strict_types=1);
 namespace Helix\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 
 //Project related details
 class Project extends Model
 {
+    use Searchable;
+
+    public static function boot()
+    {
+        static::updated(function ($model) {
+            $model->user->touch();
+        });
+
+        parent::boot();
+    }
+
     protected $table = 'exploration.projects';
     protected $primaryKey = 'project_id';
     protected $fillable = [
@@ -24,6 +36,20 @@ class Project extends Model
 
     // This is used to keep track of related search terms
     public $relatedSearchTerms;
+
+    public function toSearchableArray()
+    {
+        $this->interests;
+        $this->pi;
+        $this->department;
+        $this->sponsor;
+        $this->members;
+        $this->visibility;
+        $this->attribute;
+        $array = $this->toArray();
+
+        return $array;
+    }
 
     public function image()
     {
@@ -93,14 +119,14 @@ class Project extends Model
         return $this->hasMany('Helix\Models\Award', 'project_id', 'project_id');
     }
 
-    public function interests()
-    {
-        return $this->belongsToMany('Helix\Models\Research', 'fresco.expertise_entity', 'entities_id', 'expertise_id');
-    }
+    // public function interests()
+    // {
+    //     return $this->belongsToMany('Helix\Models\Research', 'fresco.expertise_entity', 'entities_id', 'expertise_id');
+    // }
 
     public function department()
     {
-        return $this->belongsTo('Helix\Models\Departments');
+        return $this->belongsTo('Helix\Models\Departments', 'entities_id', 'entities_id');
     }
 
     //One project has one set of helix-related attributes.
@@ -194,13 +220,13 @@ class Project extends Model
         return \array_search($project_type, $projectTypes);
     }
 
-    public function scopeWithInterestsLike($query, $searchStr)
-    {
-        return $query->with('interests')
-            ->whereHas('interests', function ($q) use ($searchStr) {
-                $q->where('title', $searchStr);
-            });
-    }
+    // public function scopeWithInterestsLike($query, $searchStr)
+    // {
+    //     return $query->with('interests')
+    //         ->whereHas('interests', function ($q) use ($searchStr) {
+    //             $q->where('title', $searchStr);
+    //         });
+    // }
 
     /**
      * Queries Projects that have any of the given Research interests by ID.

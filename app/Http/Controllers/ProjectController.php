@@ -6,7 +6,11 @@ namespace Helix\Http\Controllers;
 
 use Auth;
 use DB;
-//use Helix\Contracts\CreateSeekingContract;
+
+use Helix\Contracts\CreateSeekingContract;
+use Helix\Contracts\CreateTagContract;
+use Helix\Contracts\GetUniversityEventsContract;
+use Helix\Contracts\UpdateCollaboratorsContract;
 use Helix\Contracts\UpdateProjectAttributesContract;
 use Helix\Contracts\UpdateProjectGeneralContract;
 use Helix\Contracts\UpdateProjectPolicyContract;
@@ -20,7 +24,6 @@ use Helix\Models\Person;
 use Helix\Models\Project;
 use Helix\Models\ProjectPolicy;
 use Helix\Models\Purpose;
-use Helix\Models\Research;
 use Helix\Models\Role;
 use Helix\Models\Seeking;
 use Illuminate\Http\Request;
@@ -37,7 +40,10 @@ class ProjectController extends Controller
     protected $projectAttributesUpdater = null;
     protected $projectPolicyUpdater = null;
     protected $projectPurposeUpdater = null;
-    //protected $createSeekingContract = null;
+    protected $createSeekingContract = null;
+    protected $createTagContract = null;
+    protected $getUniversityEventsContract = null;
+    protected $collaboratorsUpdater = null;
 
     /**
      * ProjectController constructor.
@@ -48,41 +54,50 @@ class ProjectController extends Controller
      * @param UpdateProjectPolicyContract     $updateProjectPolicyContract
      * @param UpdateProjectPurposeContract    $updateProjectPurposeContract
      * @param CreateSeekingContract           $createSeekingContract
+     * @param CreateTagContract               $createTagContract
+     * @param GetUniversityEventsContract     $getUniversityEventsContract
+     * @param UpdateCollaboratorsContract     $updateCollaboratorsContract
      */
     public function __construct(
         VerifyProjectIdContract $verifyProjectIdContract,
         UpdateProjectGeneralContract $updateProjectGeneralContract,
         UpdateProjectAttributesContract $updateProjectAttributesContract,
         UpdateProjectPolicyContract $updateProjectPolicyContract,
-        UpdateProjectPurposeContract $updateProjectPurposeContract
-        //CreateSeekingContract $createSeekingContract
+        UpdateProjectPurposeContract $updateProjectPurposeContract,
+        CreateTagContract $createTagContract,
+        GetUniversityEventsContract $getUniversityEventsContract,
+        UpdateCollaboratorsContract $updateCollaboratorsContract,
+        CreateSeekingContract $createSeekingContract
     ) {
-        $this->middleware('auth', ['except' => [
-            'index',
-            'show',
-            'apiProject',
-            'updateCayuseProjects',
-            'validateYoutube',
-            'createAllProjectAttributes',
-            'getCollaboratorsList',
-            'getByCategoryType',
-        ]]);
+        // $this->middleware('auth', ['except' => [
+        //     'index',
+        //     'show',
+        //     'apiProject',
+        //     'updateCayuseProjects',
+        //     'validateYoutube',
+        //     'createAllProjectAttributes',
+        //     'getCollaboratorsList',
+        //     'getByCategoryType',
+        // ]]);
 
-        $this->middleware(['project-write', 'helix-roles'], ['only' => [
-            'create',
-            'step1',
-            'getStep2',
-            'step2',
-            'getStep3',
-            'store',
-            'destroy',
-        ]]);
+        // $this->middleware(['project-write', 'helix-roles'], ['only' => [
+        //     // 'create',
+        //     'step1',
+        //     'getStep2',
+        //     'step2',
+        //     'getStep3',
+        //     'store',
+        //     'destroy',
+        // ]]);
 
         $this->projectIdVerifier = $verifyProjectIdContract;
         $this->projectGeneralUpdater = $updateProjectGeneralContract;
         $this->projectAttributesUpdater = $updateProjectAttributesContract;
         $this->projectPolicyUpdater = $updateProjectPolicyContract;
         $this->projectPurposeUpdater = $updateProjectPurposeContract;
+        $this->collaboratorsUpdater = $updateCollaboratorsContract;
+        $this->getUniversityEventsContract = $getUniversityEventsContract;
+        $this->createTagContract = $createTagContract;
     }
 
     /**
@@ -100,12 +115,12 @@ class ProjectController extends Controller
 
             return redirect("project/$project->slug");
         } elseif (str_contains($id, 'projects:')) {
-            $project = Project::with('pi', 'members', 'award', 'interests', 'link', 'image', 'visibility')->findOrFail($id);
+            $project = Project::with('pi', 'members', 'award', 'link', 'image', 'visibility')->findOrFail($id);
 
             return redirect("project/$project->slug");
         }
 
-        $project = Project::with('pi', 'members', 'award', 'interests', 'link', 'image', 'visibility')->where('slug', $id)->firstOrFail();
+        $project = Project::with('pi', 'members', 'award', 'link', 'image', 'visibility')->where('slug', $id)->firstOrFail();
 
         // This is to check if there is a row in the attributes table corresponding to this project
         $attributes = Attribute::with('purpose')->findOrNew($project->project_id);
@@ -178,43 +193,39 @@ class ProjectController extends Controller
      */
     public function create($projectId = null)
     {
-        // If user is coming from anywhere besides project/step-2 and if session has new-project
-        if (!str_contains(url()->previous(), 'step-2') && session('new-project')) {
-            session()->forget('new-project');
-        }
-        if (!session('new-project')) {
-            if ($projectId) {
-                //could probably eager load here
-                $project = Project::with('attribute', 'link')->findOrFail($projectId);
+        dd("herte");
+        if ($projectId) {
+            //could probably eager load here
+            $project = Project::with('attribute', 'link')->findOrFail($projectId);
 
-                if ($project->attribute == null) {
-                    Attribute::create([
-                        'project_id' => $projectId,
-                        'is_featured' => 0,
-                        'seeking_collaborators' => 0,
-                        'seeking_students' => 0,
-                        'purpose_name' => 'project',
-                    ]);
-                }
-
-                $project_general = [
-                    'project_purpose' => $project->attribute ? $project->attribute->purpose_name : '',
-                    'project_type' => $project->getPolicyType(),
-                    'title' => $project->project_title,
-                    'description' => $project->abstract,
-                    'start_date' => \date('m/d/Y', \strtotime(\str_replace('-', '/', $project->project_begin_date))),
-                    'end_date' => $project->project_end_date ? \date('m/d/Y', \strtotime(\str_replace('-', '/', $project->project_end_date))) : null,
-                    'url' => $project->project_url ?: null,
-                    'cayuse_project' => null !== $project->cayuse_id ? true : false,
-                    'youtube' => $project->link ? $project->link->link : '',
-                ];
-
-                session()->put('new-project.project_general', $project_general);
+            if ($project->attribute == null) {
+                Attribute::create([
+                    'project_id' => $projectId,
+                    'is_featured' => 0,
+                    'seeking_collaborators' => 0,
+                    'seeking_students' => 0,
+                    'purpose_name' => 'project',
+                ]);
             }
+
+            $project_general = [
+                'project_purpose' => $project->attribute ? $project->attribute->purpose_name : '',
+                'project_type' => $project->getPolicyType(),
+                'title' => $project->project_title,
+                'description' => $project->abstract,
+                'start_date' => \date('m/d/Y', \strtotime(\str_replace('-', '/', $project->project_begin_date))),
+                'end_date' => $project->project_end_date ? \date('m/d/Y', \strtotime(\str_replace('-', '/', $project->project_end_date))) : null,
+                'url' => $project->project_url ?: null,
+                'cayuse_project' => null !== $project->cayuse_id ? true : false,
+                'youtube' => $project->link ? $project->link->link : '',
+            ];
+
+            session()->put('new-project.project_general', $project_general);
         }
+
         $projectPurposes = Purpose::all()->pluck('display_name', 'system_name');
 
-        return view('pages.project.one', \compact('project', 'projectId', 'projectPurposes'));
+        return view('pages.project.create', \compact('project', 'projectId', 'projectPurposes'));
     }
 
     /**
@@ -240,6 +251,7 @@ class ProjectController extends Controller
                 ]);
             }
         }
+
         // Title is always editable if you are an admin, otherwise it's editable if the project is not from cayuse.
         if (!session('new-project.project_general.cayuse_project') || auth()->user()->hasRole('admin')) {
             session()->put([
@@ -247,7 +259,6 @@ class ProjectController extends Controller
                 'new-project.project_general.cayuse_project' => false,
             ]);
         }
-
         session()->put([
             'new-project.project_general.project_type' => request('project_type'),
             'new-project.project_general.project_purpose' => request('project_purpose'),
@@ -270,6 +281,7 @@ class ProjectController extends Controller
      */
     public function validateYoutube(Request $request)
     {
+        dd("here");
         $youtube_url = request()->url;
         $rx = '#(https?://(?:www\.)?youtube\.com/watch\?v=([^&]+?))|((https?://(?:www\.)?)(youtu\.be){1})|((https?://(?:www\.)?(vimeo\.com){1}))#';
 
@@ -298,29 +310,9 @@ class ProjectController extends Controller
             return back();
         }
 
-        if (!session('new-project.interests')) {
-            if ($projectId) {
-                $projectInterests = Project::findOrFail($projectId)->interests->toArray();
-                if (!empty($projectInterests)) {
-                    session()->put('new-project.interests', stringifyTags($projectInterests));
-                }
-            }
-        }
-
         // TODO: refactor everything to the back end
 
-        if (request()->wantsJson()) {
-            if (\array_key_exists('interests', session('new-project'))) {
-                return jsonEncodeTags(session('new-project')['interests']['tags']);
-            }
-        }
-
-        $categories = Research::whereNull('parent_attribute_id')->pluck('title', 'attribute_id as id');
-        // Subcategories and tags are hard coded for initialization of Select2 options
-        $subcategories = Research::where('parent_attribute_id', 'research:1')->pluck('title', 'attribute_id as id');
-        $tags = Research::where('parent_attribute_id', 'research:11')->pluck('title', 'attribute_id as id');
-
-        return view('pages.project.two', \compact('categories', 'subcategories', 'tags'));
+        return view('pages.project.two', \compact('categories', 'subcategories'));
     }
 
     /**
@@ -334,18 +326,6 @@ class ProjectController extends Controller
      */
     public function step2($projectId = null)
     {
-        if (\array_key_exists('interests', session('new-project'))) {
-            session()->forget('new-project.interests');
-        }
-
-        if (request('tags')) {
-            session()->put('new-project.interests', request()->only('tags'));
-        }
-
-        if (request('action') == 'back') {
-            return isset($projectId) ? redirect('project/step-1/' . $projectId) : redirect('project/step-1');
-        }
-
         return redirect('project/step-3/' . $projectId ?: '');
     }
 
@@ -506,6 +486,7 @@ class ProjectController extends Controller
         /*$this->projectAttributesUpdater->updateProjectAttributes($projectId, $projectData);
         $this->projectPolicyUpdater->updateProjectPolicy($projectId, $projectData);
         $this->projectPurposeUpdater->updateProjectPurpose($projectId, $projectData);*/
+
 
         return view('pages.project.four', \compact('project'));
     }
@@ -697,10 +678,10 @@ class ProjectController extends Controller
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getCatagory()
-    {
-        return Research::whereNull('parent_attribute_id')->get();
-    }
+    // public function getCatagory()
+    // {
+    //     return Research::whereNull('parent_attribute_id')->get();
+    // }
 
     /**
      * ???
@@ -709,11 +690,11 @@ class ProjectController extends Controller
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getSub($id)
-    {
-        return Research::where('parent_attribute_id', $id)->select('title', 'attribute_id as id')->get();
-        return Research::where('parent_attribute_id', $id)->select('attribute_id as id', 'title')->get();
-    }
+    // public function getSub($id)
+    // {
+    //     return Research::where('parent_attribute_id', $id)->select('title', 'attribute_id as id')->get();
+    //     return Research::where('parent_attribute_id', $id)->select('attribute_id as id', 'title')->get();
+    // }
 
     /**
      * ???
@@ -722,21 +703,21 @@ class ProjectController extends Controller
      *
      * @return array
      */
-    public function getTags($id)
-    {
-        $subcatagories = Research::where('parent_attribute_id', $id)->with('children')->get();
-        $tags = [];
-        foreach ($subcatagories as $child) {
-            \array_push($tags, $child->children);
-        }
+    // public function getTags($id)
+    // {
+    //     $subcatagories = Research::where('parent_attribute_id', $id)->with('children')->get();
+    //     $tags = [];
+    //     foreach ($subcatagories as $child) {
+    //         \array_push($tags, $child->children);
+    //     }
 
-        return $tags = array_collapse($tags);
-        // return $tags = array_pluck($tags,'title','attribute_id');
+    //     return $tags = array_collapse($tags);
+    //     // return $tags = array_pluck($tags,'title','attribute_id');
 
-        $tags = array_collapse($tags);
+    //     $tags = array_collapse($tags);
 
-        return $tags;
-    }
+    //     return $tags;
+    // }
 
     /**
      * ???
@@ -745,40 +726,40 @@ class ProjectController extends Controller
      *
      * @return array|\Illuminate\Http\JsonResponse
      */
-    public function getByCategoryType($id)
-    {
-        switch (request('type')) {
-            // A category was selected, so grab the subcategory and that subcategories tags
-            case 'category':
-                $subcategories = Research::where('parent_attribute_id', $id)
-                                    ->select('title', 'attribute_id as id')
-                                    ->orderBy('title', 'ASC')
-                                    ->get();
+    // public function getByCategoryType($id)
+    // {
+    //     switch (request('type')) {
+    //         // A category was selected, so grab the subcategory and that subcategories tags
+    //         case 'category':
+    //             $subcategories = Research::where('parent_attribute_id', $id)
+    //                                 ->select('title', 'attribute_id as id')
+    //                                 ->orderBy('title', 'ASC')
+    //                                 ->get();
 
-                $tags = Research::where('parent_attribute_id', $subcategories[0]->id)
-                                    ->select('title', 'attribute_id as id')
-                                    ->orderBy('title', 'ASC')
-                                    ->get();
+    //             $tags = Research::where('parent_attribute_id', $subcategories[0]->id)
+    //                                 ->select('title', 'attribute_id as id')
+    //                                 ->orderBy('title', 'ASC')
+    //                                 ->get();
 
-                return [
-                    'subcategories' => $subcategories,
-                    'tags' => $tags,
-                    'type' => request('type'),
-                ];
-            break;
-            // A subcategory was selected so grab its tags
-            case 'subcategory':
-                $tags = Research::where('parent_attribute_id', $id)->select('title', 'attribute_id as id')->get();
+    //             return [
+    //                 'subcategories' => $subcategories,
+    //                 'tags' => $tags,
+    //                 'type' => request('type'),
+    //             ];
+    //         break;
+    //         // A subcategory was selected so grab its tags
+    //         case 'subcategory':
+    //             $tags = Research::where('parent_attribute_id', $id)->select('title', 'attribute_id as id')->get();
 
-                return [
-                    'tags' => $tags,
-                    'type' => request('type'),
-                ];
-            break;
-            default:
-                return response()->json(['status' => 'There was an error with your request.'], 422);
-        }
-    }
+    //             return [
+    //                 'tags' => $tags,
+    //                 'type' => request('type'),
+    //             ];
+    //         break;
+    //         default:
+    //             return response()->json(['status' => 'There was an error with your request.'], 422);
+    //     }
+    // }
 
     /**
      * This will be called via AJAX by an admin to toggle a project's isFeatured flag.

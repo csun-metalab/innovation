@@ -3,25 +3,25 @@
         <div class="cd-filter-block ">
             {!! Form::label('sponsor','Filter by Sponsor')!!}
             <div class="cd-filter-content">
-                {!! Form::select('sponsor', $sponsor , request()->get('sponsor') ?: null, ['placeholder'=> 'Sponsor...','class' => 'select2-sponsor' , 'style' => 'width: 100%'])!!}
+                {!! Form::select('sponsor', $filters['sponsor'] , request()->get('sponsor') ?: null, ['placeholder'=> 'Sponsor...','class' => 'select2-sponsor' , 'style' => 'width: 100%'])!!}
             </div>
         </div>
         <div class="cd-filter-block">
             {!! Form::label('department','Filter by Department')!!}
             <div class="cd-filter-content">
-                {!! Form::select('department', $departmentFilter ?: [] , request()->get('department') ?: null, ['placeholder' => 'Department...','class' => 'select2-departments' , 'style' => 'width: 100%'])!!}
+                {!! Form::select('department', $filters['departments'] , request()->get('department') ?: null, ['placeholder' => 'Department...','class' => 'select2-departments' , 'style' => 'width: 100%'])!!}
             </div>
         </div>
         <div class="cd-filter-block">
             {!! Form::label('type','Filter by Type')!!}
             <div class="cd-filter-content">
-                {{ Form::select ('type', $purposes, request()->get('type')?: null,['class'=>'members select2-types', 'placeholder' => 'Type...', 'style' => 'width: 100%'] ) }}
+                {{ Form::select ('type', $filters['purposes'], request()->get('type')?: null,['class'=>'members select2-types', 'placeholder' => 'Type...', 'style' => 'width: 100%'] ) }}
             </div>
         </div>
         <div class="cd-filter-block">
             {!! Form::label('collaborators','Filter by Seeking Collaborators')!!}
             <div class="cd-filter-content">
-                {{ Form::select ('collaborators', $collaborators, request()->get('collaborators')?: null,['class'=>'select2-collaborators', 'placeholder' => 'Collaborators...', 'style' => 'width: 100%'] ) }}
+                {{ Form::select ('collaborators', $filters['collaborators'], request()->get('collaborators')?: null,['class'=>'select2-collaborators', 'placeholder' => 'Collaborators...', 'style' => 'width: 100%'] ) }}
             </div>
         </div>
 
@@ -33,7 +33,7 @@
     </form>
     <a title="Close" class="cd-close">Close</a>
 </div>
-@if( request()->filled('sponsor') || request()->filled('department') || request()->filled('member') )
+@if( request()->filled('sponsor') || request()->filled('department') || request()->filled('member') || request()->filled('collaborators'))
     <a title="Filters Set" class="cd-filter-trigger cd-filter-on"><i class="fa fa-filter"></i> Filters
         Set</a>
 @else

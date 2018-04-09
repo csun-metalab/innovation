@@ -1,14 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Helix\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 
 class AcademicDepartment extends Model
 {
+    use Searchable;
     protected $table = 'nemo.academicDepartments';
     protected $primaryKey = 'entities_id';
     public $incrementing = false;
+
     /*
      * entities_id,
      * parent_entities_id,
@@ -19,8 +24,16 @@ class AcademicDepartment extends Model
      * created_at,
      * updated_at
      */
+    public function toSearchableArray()
+    {
+        $this->department;
+        $array = $this->toArray();
 
-    public function people(){
+        return $array;
+    }
+
+    public function people()
+    {
         return $this->belongsToMany(
             $relatedto = 'Helix\Models\Person',
             $through = 'department_user',
@@ -29,7 +42,8 @@ class AcademicDepartment extends Model
         );
     }
 
-    public function department() {
+    public function department()
+    {
         return $this->belongsToMany(
             'Helix\Models\Departments',
             'nemo.academicDepartment_department',

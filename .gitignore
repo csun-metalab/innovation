@@ -13,3 +13,4 @@ yarn-error.log
 .env
 /storage/debugbar
 .php_cs.cache
+/bower_components

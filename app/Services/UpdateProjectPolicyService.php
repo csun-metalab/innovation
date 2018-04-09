@@ -10,7 +10,6 @@ use Helix\Models\ProjectPolicy;
 
 class UpdateProjectPolicyService implements UpdateProjectPolicyContract
 {
-
     public function updateProjectPolicy($projectId, array $data)
     {
         $project = Project::findOrFail($projectId);
@@ -19,25 +18,23 @@ class UpdateProjectPolicyService implements UpdateProjectPolicyContract
         $projectPolicies = $project->getSelectedPolicies($data['project_general']['project_type']);
 
         // Project already has policies so update them
-        if(count($project->policies) > 0)
-        {
+        if (\count($project->policies) > 0) {
             ProjectPolicy::invitationPolicy($project)->update([
-                'policy' => $projectPolicies['invitation']
+                'policy' => $projectPolicies['invitation'],
             ]);
             ProjectPolicy::approvalPolicy($project)->update([
-                'policy' => $projectPolicies['approval']
+                'policy' => $projectPolicies['approval'],
             ]);
             ProjectPolicy::visibilityPolicy($project)->update([
-                'policy' => $projectPolicies['visibility']
+                'policy' => $projectPolicies['visibility'],
             ]);
         }
         // No project policies exist so create them
-        else
-        {
+        else {
             $project->policies()->saveMany([
                 new ProjectPolicy(['policy_type' => 'invitation', 'policy' => $projectPolicies['invitation']]),
                 new ProjectPolicy(['policy_type' => 'approval',   'policy' => $projectPolicies['approval']]),
-                new ProjectPolicy(['policy_type' => 'visibility', 'policy' => $projectPolicies['visibility']])
+                new ProjectPolicy(['policy_type' => 'visibility', 'policy' => $projectPolicies['visibility']]),
             ]);
         }
     }

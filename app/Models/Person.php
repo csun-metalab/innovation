@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Helix\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 use METALab\Auth\MetaUser;
 
 class Person extends MetaUser
 {
+    use Searchable;
+
     protected $table = 'users';
     protected $primaryKey = 'user_id';
     /**
@@ -36,6 +39,19 @@ class Person extends MetaUser
 
     // This is used to keep track of related search terms
     public $relatedSearchTerms;
+
+    public function toSearchableArray()
+    {
+        $this->department_academicDepartments;
+        $array = $this->toArray();
+        if ($array['department_academic_departments']) {
+            dd($array);
+
+            return $array;
+        }
+
+        return [];
+    }
 
     /**
      * Constructs a new Person object. This constructor has to be added because
@@ -74,10 +90,10 @@ class Person extends MetaUser
     /**
      * Relates this person to all their Interests.
      */
-    public function all_interests()
-    {
-        return $this->belongsToMany('Helix\Models\Research', 'fresco.expertise_entity', 'entities_id', 'expertise_id');
-    }
+    // public function all_interests()
+    // {
+    //     return $this->belongsToMany('Helix\Models\Research', 'fresco.expertise_entity', 'entities_id', 'expertise_id');
+    // }
 
     /**
      * Relates this person to their research interests.
@@ -87,25 +103,6 @@ class Person extends MetaUser
         return $this->all_interests()->where('expertise_id', 'LIKE', 'research:%');
     }
 
-    /**
-     * Returns the academic interest model for a user.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function academic_interests()
-    {
-        return $this->hasMany('Helix\Models\Academic', 'entities_id', 'user_id');
-    }
-
-    /**
-     * Returns the personal interest modals for a user.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function personal_interests()
-    {
-        return $this->belongsToMany('Helix\Models\Personal', 'fresco.expertise_entity', 'entities_id', 'expertise_id');
-    }
 
     /**
      * Relates this Person to all its associated Department models. This also
@@ -129,6 +126,11 @@ class Person extends MetaUser
     {
         return $this->hasMany('Helix\Models\NemoMembership', 'individuals_id')
             ->where('parent_entities_id', 'LIKE', 'academic_departments:%');
+    }
+
+    public function department_academicDepartments()
+    {
+        return $this->hasManyThrough('Helix\Models\NemoMembership', '\Helix\Models\AcademicDepartment', 'parent_entities_id', 'individuals_id', 'entities_id');
     }
 
     /**
@@ -213,7 +215,7 @@ class Person extends MetaUser
      * is used primarily by custom authentication service providers.
      *
      * @param string $identifier The identifier to use for retrieval
-     * @param string $token The token to use for retrieval
+     * @param string $token      The token to use for retrieval
      *
      * @return User
      */
@@ -229,7 +231,7 @@ class Person extends MetaUser
      *
      * @param string $role The system name of the role to check
      *
-     * @return boolean
+     * @return bool
      */
     public function hasRole($role)
     {
@@ -243,7 +245,7 @@ class Person extends MetaUser
      *
      * @param array $roles An array of system role names to check
      *
-     * @return boolean
+     * @return bool
      */
     public function hasAnyRole($roles)
     {
@@ -260,10 +262,10 @@ class Person extends MetaUser
      * Returns whether the person has the specified role name within the
      * specified department entities ID.
      *
-     * @param string $role The system name of the role
+     * @param string $role   The system name of the role
      * @param string $deptId The department entities ID to check
      *
-     * @return boolean
+     * @return bool
      */
     public function hasRoleInDepartment($role, $deptId)
     {
@@ -283,7 +285,7 @@ class Person extends MetaUser
     /**
      * Returns whether this person is a faculty member in any department.
      *
-     * @return boolean
+     * @return bool
      */
     public function isFaculty()
     {
@@ -328,7 +330,7 @@ class Person extends MetaUser
      * Query Scope to find email address from URI.
      *
      * @param string $email string from email before \@ symbol (ie: john.smith.123)
-     * @param mixed $query
+     * @param mixed  $query
      *
      * @return Builder
      */
@@ -390,7 +392,7 @@ class Person extends MetaUser
      *
      * @param Project $project - The project to check.
      *
-     * @return boolean
+     * @return bool
      */
     public function isMember(Project $project)
     {

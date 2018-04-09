@@ -21,8 +21,8 @@
     </div>
     <span class="pull-right">Browse All:
       <a class="btn-link" href="{{route('search.projects',['searchType'=>'title','collaborators'=>'student'])}}"> Student Opportunities</a>
-      | <a class="btn-link" href="{{ route('browse.research-interests') }}">Research Interests and Themes</a>
-    </span>
+{{--       | <a class="btn-link" href="{{ route('browse.research-interests') }}">Research Interests and Themes</a>
+ --}}    </span>
     <br>
     @include('layouts.partials.similar-search-terms')
     @yield('filter-tags')

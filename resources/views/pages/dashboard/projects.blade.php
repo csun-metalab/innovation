@@ -9,7 +9,7 @@
       <div class="col-sm-12">
       {{-- <br> --}}
       <a class="btn btn-default" style="float:right;" href="{{ url('project/step-1') }}">Add a New Project</a>
-        <h1 class="type--header type--thin">Scholarship Dashboard</h1>
+        <h1 class="type--header type--thin">Innovation Dashboard</h1>
       </div>
     </div>
 

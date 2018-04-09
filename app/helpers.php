@@ -121,12 +121,12 @@ function generateNewProjectId()
 /**
  * Generate a new id in fresco.research_interests.
  */
-function generateNewResearchId()
-{
-    $research = Helix\Models\Research::selectRaw("attribute_id, CONVERT(SUBSTRING_INDEX(attribute_id, ':', -1), UNSIGNED INTEGER) AS attribute_id")->orderBy('attribute_id', 'DESC')->first();
+// function generateNewResearchId()
+// {
+//     $research = Helix\Models\Research::selectRaw("attribute_id, CONVERT(SUBSTRING_INDEX(attribute_id, ':', -1), UNSIGNED INTEGER) AS attribute_id")->orderBy('attribute_id', 'DESC')->first();
 
-    return 'research:' . ++$research->attribute_id;
-}
+//     return 'research:' . ++$research->attribute_id;
+// }
 
 /**
  * Generate a new id in fresco.personal_interests.
@@ -347,7 +347,7 @@ function guzzleRequest($url, $method = 'GET', $assoc = true)
     } catch (\GuzzleHttp\Exception\RequestException $e) {
         $responseJson = \json_encode(['success' => false]);
     } finally {
-        //$data = \json_decode($responseJson->getBody(), $assoc);
+        // $data = \json_decode($responseJson->getBody(), $assoc);
     }
 
     return $data;

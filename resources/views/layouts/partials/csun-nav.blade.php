@@ -7,14 +7,12 @@
         <div class="bar"></div>
       </div>
           <a title="California State University, Northridge - Home" href="http://www.csun.edu" class="primary-nav__brand"><span class="sr-only">California State University, Northridge (CSUN)</span></a>
-             <a title="CSUN Scholarship - Home" href="{{ url('/') }}" class="primary-nav__sub-brand">Scholarship<small><sub>BETA</sub></small></a>
+             <a title="CSUN Scholarship - Home" href="{{ url('/') }}" class="primary-nav__sub-brand">Innovation</a>
           <a title="Skip to main content" class="sr-only" href="#main">Skip to main content</a>
     </div>
     <ul class="primary-nav__links">
     <li><a title="CSUN Scholarship - Home" href="{{ url("/") }}" class="primary-nav__link {{ setActive(['/']) }}">Home</a></li>
-    <li><a title="Faculty" href="http://www.csun.edu/faculty/profiles" class="primary-nav__link">Profiles</a></li>
-    <li><a title="Faculty Stories" href="http://www.csun.edu/faculty/stories" class="primary-nav__link">Stories</a></li>
-    <li><a title="Explore Projects" href="{{ url('project') }}" class="primary-nav__link {{ setActive(['project*','admin*']) }}">Scholarship</a></li>
+    <li><a title="Explore Projects" href="{{ url('project') }}" class="primary-nav__link {{ setActive(['project*','admin*']) }}">Projects</a></li>
     <li><a title="About CSUN Scholarship" href="{{ url("/about/version-history") }}" class="primary-nav__link {{ setActive(['about*']) }}">About</a></li>
     @if (Auth::check())
     <li class="drop">

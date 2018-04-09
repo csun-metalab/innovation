@@ -19,9 +19,9 @@ class GenericMailer extends Mailable
     /**
      * Create a new message instance.
      *
-     * @param String $view
+     * @param string $view
      * @param array  $data
-     * @param String $subject
+     * @param string $subject
      */
     public function __construct(String $view, array $data, String $subject)
     {
