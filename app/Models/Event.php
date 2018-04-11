@@ -15,5 +15,7 @@ class Event extends Model
     protected $fillable = [
         'project_id',
         'event',
+        'start_date',
+        'end_date'
     ];
 }

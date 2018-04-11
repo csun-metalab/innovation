@@ -16,6 +16,8 @@ class CreateEventsTable extends Migration
             $table->increments('id');
             $table->string('project_id');
             $table->string('event_name');
+            $table->timestamp('start_date')->nullable();
+            $table->timestamp('end_date')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
