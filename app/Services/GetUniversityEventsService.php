@@ -9,9 +9,13 @@ use Helix\Models\Event;
 
 class GetUniversityEventsService implements GetUniversityEventsContract
 {
-    public function getUniversityEvents($project_id)
+    public function getUniversityEvents($project_id = null)
     {
-        $events = Event::where('project_id', $project_id)->get();
+        if (is_null($project_id))
+            $events = Event::get();
+        else
+            $events = Event::where('project_id', $project_id)->get();
+
 
         return $events;
     }
