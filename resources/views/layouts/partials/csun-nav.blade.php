@@ -28,7 +28,7 @@
             {{-- Route for user Profile not found --}}
             <li title="Go To My Profile" class="{{ setActive(['admin/Profile'])   }}"><a target="_blank" href="{{Auth::user()->profile_url()}}" class="drop-down__link" title="My Profile"> My Profile  <i class="{{-- fa fa-user --}}" aria-hidden="true"></i>
             </a></li>
-          @elseif(Auth::user()->isStaffBasedOnAffiliation() && Auth::user()->isAdmin())
+          @elseif(Auth::user())
             <li title="Profile Dashboard" class="{{ setActive(['admin/projects']) }}"><a href="{{url('admin/dashboard')}}" class="drop-down__link" title="Dashboard">Dashboard   <i class="{{-- fa fa-tachometer --}}" aria-hidden="true"></i>
               </a></li>
           @endif

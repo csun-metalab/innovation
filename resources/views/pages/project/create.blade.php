@@ -1,5 +1,6 @@
 @extends('layouts.master')
 @section('content')
+{{Form::open()}}
     <div class="section" style="background-color: #252525;">
       <div class="container">
         <div class="row">
@@ -125,15 +126,16 @@
           <div class="col-xs-12">
             <div class="form__group">
               {{Form::label('tags','Tags',['class'=>'label--required type--left type--thin'])}}
-              {{ Form::select('tags[]', ['',''], null, ['class' => 'select2-tags tags', 'multiple' => 'multiple']) }}
+              {!!Form::select('tags[]', ['',''], null, ['class' => 'select2-tags tags', 'multiple' => 'multiple'])!!}
             </div>
           </div>
         </div>
         <div class="type--center">
           <a href="{{url('/project')}}" class="btn btn-default">Cancel</a>
-          <button class="btn btn-primary" role="button">Submit</button>
+          {!!Form::submit('Submit',['class'=>'btn btn-primary'])!!}
         </div>
     </div>
+{!!Form::close()!!}
 
 @stop
 @section('scripts')

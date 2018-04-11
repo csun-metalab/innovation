@@ -54,8 +54,10 @@ Route::group(['middleware' => ['web']], function () {
         Route::get('new', function () {
             return view('pages.project.create');
         });
-        Route::get('create/{projectId?}', 'ProjectController@create')
-            ->name('project.edit.1');
+        Route::get('create', 'ProjectController@create')
+            ->name('project.create.get');
+        Route::post('create', 'ProjectController@postCreate')
+            ->name('project.create.post');
 
         Route::post('step-1/{projectId?}', 'ProjectController@step1')
             ->name('project.edit.step-1.post');
@@ -123,9 +125,6 @@ if (app()->environment('local')) {
     // Miscellaneous routes
     // Todo: Delete this after uncommenting the equivalent route above.
     Route::get('init/project-attributes', 'ProjectController@createAllProjectAttributes');
-    Route::get('dashboard', function () {
-        return view('pages.dashboard.landing');
-    });
     Route::get('see-more-projects', function () {
         return view('pages.search.seemoreprojects');
     });

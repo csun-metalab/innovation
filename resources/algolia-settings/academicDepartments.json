@@ -4,10 +4,7 @@
     "hitsPerPage": 20,
     "maxValuesPerFacet": 100,
     "version": 2,
-    "attributesToIndex": [
-        "display_name",
-        "department.display_name"
-    ],
+    "attributesToIndex": null,
     "numericAttributesToIndex": null,
     "attributesToRetrieve": null,
     "unretrievableAttributes": null,
