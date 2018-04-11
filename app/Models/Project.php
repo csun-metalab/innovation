@@ -21,7 +21,7 @@ class Project extends Model
         parent::boot();
     }
 
-    protected $table = 'exploration.projects';
+    protected $table = 'projects';
     protected $primaryKey = 'project_id';
     protected $fillable = [
         'project_id',

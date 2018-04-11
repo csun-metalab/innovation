@@ -48,9 +48,18 @@ class SearchController extends Controller
             $isFeatured = ['attribute.is_featured:1'];
             $isFeatured = $this->buildAlgoliaProjectFilters($isFeatured);
 
+        
+            $featuredProjects = Project::search('')->with($isFeatured)->get();
+            if(count($featuredProjects) >= 3){
+                $featuredProjects->random(3);
+            }
+
             $projects = Project::search('')->with($notFeatured);
-            $featuredProjects = Project::search('')->with($isFeatured)->get()->random(3);
-            $projects = $projects->take($recentProjectsToConsider)->get()->random($recentProjectsToRandomlyShow);
+            $projects = $projects->take($recentProjectsToConsider)->get();
+
+            if(count($projects) >= $recentProjectsToRandomlyShow ){
+                $projects = $projects->random($recentProjectsToRandomlyShow);
+            }
         }
 
         $viewData = \compact('projects', 'featuredProjects', 'filters');

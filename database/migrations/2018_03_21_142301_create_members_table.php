@@ -17,7 +17,7 @@ class CreateMembersTable extends Migration
             $table->string('members_id');
             $table->string('position');
             $table->string('role');
-            $table->bool('active')->default(true);
+            $table->boolean('active')->default(true);
             $table->softDeletes();
             $table->timestamps();
         });

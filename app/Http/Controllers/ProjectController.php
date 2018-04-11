@@ -6,6 +6,7 @@ namespace Helix\Http\Controllers;
 
 use Auth;
 use DB;
+
 use Helix\Contracts\CreateSeekingContract;
 use Helix\Contracts\CreateTagContract;
 use Helix\Contracts\GetUniversityEventsContract;
@@ -15,7 +16,6 @@ use Helix\Contracts\UpdateProjectGeneralContract;
 use Helix\Contracts\UpdateProjectPolicyContract;
 use Helix\Contracts\UpdateProjectPurposeContract;
 use Helix\Contracts\VerifyProjectIdContract;
-use Helix\Http\Requests\ProjectStepOneCreate;
 use Helix\Models\Attribute;
 use Helix\Models\Interest;
 use Helix\Models\Invitation;
@@ -28,6 +28,7 @@ use Helix\Models\Seeking;
 use Illuminate\Http\Request;
 use Searchy;
 
+use Helix\Http\Requests\Project\ProjectCreate;
 /**
  * Essentially the resource controller for projects. In addition, this has the
  * three steps for creating/editing a project and AJAX calls in those forms.
@@ -63,31 +64,31 @@ class ProjectController extends Controller
         UpdateProjectAttributesContract $updateProjectAttributesContract,
         UpdateProjectPolicyContract $updateProjectPolicyContract,
         UpdateProjectPurposeContract $updateProjectPurposeContract,
-        CreateSeekingContract $createSeekingContract,
         CreateTagContract $createTagContract,
         GetUniversityEventsContract $getUniversityEventsContract,
-        UpdateCollaboratorsContract $updateCollaboratorsContract
+        UpdateCollaboratorsContract $updateCollaboratorsContract,
+        CreateSeekingContract $createSeekingContract
     ) {
-        $this->middleware('auth', ['except' => [
-            'index',
-            'show',
-            'apiProject',
-            'updateCayuseProjects',
-            'validateYoutube',
-            'createAllProjectAttributes',
-            'getCollaboratorsList',
-            'getByCategoryType',
-        ]]);
+        // $this->middleware('auth', ['except' => [
+        //     'index',
+        //     'show',
+        //     'apiProject',
+        //     'updateCayuseProjects',
+        //     'validateYoutube',
+        //     'createAllProjectAttributes',
+        //     'getCollaboratorsList',
+        //     'getByCategoryType',
+        // ]]);
 
-        $this->middleware(['project-write', 'helix-roles'], ['only' => [
-            'create',
-            'step1',
-            'getStep2',
-            'step2',
-            'getStep3',
-            'store',
-            'destroy',
-        ]]);
+        // $this->middleware(['project-write', 'helix-roles'], ['only' => [
+        //     // 'create',
+        //     'step1',
+        //     'getStep2',
+        //     'step2',
+        //     'getStep3',
+        //     'store',
+        //     'destroy',
+        // ]]);
 
         $this->projectIdVerifier = $verifyProjectIdContract;
         $this->projectGeneralUpdater = $updateProjectGeneralContract;
@@ -192,44 +193,65 @@ class ProjectController extends Controller
      */
     public function create($projectId = null)
     {
-        // If user is coming from anywhere besides project/step-2 and if session has new-project
-        if (!str_contains(url()->previous(), 'step-2') && session('new-project')) {
-            session()->forget('new-project');
-        }
-        if (!session('new-project')) {
-            if ($projectId) {
-                //could probably eager load here
-                $project = Project::with('attribute', 'link')->findOrFail($projectId);
+        if ($projectId) {
+            //could probably eager load here
+            $project = Project::with('attribute', 'link')->findOrFail($projectId);
 
-                if ($project->attribute == null) {
-                    Attribute::create([
-                        'project_id' => $projectId,
-                        'is_featured' => 0,
-                        'seeking_collaborators' => 0,
-                        'seeking_students' => 0,
-                        'purpose_name' => 'project',
-                    ]);
-                }
-
-                $project_general = [
-                    'project_purpose' => $project->attribute ? $project->attribute->purpose_name : '',
-                    'project_type' => $project->getPolicyType(),
-                    'title' => $project->project_title,
-                    'description' => $project->abstract,
-                    'start_date' => \date('m/d/Y', \strtotime(\str_replace('-', '/', $project->project_begin_date))),
-                    'end_date' => $project->project_end_date ? \date('m/d/Y', \strtotime(\str_replace('-', '/', $project->project_end_date))) : null,
-                    'url' => $project->project_url ?: null,
-                    'cayuse_project' => null !== $project->cayuse_id ? true : false,
-                    'youtube' => $project->link ? $project->link->link : '',
-                ];
-
-                session()->put('new-project.project_general', $project_general);
+            if ($project->attribute == null) {
+                Attribute::create([
+                    'project_id' => $projectId,
+                    'is_featured' => 0,
+                    'seeking_collaborators' => 0,
+                    'seeking_students' => 0,
+                    'purpose_name' => 'project',
+                ]);
             }
-        }
-        $projectPurposes = Purpose::all()->pluck('display_name', 'system_name');
 
-        return view('pages.project.one', \compact('project', 'projectId', 'projectPurposes'));
+            $project_general = [
+                'project_purpose' => $project->attribute ? $project->attribute->purpose_name : '',
+                'project_type' => $project->getPolicyType(),
+                'title' => $project->project_title,
+                'description' => $project->abstract,
+                'start_date' => \date('m/d/Y', \strtotime(\str_replace('-', '/', $project->project_begin_date))),
+                'end_date' => $project->project_end_date ? \date('m/d/Y', \strtotime(\str_replace('-', '/', $project->project_end_date))) : null,
+                'url' => $project->project_url ?: null,
+                'cayuse_project' => null !== $project->cayuse_id ? true : false,
+                'youtube' => $project->link ? $project->link->link : '',
+            ];
+
+            session()->put('new-project.project_general', $project_general);
+        }
+
+        return view('pages.project.create', \compact('project', 'projectId'));
     }
+    public function postCreate(ProjectCreate $project, $projectId = null)
+    {
+        dd($project);
+        $projectData = [
+            'project_purpose'=> $project->attributes? $project->attributes->purpose_name: '',
+            'project_type'   => $project->getPolicyType(),
+            'title'          => $project->project_title,
+            'description'    => $project->abstract,
+            'start_date'     => date("m/d/Y", strtotime(str_replace('-','/', $project->project_begin_date))),
+            'end_date'       => $project->project_end_date ? date("m/d/Y", strtotime(str_replace('-','/', $project->project_end_date))) : NULL,
+            'url'            => $project->project_url ?: NULL,
+            'cayuse_project' => !is_null($project->cayuse_id) ? true : false,
+            'youtube'        => $project->link? $project->link->link: '',
+        ];
+        $projectId = $this->projectIdVerifier->verifyId($projectId);
+        $this->projectGeneralUpdater->updateProjectGeneral($projectId, $projectData);
+        $this->projectAttributesUpdater;
+        $this->projectPolicyUpdater->updateProjectPolicy($projectId, $projectData);
+        $this->projectPurposeUpdater->updateProjectPurpose($projectId, $projectData);
+        $this->collaboratorsUpdater;
+        $this->createTagContract;
+
+    
+
+
+        return view('pages.project.four', \compact('project'));
+    }
+
 
     /**
      * Handles the information given from step 1 and session information.
@@ -239,7 +261,7 @@ class ProjectController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function step1(ProjectStepOneCreate $request, $projectId = null)
+    public function step1(StepOneRequest $request, $projectId = null)
     {
         if (session('new-project')) {
             if (\array_key_exists('project_general', session('new-project'))) {
@@ -284,6 +306,7 @@ class ProjectController extends Controller
      */
     public function validateYoutube(Request $request)
     {
+        dd("here");
         $youtube_url = request()->url;
         $rx = '#(https?://(?:www\.)?youtube\.com/watch\?v=([^&]+?))|((https?://(?:www\.)?)(youtu\.be){1})|((https?://(?:www\.)?(vimeo\.com){1}))#';
 
@@ -437,51 +460,6 @@ class ProjectController extends Controller
         event(new \Helix\Events\Project\ProjectCreatedOrUpdated($project, session('new-project')));
 
         session()->forget('new-project');
-
-        return view('pages.project.four', \compact('project'));
-    }
-
-    public function postProjectCreation(Request $request, $projectId = null)
-    {
-        $collaborators = null !== request('collaborators') ? \array_filter(request('collaborators')) : [];
-
-        $projectData = [
-           'project_general' => [
-               'title' => \trim($request->title),
-               'cayuse_project' => false,
-               'project_type' => $request->project_type,
-               'project_purpose' => $request->project_purpose,
-               'description' => \trim($request->description),
-               'start_date' => $request->start_date,
-               'end_date' => $request->end_date,
-               'url' => \trim($request->url),
-               'youtube' => \trim($request->youtube),
-           ],
-            'interests' => $request->tags,
-            'collaborators' => [],
-            'seeking' => [
-                'collaborators' => 0,
-                'students' => 0,
-                'qualifications' => null,
-            ],
-        ];
-
-        if (!empty($collaborators)) {
-            $projectData['collaborators'] = $collaborators;
-            $projectData['seeking']['collaborators'] = $request->seekingCollaborators;
-            $projectData['seeking']['students'] = $request->seekingStudents;
-            if ($request->seekingStudents && $request->studentQualifications) {
-                $projectData['seeking']['qualifications'] = $request->studentQualifications;
-            }
-        }
-
-        $projectId = $this->projectIdVerifier->verifyId($projectId);
-
-        $this->projectGeneralUpdater->updateProjectGeneral($projectId, $projectData);
-        $this->projectAttributesUpdater->updateProjectAttributes($projectId, $projectData);
-        $this->projectPolicyUpdater->updateProjectPolicy($projectId, $projectData);
-        $this->projectPurposeUpdater->updateProjectPurpose($projectId, $projectData);
-        $this->collaboratorsUpdater->updateCollaborators($projectId, $projectData);
 
         return view('pages.project.four', \compact('project'));
     }

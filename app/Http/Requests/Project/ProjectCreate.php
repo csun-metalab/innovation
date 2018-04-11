@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Helix\Http\Requests;
+namespace Helix\Http\Requests\Project;
 
+use Auth;
 use Illuminate\Foundation\Http\FormRequest;
 
-class ProjectStepOneCreate extends FormRequest
+class ProjectCreate extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -15,7 +16,7 @@ class ProjectStepOneCreate extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return Auth::check();
     }
 
     /**
@@ -25,23 +26,14 @@ class ProjectStepOneCreate extends FormRequest
      */
     public function rules()
     {
-        $rules = [
-            'project_type' => 'required|in:institutional,showcase,stealth',
+       $rules = [
             'title' => 'required|min:3|max:256',
             'start_date' => 'date_format:m/d/Y|required',
             'end_date' => 'nullable|date_format:m/d/Y|after:start_date',
             'description' => 'required',
-            'funding' => 'numeric|min:0',
             'url' => 'nullable|url',
             'youtube' => ['nullable', 're.gex' => 'regex:#(https?://(?:www\.)?youtube\.com/watch\?v=([^&]+?))|((https?://(?:www\.)?)(youtu\.be){1})|((https?://(?:www\.)?(vimeo\.com){1}))#'],
         ];
-
-        //This makes the title of a cayuse project required for only admins.
-        //This prevents an admin from completely removing a title.
-        if (session('new-project.project_general.cayuse_project') && !auth()->user()->hasRole('admin')) {
-            $rules['title'] = 'min:3|max:256';
-        }
-
         return $rules;
     }
 

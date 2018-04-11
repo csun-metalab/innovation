@@ -114,6 +114,9 @@ function generateNewProjectId()
     $project = Project::select(DB::raw('CONVERT(REPLACE(project_id, "projects:", ""), UNSIGNED INTEGER) as id'))
           ->orderBy('id', 'DESC')
           ->first();
+    if($project == null){
+        return 'projects:1';
+    }
 
     return 'projects:' . ++$project->id;
 }
@@ -156,7 +159,7 @@ function datePickerFormat($date)
 {
     return \date('m/d/Y', \strtotime($date));
 }
-function monthFormat($timestamp)
+function monthFormat(String $timestamp)
 {
     return \date('F-d-Y', \strtotime($timestamp));
 }
