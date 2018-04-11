@@ -14,7 +14,7 @@ class Event extends Model
     protected $dates = ['deleted_at'];
     protected $fillable = [
         'project_id',
-        'event',
+        'event_name',
         'start_date',
         'end_date'
     ];
