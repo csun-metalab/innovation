@@ -24,5 +24,9 @@ class UniversityEventsServiceProvider extends ServiceProvider
             'Helix\Contracts\GetUniversityEventsContract',
             'Helix\Services\GetUniversityEventsService'
         );
+        $this->app->bind(
+            'Helix\Contracts\CreateUniversityEventContract',
+            'Helix\Services\CreateUniversityEventService'
+        );
     }
 }

@@ -224,6 +224,7 @@ return [
         Collective\Html\HtmlServiceProvider::class,
         Helix\Providers\ViewComposerServiceProvider::class,
         Helix\Providers\ProjectServiceProvider::class,
+        Helix\Providers\UniversityEventsServiceProvider::class,
 
         // META+Lab LDAP authentication service provider
         CSUNMetaLab\Authentication\Providers\AuthServiceProvider::class,

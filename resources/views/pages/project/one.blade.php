@@ -158,6 +158,8 @@
     {!! Html::script('js/metaphor.js') !!}
     {!! Html::script('js/jquery.min.js') !!}
 
+
+
     {{-- javascript for validation of youtube link --}}
     <script type="text/javascript">
         // on focus out

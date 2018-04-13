@@ -13,20 +13,32 @@
     </div>
 
     <div class="row">
+
       <div class="col-lg-3">
         @include("layouts.partials.admin-sidebar")
       </div>
+
       <div class="col-lg-9">
+          {!! Form::open(array('url' => route('dashboard.event.create'))) !!}
+          {!! Form::hidden('originator', Auth::user()->display_name) !!}
+          {!! Form::label('event_name', 'Title', ['class'=>'label--default']) !!}
+          {!! Form::text('event_name') !!}
+          {!! Form::label('start_date', 'Start Date', ['class'=>'label--default']) !!}
+          {!! Form::text('start_date', '', ['class'=>'form-control datepicker', 'placeholder'=>'mm/dd/yyyy', 'type' => 'date', 'maxlength' => '10']) !!}
+          {!! Form::label('end_date', 'End Date', ['class'=>'label--default']) !!}
+          {!! Form::text('end_date', '', ['class'=>'form-control datepicker', 'placeholder'=>'mm/dd/yyyy', 'type' => 'date', 'maxlength' => '10']) !!}
+          {!! Form::submit('Create', ['title' => 'Create','class' => 'btn btn-primary', 'style' => 'width: 132px']) !!}
+          {!! Form::close() !!}
 			@forelse($events as $event)
 			<div style="border: 1px solid #d4d4d4; padding: 15px;">
-				<p>{{ monthFormat($event->start_date) }}
-				<b>{{ $event->event_name }}</b> is requesting to join your project as <b>{{ $invitation->role_position }}</b>
-				</p>
+				<p>
+                    {{ monthFormat($event->start_date) }} to {{ monthFormat($event->end_date) }}
+                </p>
           <strong>{{ $event->event_name }}</strong>
-        </a><br>
+        <br>
 				<p></p>
-				<ul class="list--inline list--unstyled">
-
+				<ul>
+                    Created By {{$event->originator}}
 				</ul>
 			</div>
 		@empty

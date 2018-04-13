@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Helix\Contracts;
 
-interface GetUniversityEventsContract
+interface CreateUniversityEventContract
 {
-    public function getUniversityEvents();
+    public function createUniversityEvent($eventName,$startDate,$endDate,$originator);
 }
