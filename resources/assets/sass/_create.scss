@@ -1,0 +1,27 @@
+//CREATE A PROJECT SASS PAGE
+
+.uploader {
+  position: relative;
+  overflow: hidden;
+  width: 1111px;
+  height: 315px;
+  padding-top: 100px;
+  padding-bottom: 100px;
+  border: dashed rgba(0, 0, 0, 0.1);
+}
+
+#upload:hover {
+  color: red;
+  cursor: pointer;
+}
+
+/*hides default upload button*/
+#photoLoad {
+  display: none;
+  padding-top: 10px;
+  text-align: center;
+}
+
+.create__section {
+  background-color:#252525;
+}

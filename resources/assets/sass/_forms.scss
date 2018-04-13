@@ -1,0 +1,10 @@
+.form--long {
+  width: 100%;
+}
+
+//problem & solution divider
+@media all and (min-width: 768px) {
+ #create__problem {
+  border-right: rgba(0, 0, 0, 0.2) solid 2px;
+}
+}

@@ -23,6 +23,10 @@
 // CSUN THEME
 @import "partials/csun-footer";
 
+//CSS for Pages
+@import "create";
+@import "forms";
+
 select {
   background-image: url(http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png);
   background-repeat: no-repeat;
