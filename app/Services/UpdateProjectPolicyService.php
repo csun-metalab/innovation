@@ -13,9 +13,8 @@ class UpdateProjectPolicyService implements UpdateProjectPolicyContract
     public function updateProjectPolicy($projectId, array $data)
     {
         $project = Project::findOrFail($projectId);
-
         // Grab permission level for the project
-        $projectPolicies = $project->getSelectedPolicies($data['project_general']['project_type']);
+        $projectPolicies = $project->getSelectedPolicies($data['project_type']);
 
         // Project already has policies so update them
         if (\count($project->policies) > 0) {

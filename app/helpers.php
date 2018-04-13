@@ -356,6 +356,24 @@ function guzzleRequest($url, $method = 'GET', $assoc = true)
     return $data;
 }
 
+function watsonRequest($url, $json, $auth = null, $assoc = true)
+{
+    $data = null;
+    $responseJson = null;
+    try {
+        $client = new \GuzzleHttp\Client();
+        $responseJson = $client->request('POST', env('WATSON_API_URL').$url, [
+            'auth' => $auth,
+            'json' => $json,
+            'verify' => false
+        ]);
+        $data = json_decode($responseJson->getBody()->getContents(), $assoc);
+    } catch (\GuzzleHttp\Exception\RequestException $e) {
+        $data = false;
+    }
+    return $data;
+}
+
 /**
  * Handles the Ajax requests for retrieving profile images
  * from the CDN.

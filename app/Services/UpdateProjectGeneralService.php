@@ -6,6 +6,7 @@ namespace Helix\Services;
 
 use Helix\Contracts\UpdateProjectGeneralContract;
 use Helix\Models\Project;
+use Helix\Models\Link;
 
 class UpdateProjectGeneralService implements UpdateProjectGeneralContract
 {
@@ -13,13 +14,22 @@ class UpdateProjectGeneralService implements UpdateProjectGeneralContract
     {
         $project = Project::findOrFail($projectId);
 
-        $project->slug = slugify($data['project_general']['title']);
-        $project->project_title = $data['project_general']['title'];
-        $project->project_url = $data['project_general']['url'] ?: null;
+        $project->slug = slugify($data['title']);
+        $project->project_title = $data['title'];
+        $project->visibility = 1;
+        $proejct->pi_members_id = $data['project_author'];
         //$project->project_begin_date = timestampFormat($data['project_general']['start_date']);
         //$project->project_end_date = $data['project_general']['end_date'] ? timestampFormat($data['project_general']['end_date']) : null;
-        $project->abstract = $data['project_general']['description'];
+        $project->abstract = $data['description'];
         $project->is_publishable = 1;
         $project->save();
+        $project->searchable();
+        if(isset($data['url'])){
+            Link::create([
+                'entity_id' => $projectId,
+                'link_type' => 'video',
+                'link'  =>  $data['url']
+            ]);
+        }
     }
 }

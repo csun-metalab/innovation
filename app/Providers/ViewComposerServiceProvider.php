@@ -14,7 +14,7 @@ class ViewComposerServiceProvider extends ServiceProvider
     public function boot()
     {
         view()->composer([
-            'pages.project.one',
+            'pages.project.create',
             'pages.project.edit'
         ], 'Helix\Http\ViewComposers\ProjectTypeComposer');
     }

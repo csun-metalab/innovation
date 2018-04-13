@@ -14,9 +14,9 @@ class Project extends Model
 
     public static function boot()
     {
-        static::updated(function ($model) {
-            $model->user->touch();
-        });
+        // static::updated(function ($model) {
+        //     $model->user->touch();
+        // });
 
         parent::boot();
     }

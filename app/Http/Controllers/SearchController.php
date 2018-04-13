@@ -15,6 +15,7 @@ use Helix\Models\Research;
 use Laravel\Scout\Searchable;
 use Searchy;
 
+
 /**
  * Handles the search pages, query builders for those pages, and the functions
  * the AJAX calls from the filter.
@@ -44,7 +45,7 @@ class SearchController extends Controller
             $projects = $this->search();
         } else {
             $notFeatured = ['attribute.is_featured:0'];
-            $notFeatured = $this->buildAlgoliaProjectFilters($notFeatured);
+            $notFeatured = $this->buildAlgoliaProjectFilters();
             $isFeatured = ['attribute.is_featured:1'];
             $isFeatured = $this->buildAlgoliaProjectFilters($isFeatured);
 
@@ -406,7 +407,7 @@ class SearchController extends Controller
         //   });
         // });
         } else {
-            $projectRulesFilters[] = 'visibility.policy:public';
+            // $projectRulesFilters[] = 'visibility.policy:public';
         }
 
         return $projectRulesFilters;
@@ -446,10 +447,9 @@ class SearchController extends Controller
             if ($data) {
                 foreach ($data as $person) {
                     $tmp['id'] = $person->user_id;
-                    $tmp['text'] = $person->common_name;
+                    $tmp['text'] = $person->display_name;
                     $results[] = $tmp;
                 }
-
                 return $results;
             }
         }

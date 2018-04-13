@@ -206,7 +206,6 @@ class ProjectController extends Controller
                     'purpose_name' => 'project',
                 ]);
             }
-
             $project_general = [
                 'project_purpose' => $project->attribute ? $project->attribute->purpose_name : '',
                 'project_type' => $project->getPolicyType(),
@@ -222,34 +221,49 @@ class ProjectController extends Controller
             session()->put('new-project.project_general', $project_general);
         }
 
-        return view('pages.project.create', \compact('project', 'projectId'));
+        // $projectPurposes = Purpose::all()->pluck('display_name','system_name');
+        $projectPurposes = ['Test','test2'];
+
+        return view('pages.project.create', \compact('project', 'projectId','projectPurposes'));
     }
-    public function postCreate(ProjectCreate $project, $projectId = null)
+    public function postCreate(Request $project, $projectId = null)
     {
-        dd($project);
+        $projectAuthor = Auth::user()->user_id;
+
         $projectData = [
-            'project_purpose'=> $project->attributes? $project->attributes->purpose_name: '',
-            'project_type'   => $project->getPolicyType(),
-            'title'          => $project->project_title,
-            'description'    => $project->abstract,
-            'start_date'     => date("m/d/Y", strtotime(str_replace('-','/', $project->project_begin_date))),
-            'end_date'       => $project->project_end_date ? date("m/d/Y", strtotime(str_replace('-','/', $project->project_end_date))) : NULL,
-            'url'            => $project->project_url ?: NULL,
-            'cayuse_project' => !is_null($project->cayuse_id) ? true : false,
-            'youtube'        => $project->link? $project->link->link: '',
+            'title'          => $project->title,
+            'description'    => $project->description,
+            'project_type'   => $project->project_type,
+            'project_autor'  => $projectAuthor,
+            // 'start_date'     => date("m/d/Y", strtotime(str_replace('-','/', $project->project_begin_date))),
+            // 'end_date'       => $project->project_end_date ? date("m/d/Y", strtotime(str_replace('-','/', $project->project_end_date))) : NULL,
+            'url'            => $project->url ?: NULL,
+            'youtube'        => $project->video?: NULL
         ];
+        $tags = $this->tagsDecode($project->tags);
         $projectId = $this->projectIdVerifier->verifyId($projectId);
         $this->projectGeneralUpdater->updateProjectGeneral($projectId, $projectData);
-        $this->projectAttributesUpdater;
         $this->projectPolicyUpdater->updateProjectPolicy($projectId, $projectData);
-        $this->projectPurposeUpdater->updateProjectPurpose($projectId, $projectData);
-        $this->collaboratorsUpdater;
-        $this->createTagContract;
-
-    
+        $this->collaboratorsUpdater->updateCollaborators($projectId, $projectData);
+        $this->createTagContract->createTag($projectId, $tags);
 
 
         return view('pages.project.four', \compact('project'));
+    }
+    private function tagsDecode(array $tags)
+    {
+        foreach ($tags as &$tag) {
+            if(str_contains($tag,'watson:')){
+                $data = explode(':', $tag);
+                $text = $data[1];
+                $relevance = $data[2];
+            }else{
+                $text = $tag;
+                $relevance = 1;
+            }
+            $tag = compact('text','relevance');
+        }
+        return $tags;
     }
 
 
@@ -306,7 +320,6 @@ class ProjectController extends Controller
      */
     public function validateYoutube(Request $request)
     {
-        dd("here");
         $youtube_url = request()->url;
         $rx = '#(https?://(?:www\.)?youtube\.com/watch\?v=([^&]+?))|((https?://(?:www\.)?)(youtu\.be){1})|((https?://(?:www\.)?(vimeo\.com){1}))#';
 
@@ -545,16 +558,13 @@ class ProjectController extends Controller
     public function getCollaboratorsList()
     {
         if (request()->filled('q')) {
-            $data = Searchy::search('users')->fields('display_name', 'first_name', 'last_name', 'middle_name')->query(request('q'))->getQuery()->limit(10)->get();
-            // $data = Person::where('display_name', 'LIKE', "%".request()->q."%")->take(5)->get();
-
+            $data = Person::search(request('q'))->get()->take(10);
             if ($data) {
                 foreach ($data as $person) {
                     $tmp['id'] = $person->user_id;
-                    $tmp['text'] = $person->common_name;
+                    $tmp['text'] = $person->display_name;
                     $results[] = $tmp;
                 }
-
                 return $results;
             }
         }
@@ -843,5 +853,35 @@ class ProjectController extends Controller
         Attribute::insert($newAttributeValues->toArray());
 
         return $newAttributeValues->count();
+    }
+
+    public function getWatsonTags(Request $request, $data = null, $relevance = 0.5)
+    {   
+        if($request->ajax()){
+            if($request->filled('data')){
+                $data = $request->get('data');
+            }
+            $auth = [ env('WATSON_USER_NAME'), env('WATSON_PASSWORD')];
+            $json = [
+                "text" => $data,
+                "features" => [
+                        "concepts" => [
+                            "emotion" => false,
+                            "sentiment" => false
+                        ]
+                    ]
+            ];
+            $responseData = watsonRequest( env('WATSON_API_TYPE') , $json, $auth);
+            if($responseData){
+                $data = array_filter($responseData['concepts'], function ($tag) use ($relevance) { 
+                    return ($tag['relevance'] >= $relevance);
+                });
+            }else{
+                $data = null;
+            }
+            return $data;
+        }else{
+            abort(403);
+        }
     }
 }

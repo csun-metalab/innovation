@@ -31,8 +31,7 @@ mix.copy(`resources/js/loadProfileImages.js`, 'public/js/loadProfileImages.js');
 //   'collab.js'
 // ], 'public/js/collab.js', 'resources/js');
 
-mix.scripts([
-'scripts.js',
-'collaborators.js'
-], 'public/js/scripts.js', 'resources/js');
+mix.js('resources/js/scripts.js', 'public/js');
+mix.js('resources/js/collaborators.js', 'public/js');
+
 
