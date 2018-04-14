@@ -127,7 +127,7 @@ class SearchController extends Controller
         $requestedFilters = request()->all();
         $requestedFilters = collect($requestedFilters);
         // List of things from which to search.
-        $sponsor = Award::pluck('sponsor', 'sponsor_code')->sort()->unique();
+        // $sponsor = Award::pluck('sponsor', 'sponsor_code')->sort()->unique();
         $AcademicDepartments = AcademicDepartment::pluck('display_name', 'entities_id')->sort();
         $departments = [null => 'Filter by Department'];
         $purposes = Purpose::pluck('display_name', 'system_name')->sort();
@@ -225,7 +225,7 @@ class SearchController extends Controller
         $requestedFilters = collect($requestedFilters);
 
         // List of things from which to search.
-        $sponsor = Award::pluck('sponsor', 'sponsor_code')->sort()->unique();
+        // $sponsor = Award::pluck('sponsor', 'sponsor_code')->sort()->unique();
         $departments = AcademicDepartment::pluck('display_name', 'entities_id')->sort();
         $purposes = Purpose::pluck('display_name', 'system_name')->sort();
         $collaborators = ['student' => 'Student Contributors', 'faculty' => 'Faculty Collaborators'];

@@ -69,16 +69,17 @@ class ProjectController extends Controller
         UpdateCollaboratorsContract $updateCollaboratorsContract,
         CreateSeekingContract $createSeekingContract
     ) {
-        // $this->middleware('auth', ['except' => [
-        //     'index',
-        //     'show',
-        //     'apiProject',
-        //     'updateCayuseProjects',
-        //     'validateYoutube',
-        //     'createAllProjectAttributes',
-        //     'getCollaboratorsList',
-        //     'getByCategoryType',
-        // ]]);
+        $this->middleware('auth', ['except' => [
+            'index',
+            'show',
+            'apiProject',
+            'updateCayuseProjects',
+            'validateYoutube',
+            'createAllProjectAttributes',
+            'getCollaboratorsList',
+            'getByCategoryType',
+            'getWatsonTags'
+        ]]);
 
         // $this->middleware(['project-write', 'helix-roles'], ['only' => [
         //     // 'create',
@@ -115,15 +116,15 @@ class ProjectController extends Controller
 
             return redirect("project/$project->slug");
         } elseif (str_contains($id, 'projects:')) {
-            $project = Project::with('pi', 'members', 'award', 'link', 'image', 'visibility')->findOrFail($id);
+            $project = Project::with('pi', 'members', 'award', 'link', 'image', 'visibilityPolicy','tags')->findOrFail($id);
 
             return redirect("project/$project->slug");
         }
 
-        $project = Project::with('pi', 'members', 'award', 'link', 'image', 'visibility')->where('slug', $id)->firstOrFail();
-
+        $project = Project::with('pi', 'members', 'award', 'link', 'image', 'visibilityPolicy','tags')->where('slug', $id)->firstOrFail();
         // This is to check if there is a row in the attributes table corresponding to this project
         $attributes = Attribute::with('purpose')->findOrNew($project->project_id);
+
         if ($attributes->project_id == null) {
             $attributes->project_id = $project->project_id;
             $attributes->purpose_name = 'project';
@@ -147,7 +148,6 @@ class ProjectController extends Controller
                 return redirect('login');
             }
         }
-
         // return $project->award;
         // $membership = $this->sortMembers($membership);
         if (\count($project->award)) {
@@ -160,8 +160,7 @@ class ProjectController extends Controller
         }
         if ($api) {
             return $this->sendResponse($project, 'project');
-        }
-
+        };
         return view('pages.project.show', \compact('project', 'attributes'));
     }
 
@@ -179,7 +178,7 @@ class ProjectController extends Controller
             $id = Project::where('slug', $id)->firstOrFail()['project_id'];
         }
 
-        return redirect('project/step-1/' . $id);
+        return redirect('project/create/' . $id);
     }
 
     /**
@@ -229,24 +228,26 @@ class ProjectController extends Controller
     public function postCreate(Request $project, $projectId = null)
     {
         $projectAuthor = Auth::user()->user_id;
-
         $projectData = [
             'title'          => $project->title,
             'description'    => $project->description,
             'project_type'   => $project->project_type,
-            'project_autor'  => $projectAuthor,
+            'project_author'  => $projectAuthor,
             // 'start_date'     => date("m/d/Y", strtotime(str_replace('-','/', $project->project_begin_date))),
             // 'end_date'       => $project->project_end_date ? date("m/d/Y", strtotime(str_replace('-','/', $project->project_end_date))) : NULL,
             'url'            => $project->url ?: NULL,
-            'youtube'        => $project->video?: NULL
+            'youtube'        => $project->video?: NULL,
+            'collaborators' =>  $project->collaborators
         ];
         $tags = $this->tagsDecode($project->tags);
         $projectId = $this->projectIdVerifier->verifyId($projectId);
         $this->projectGeneralUpdater->updateProjectGeneral($projectId, $projectData);
         $this->projectPolicyUpdater->updateProjectPolicy($projectId, $projectData);
         $this->collaboratorsUpdater->updateCollaborators($projectId, $projectData);
+        $this->projectAttributesUpdater->updateProjectAttributes($projectId,$projectData);
         $this->createTagContract->createTag($projectId, $tags);
-
+        
+        Project::find($projectId)->firstOrFail()->searchable();
 
         return view('pages.project.four', \compact('project'));
     }
@@ -342,16 +343,16 @@ class ProjectController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View|string
      */
-    public function getStep2($projectId = null)
-    {
-        if (!session('new-project')) {
-            return back();
-        }
+    // public function getStep2($projectId = null)
+    // {
+    //     if (!session('new-project')) {
+    //         return back();
+    //     }
 
-        // TODO: refactor everything to the back end
+    //     // TODO: refactor everything to the back end
 
-        return view('pages.project.two', \compact('categories', 'subcategories'));
-    }
+    //     return view('pages.project.two', \compact('categories', 'subcategories'));
+    // }
 
     /**
      * MARK FOR DELETION.
@@ -362,10 +363,10 @@ class ProjectController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function step2($projectId = null)
-    {
-        return redirect('project/step-3/' . $projectId ?: '');
-    }
+    // public function step2($projectId = null)
+    // {
+    //     return redirect('project/step-3/' . $projectId ?: '');
+    // }
 
     /**
      * Returns the view for step 3 and handles the AJAX call for populating
@@ -377,52 +378,52 @@ class ProjectController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View|int|string
      */
-    public function getStep3($projectId = null)
-    {
-        if (!session('new-project')) {
-            return back();
-        }
-        if (!session('new-project.collaborators')) {
-            if ($projectId) {
-                $projectCollaborators = Project::findOrFail($projectId)->allMembers->toArray();
-                if (!empty($projectCollaborators)) {
-                    session()->put('new-project.collaborators', stringifyCollaborators($projectCollaborators));
-                }
-            }
-        }
+    // public function getStep3($projectId = null)
+    // {
+    //     if (!session('new-project')) {
+    //         return back();
+    //     }
+    //     if (!session('new-project.collaborators')) {
+    //         if ($projectId) {
+    //             $projectCollaborators = Project::findOrFail($projectId)->allMembers->toArray();
+    //             if (!empty($projectCollaborators)) {
+    //                 session()->put('new-project.collaborators', stringifyCollaborators($projectCollaborators));
+    //             }
+    //         }
+    //     }
 
-        if (request()->wantsJson()) {
-            $results = 0;
+    //     if (request()->wantsJson()) {
+    //         $results = 0;
 
-            if (\array_key_exists('collaborators', session('new-project'))) {
-                $results = \json_encode(session('new-project')['collaborators']);
-            }
+    //         if (\array_key_exists('collaborators', session('new-project'))) {
+    //             $results = \json_encode(session('new-project')['collaborators']);
+    //         }
 
-            return $results;
-        }
-        $roles = Role::orderBy('rolename_id')->roleNames()->pluck('display_name', 'display_name');
-        $seekingCollaborators = 0;
-        $seekingStudents = 0;
-        $studentQualifications = null; // = '';
-        if (isset($projectId)) {
-            $project = Project::with('attribute')->findOrFail($projectId);
-            $invitations = $project->invitations()->whereNull('updated_at')->get();
-            $seekingCollaborators = $project->attribute ? $project->attribute->seeking_collaborators : $seekingCollaborators;
-            $seekingStudents = $project->attribute ? $project->attribute->seeking_students : $seekingStudents;
-            $studentQualifications = $project->attribute ? $project->attribute->student_qualifications : $studentQualifications;
-        }
+    //         return $results;
+    //     }
+    //     $roles = Role::orderBy('rolename_id')->roleNames()->pluck('display_name', 'display_name');
+    //     $seekingCollaborators = 0;
+    //     $seekingStudents = 0;
+    //     $studentQualifications = null; // = '';
+    //     if (isset($projectId)) {
+    //         $project = Project::with('attribute')->findOrFail($projectId);
+    //         $invitations = $project->invitations()->whereNull('updated_at')->get();
+    //         $seekingCollaborators = $project->attribute ? $project->attribute->seeking_collaborators : $seekingCollaborators;
+    //         $seekingStudents = $project->attribute ? $project->attribute->seeking_students : $seekingStudents;
+    //         $studentQualifications = $project->attribute ? $project->attribute->student_qualifications : $studentQualifications;
+    //     }
 
-        return view(
-            'pages.project.three',
-            \compact(
-                'roles',
-                'invitations',
-                'seekingCollaborators',
-                'seekingStudents',
-                'studentQualifications'
-            )
-        );
-    }
+    //     return view(
+    //         'pages.project.three',
+    //         \compact(
+    //             'roles',
+    //             'invitations',
+    //             'seekingCollaborators',
+    //             'seekingStudents',
+    //             'studentQualifications'
+    //         )
+    //     );
+    // }
 
     /**
      * MARK FOR DELETION.

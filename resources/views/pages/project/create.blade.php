@@ -19,29 +19,31 @@
               {{Form::text('title','',['placeholder'=> "Enter a title..", 'id' => 'title'])}}
             </div>
           </div>
-          <div class="col-xl-3">
+          <div class="col-xl-5">
             <div class="form__group">
               {{Form::label('projectEvent','Term/Event',['class'=>'label--required type--left type--thin'])}}
               {{Form::select('projectEvent',['Select an Event','Bull Ring','I-Corps','Other'])}}
             </div>
           </div>
-          <div class="col-xl-2">
+          {{-- <div class="col-xl-2">
             <div class="form__group">
               {{Form::label('project_type','Project Type',['class'=>'label--required type--left type--thin'])}}
               {{ Form::select('project_type', $projectTypes) }}
             </div>
-          </div>
+          </div> --}}
       </div>
       <div class="row">
         <div class="col-xs-12">
           <div class="form__group">
-            {{Form::label('description','Description',['id'=>'label--required type--thin type--left'])}}
+            {{Form::label('description','Description',['class'=>'label--required type--thin type--left'])}}
             {{Form::textArea('description','',['placeholder'=>'Enter a description...', 'id'=>'description'])}}
           </div>
         </div>
       </div>
-      <form>
-          <label for="youtube">Video
+
+      <div class="row">
+        <div class="col-xs-6">
+          <label for="youtube" class="type--thin type--left">Video
               <div class="tooltip"><i class="fa fa-question-circle" aria-hidden="true"></i>
                   <span class="tooltiptext">
                       YouTube and Vimeo are the currently supported video-sharing web sites<br>
@@ -50,66 +52,75 @@
           </label>
           {!! Form::text('video', '', ['class'=>'form-control', 'placeholder' => 'http://', 'id' => 'youtube']) !!}
           <small hidden="true" style="color:#ff0011" id="youtubemsg">* Video URL must be from YouTube or Vimeo</small>
-        </form>
-        <hr>
+        </div>
+        <div class="col-xs-6">
+          <div class="form__group">
+            {{Form::label('url','Website',['class'=>'type--thin type--left'])}}
+            {{Form::text('url','',['placeholder'=>'https://','id'=>'website'])}}
+          </div>
+        </div>
+      </div>
+      <br>
+      <hr>
         <div class="row">
           <div class="col-lg-6 col-md-5">
               <div class="form__group">
                 {{Form::label('collaborators','Team Members',['class'=>'label--required type--left type--thin'])}}
                 {{Form::select('collaborators',[],null,['id'=>'collab','class'=>'select2-collaborator','placeholder'=>'Add a new member...'])}}
               </div>
+          </div>
+          <div class="col-xs-8 col-md-5">
+            <div class="form__group">
+              {{Form::label('role','Role',['class'=>'label--required type--left type--thin'])}}
+              {{ Form::select ('roles', ['roles'], null,['class'=>'roles select2-roles', 'id'=>'roleID'] ) }}
+                <div class="tooltip" style="float:right"><i class="fa fa-question-circle" aria-hidden="true"></i>
+                    <span class="tooltiptext">You may use name, email or student ID to select team member.<br>
+                    </span>
+                </div>
             </div>
-            <div class="col-xs-8 col-md-5">
-              <div class="form__group">
-                {{Form::label('role','Role',['class'=>'label--required type--left type--thin'])}}
-                {{ Form::select ('roles', ['roles'], null,['class'=>'roles select2-roles', 'id'=>'roleID'] ) }}
-                  <div class="tooltip" style="float:right"><i class="fa fa-question-circle" aria-hidden="true"></i>
-                      <span class="tooltiptext">You may use name, email or student ID to select team member.<br>
-                      </span>
-                  </div>
-              </div>
+          </div>
+          <div class="col-xs-4 col-md-1 margin-top--25 type--center">
+              <a href="#" title="Add Collaborator" class="btn btn-primary type--center btn-sm" id="addCollabBtn">
+                  <i class="fa fa-plus" aria-hidden="true"></i> Add
+              </a>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+              <table id = "list" class="table table--padded table--bordered table--striped">
+                 <thead>
+                   <tr>
+                     <th><strong>Team Member</strong></th>
+                     <th><strong>Role</strong></th>
+                     <th><strong>Status</strong></th>
+                     <th><strong>Action</strong></th>
+                   </tr>
+                 </thead>
+                 <tbody>
+                  @if(isset($invitations) && count($invitations))
+                    @foreach($invitations as $invitation)
+                      <tr data-id="{{ $invitation->invitee->display_name }},{{ $invitation->recipient_id }},{{ $invitation->role_position }}">
+                        <td>{{ $invitation->invitee->display_name }}</td>
+                        <td>{{ $invitation->role_position }}</td>
+                        <td>Pending</td>
+                        <td class="text--center">
+                          @if(is_null($invitation->from_id))
+                          <a class="collaboratorActionBtn" data-url="{{ url('project/' . request()->route('projectId') . '/invitation/' . $invitation->id . '/accept') }}">Approve</a>
+                          @else
+                          <a class="collaboratorActionBtn" data-url="{{ url('project/' . request()->route('projectId') . '/invitation/' . $invitation->id . '/cancel') }}">Cancel Invite</a>
+                          @endif
+                        </td>
+                      </tr>
+                    @endforeach
+                  @endif
+                 </tbody>
+               </table>
+                {{-- <div id="research-collabs">
+                  <collaborators project_status="create"></collaborators>
+                </div> --}}
             </div>
-            <div class="col-xs-4 col-md-1 margin-top--25 type--center">
-                <a href="#" title="Add Collaborator" class="btn btn-primary type--center btn-sm" id="addCollabBtn">
-                    <i class="fa fa-plus" aria-hidden="true"></i> Add
-                </a>
-            </div>
-            <div class="col-sm-12">
-              <div >
-                <table id = "list" class="table table--padded table--bordered table--striped">
-                   <thead>
-                     <tr>
-                       <th><strong>Team Member</strong></th>
-                       <th><strong>Role</strong></th>
-                       <th><strong>Status</strong></th>
-                       <th><strong>Action</strong></th>
-                     </tr>
-                   </thead>
-                   <tbody>
-                    @if(isset($invitations) && count($invitations))
-                      @foreach($invitations as $invitation)
-                        <tr data-id="{{ $invitation->invitee->display_name }},{{ $invitation->recipient_id }},{{ $invitation->role_position }}">
-                          <td>{{ $invitation->invitee->display_name }}</td>
-                          <td>{{ $invitation->role_position }}</td>
-                          <td>Pending</td>
-                          <td class="text--center">
-                            @if(is_null($invitation->from_id))
-                            <a class="collaboratorActionBtn" data-url="{{ url('project/' . request()->route('projectId') . '/invitation/' . $invitation->id . '/accept') }}">Approve</a>
-                            @else
-                            <a class="collaboratorActionBtn" data-url="{{ url('project/' . request()->route('projectId') . '/invitation/' . $invitation->id . '/cancel') }}">Cancel Invite</a>
-                            @endif
-                          </td>
-                        </tr>
-                      @endforeach
-                    @endif
-                   </tbody>
-                 </table>
-                  {{-- <div id="research-collabs">
-                    <collaborators project_status="create"></collaborators>
-                  </div> --}}
-              {{ Form::close() }}
-            </div>
-{{--           <hr>
+        </div>
+{{--      <hr>
           <div class="row">
             <div class="col-sm-12">
               <div class="uploader type--center" id="upload-image">
@@ -128,26 +139,16 @@
             </div>
           </div>
           <hr> --}}
-          <div class="row">
-            <div class="col-xs-12">
-              <div class="form__group">
-                {{Form::label('url','Website',['class'=>'type--thin type--left'])}}
-                {{Form::text('url','',['placeholder'=>'https://','id'=>'website'])}}
-              </div>
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="form__group">
+              {{Form::label('tags','Tags',['class'=>'type--left type--thin'])}}
+              {!!Form::select('tags[]', ['',''], null, ['class' => 'select2-tags tags', 'multiple' => 'multiple'])!!}
             </div>
           </div>
-          <div class="row">
-            <div class="col-xs-12">
-              <div class="form__group">
-                {{Form::label('tags','Tags',['class'=>'type--left type--thin'])}}
-                {!!Form::select('tags[]', ['',''], null, ['class' => 'select2-tags tags', 'multiple' => 'multiple'])!!}
-              </div>
-            </div>
-          </div>
-          <div class="type--center">
-            <a href="{{url('/project')}}" class="btn btn-default">Cancel</a>
-            {!!Form::submit('Submit',['class'=>'btn btn-primary'])!!}
-          </div>
+        </div>
+        <div class="type--center">
+          {!!Form::submit('Submit',['class'=>'btn btn-primary'])!!}
         </div>
     </div>
 {!!Form::close()!!}
@@ -243,15 +244,15 @@
         var member = collaborator.split(','),
         displayName = member[1] == "{{ Auth::user()->user_id }}" ? member[0] + ' <span style="opacity: .5;">&#183 You</span>' : member[0];
         // 0 = name, 1 = membersId, 2 = role_position
-        template += "<tr data-id='"+ member[0] + ',' + member[1] + ',' + member[2] +"'><td>" + displayName + "</td><td>" + member[2] + "</td><td>Active</td><td style='text-align: center'> <a class='removeCollabBtn btn btn-link'>Remove</a></td></tr>";
+        template += "<tr data-id='"+ member[0] + '|' + member[1] + '|' + member[2] +"'><td>" + displayName + "</td><td>" + member[2] + "</td><td>Active</td><td style='text-align: center'> <a class='removeCollabBtn btn btn-link'>Remove</a></td></tr>";
 
-        input += "<input type='hidden' name='collaborators[]' value='"+ member[0] + ',' + member[1] + ',' + member[2] +"'>";
+        input += "<input type='hidden' name='collaborators[]' value='"+ member[0] + '|' + member[1] + '|' + member[2] +"'>";
       });
     }
     else
     {
-      template += '<tr data-id="{{ Auth::user()->display_name }},{{ Auth::user()->user_id }},Team Member"><td>{{ Auth::user()->display_name }} &#183 <span style="opacity: .5;">You</span></td><td>Team Member</td><td>Active</td><td style="text-align: center"> <a class="removeCollabBtn btn btn-link">Remove</a></td></tr>';
-      input += "<input type='hidden' name='collaborators[]' value='{{ Auth::user()->display_name }},{{ Auth::user()->user_id }},Team Member'>";
+      template += '<tr data-id="{{ Auth::user()->display_name }}|{{ Auth::user()->user_id }}|Team Member"><td>{{ Auth::user()->display_name }} &#183 <span style="opacity: .5;">You</span></td><td>Team Member</td><td>Active</td><td style="text-align: center"> <a class="removeCollabBtn btn btn-link">Remove</a></td></tr>';
+      input += "<input type='hidden' name='collaborators[]' value='{{ Auth::user()->display_name }}|{{ Auth::user()->user_id }}|Team Member'>";
     }
     $('#list tbody').append(template);
     $('.project-create-form').append(input);

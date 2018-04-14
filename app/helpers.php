@@ -111,14 +111,14 @@ function obfuscateId($id)
  */
 function generateNewProjectId()
 {
-    $project = Project::select(DB::raw('CONVERT(REPLACE(project_id, "projects:", ""), UNSIGNED INTEGER) as id'))
+    $project = Project::select(DB::raw('CONVERT(REPLACE(project_id, "innovate:", ""), UNSIGNED INTEGER) as id'))
           ->orderBy('id', 'DESC')
           ->first();
     if($project == null){
-        return 'projects:1';
+        return 'innovate:1';
     }
 
-    return 'projects:' . ++$project->id;
+    return 'innovate:' . ++$project->id;
 }
 
 /**

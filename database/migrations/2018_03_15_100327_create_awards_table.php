@@ -15,6 +15,7 @@ class CreateAwardsTable extends Migration
     {
         Schema::create('awards', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('project_id');
             $table->integer('award_amount');
             $table->string('sponsor');
             $table->timestamps();

@@ -138,10 +138,10 @@ $("#addCollabBtn").on('click', function (e) {
 	}
 
 	var displayName = $("#collab option:selected").val() == $('#auid').val() ? $('#collab option:selected').text() + '<span style="opacity: .5;"> &#183 You</span> ' : $('#collab option:selected').text(),
-	    template = "<tr data-id='" + $("#collab option:selected").text() + ',' + $("#collab option:selected").val() + ',' + $("#roleID option:selected").val() + "'><td>" + displayName + "</td><td>" + $("#roleID option:selected").text() + "</td><td> Pending </td><td style='text-align: center;'> <a class='removeCollabBtn btn btn-link'> Remove </a> </td></tr>";
+	    template = "<tr data-id='" + $("#collab option:selected").text() + '|' + $("#collab option:selected").val() + '|' + $("#roleID option:selected").val() + "'><td>" + displayName + "</td><td>" + $("#roleID option:selected").text() + "</td><td> Pending </td><td style='text-align: center;'> <a class='removeCollabBtn btn btn-link'> Remove </a> </td></tr>";
 
 	$('<input/>', {
-		value: $("#collab option:selected").text() + ',' + $("#collab option:selected").val() + ',' + $("#roleID option:selected").val(),
+		value: $("#collab option:selected").text() + '|' + $("#collab option:selected").val() + '|' + $("#roleID option:selected").val(),
 		name: 'collaborators[]',
 		type: 'hidden'
 
