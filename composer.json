@@ -10,6 +10,7 @@
         "algolia/laravel-scout-algolia-macros": "^0.5.0",
         "algolia/laravel-scout-settings": "^2.0",
         "barryvdh/laravel-debugbar": "^3.1",
+        "cognitivebuild/watsonphpsdk": "dev-master",
         "csun-metalab/laravel-directory-authentication": "^1.5",
         "csun-metalab/laravel-proxypass": "^1.0",
         "doctrine/dbal": "^2.6",

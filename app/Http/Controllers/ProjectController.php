@@ -28,6 +28,11 @@ use Helix\Models\Seeking;
 use Illuminate\Http\Request;
 use Searchy;
 
+use WatsonSDK\Common\WatsonCredential;
+use WatsonSDK\Common\SimpleTokenProvider;
+use WatsonSDK\Services\NaturalLanguageUnderstanding;
+use WatsonSDK\Services\NaturalLanguageUnderstanding\AnalyzeModel;
+
 use Helix\Http\Requests\Project\ProjectCreate;
 /**
  * Essentially the resource controller for projects. In addition, this has the
@@ -115,7 +120,7 @@ class ProjectController extends Controller
             $project = Project::where('project_number', $id)->firstOrfail();
 
             return redirect("project/$project->slug");
-        } elseif (str_contains($id, 'projects:')) {
+        } elseif (str_contains($id, 'innovate:')) {
             $project = Project::with('pi', 'members', 'award', 'link', 'image', 'visibilityPolicy','tags')->findOrFail($id);
 
             return redirect("project/$project->slug");
@@ -858,31 +863,21 @@ class ProjectController extends Controller
 
     public function getWatsonTags(Request $request, $data = null, $relevance = 0.5)
     {   
-        if($request->ajax()){
-            if($request->filled('data')){
-                $data = $request->get('data');
-            }
-            $auth = [ env('WATSON_USER_NAME'), env('WATSON_PASSWORD')];
-            $json = [
-                "text" => $data,
-                "features" => [
-                        "concepts" => [
-                            "emotion" => false,
-                            "sentiment" => false
-                        ]
-                    ]
-            ];
-            $responseData = watsonRequest( env('WATSON_API_TYPE') , $json, $auth);
-            if($responseData){
-                $data = array_filter($responseData['concepts'], function ($tag) use ($relevance) { 
-                    return ($tag['relevance'] >= $relevance);
-                });
-            }else{
-                $data = null;
-            }
-            return $data;
-        }else{
-            abort(403);
+        if($request->filled('data')){
+            $data = $request->get('data');
         }
+        $nlu = new NaturalLanguageUnderstanding( WatsonCredential::initWithCredentials(env('WATSON_USER_NAME'), env('WATSON_PASSWORD')) );
+        $model = new AnalyzeModel($data, ['concepts'=>['limit'=>50]]);
+        $result = $nlu->analyze($model);
+        $responseData =  json_decode($result->getContent());
+
+        if($responseData){
+            $data = array_filter($responseData->concepts, function ($tag) use ($relevance) { 
+                return ($tag->relevance >= $relevance);
+            });
+        }else{
+            $data = null;
+        }
+        return $data;
     }
 }

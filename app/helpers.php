@@ -350,27 +350,9 @@ function guzzleRequest($url, $method = 'GET', $assoc = true)
     } catch (\GuzzleHttp\Exception\RequestException $e) {
         $responseJson = \json_encode(['success' => false]);
     } finally {
-        // $data = \json_decode($responseJson->getBody(), $assoc);
+        $data = \json_decode($responseJson->getBody(), $assoc);
     }
 
-    return $data;
-}
-
-function watsonRequest($url, $json, $auth = null, $assoc = true)
-{
-    $data = null;
-    $responseJson = null;
-    try {
-        $client = new \GuzzleHttp\Client();
-        $responseJson = $client->request('POST', env('WATSON_API_URL').$url, [
-            'auth' => $auth,
-            'json' => $json,
-            'verify' => false
-        ]);
-        $data = json_decode($responseJson->getBody()->getContents(), $assoc);
-    } catch (\GuzzleHttp\Exception\RequestException $e) {
-        $data = false;
-    }
     return $data;
 }
 
