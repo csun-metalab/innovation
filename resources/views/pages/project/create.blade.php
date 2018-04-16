@@ -22,7 +22,7 @@
           <div class="col-xl-5">
             <div class="form__group">
               {{Form::label('projectEvent','Term/Event',['class'=>'label--required type--left type--thin'])}}
-              {{Form::select('projectEvent',$event)}}
+              {{Form::select('projectEvent',['Select an Event','Bull Ring','I-Corps','Other'])}}
             </div>
           </div>
           {{-- <div class="col-xl-2">
