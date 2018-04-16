@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Award extends Model
 {
-    protected $table = 'exploration.awards';
+    protected $table = 'awards';
     protected $primaryKey = 'award_id';
     public $incrementing = false;
 

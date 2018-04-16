@@ -13,10 +13,14 @@ class CreateProjectsTable extends Migration
     public function up()
     {
         Schema::create('projects', function(Blueprint $table){
+            $table->increments('id');
             $table->string('project_id');
-            $table->primary('project_id');
+            $table->string('project_title');
+            $table->string('pi_members_id');
             $table->string('visibility');
-            $table->string('url');
+            $table->text('abstract');
+            $table->string('slug');
+            $table->boolean('is_publishable');
             $table->timestamp('start_date')->nullable();
             $table->timestamp('end_date')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));

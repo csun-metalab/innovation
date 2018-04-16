@@ -1,258 +1,224 @@
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(1);
+module.exports = __webpack_require__(2);
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports) {
+
 window.HELIX = {
-  html: $('html'),
-  body: $('body'),
-  env: {
-    url: $('html').data('url'),
-    // token: $('html').data('token')
-  }
+	html: $('html'),
+	body: $('body'),
+	env: {
+		url: $('html').data('url')
+		// token: $('html').data('token')
+	}
 };
 
-$(".url-field").change(function() {
-    if (!/^https*:\/\//.test(this.value)) {
-        this.value = "http://" + this.value;
-    }
+$(".url-field").change(function () {
+	if (!/^https*:\/\//.test(this.value)) {
+		this.value = "http://" + this.value;
+	}
 });
 
-$(".datepicker").keyup(function(){
-    if ($(this).val().length == 2){
-        $(this).val($(this).val() + "/");
-    }else if ($(this).val().length == 5){
-        $(this).val($(this).val() + "/");
-    }
+$(".datepicker").keyup(function () {
+	if ($(this).val().length == 2) {
+		$(this).val($(this).val() + "/");
+	} else if ($(this).val().length == 5) {
+		$(this).val($(this).val() + "/");
+	}
 });
 
 // Profiles: Image Cropper
-  // ===================================//
-  // function registerJCropEvents() {
+// ===================================//
+// function registerJCropEvents() {
 
-  //   var defaultWidth  = Math.min($('#cropw').val(), 210);
-  //   var defaultHeight = Math.min($('#croph').val(), 45);
+//   var defaultWidth  = Math.min($('#cropw').val(), 210);
+//   var defaultHeight = Math.min($('#croph').val(), 45);
 
-  //   $('#cropImage').Jcrop({
-  //     aspectRatio: 42 / 9,
-  //     setSelect: [0,0,defaultWidth,defaultHeight]
-  //   });
+//   $('#cropImage').Jcrop({
+//     aspectRatio: 42 / 9,
+//     setSelect: [0,0,defaultWidth,defaultHeight]
+//   });
 
-  //   $('#cropImageContainer').on('cropend', function(e,s,c) {
-  //     updateCoords(c);
-  //   });
-  // }
+//   $('#cropImageContainer').on('cropend', function(e,s,c) {
+//     updateCoords(c);
+//   });
+// }
 
-  // function updateCoords(c) {
-  //   $('#cropx').val(c.x);
-  //   $('#cropy').val(c.y);
-  //   $('#cropw').val(c.w);
-  //   $('#croph').val(c.h);
-  // };
+// function updateCoords(c) {
+//   $('#cropx').val(c.x);
+//   $('#cropy').val(c.y);
+//   $('#cropw').val(c.w);
+//   $('#croph').val(c.h);
+// };
 
 // Append the hidden input and tr whenever user adds new collaborator
-$("#addCollabBtn").on('click',function(e){
+$("#addCollabBtn").on('click', function (e) {
 	e.preventDefault();
 	var error = $('#collab').siblings('strong');
 
-	if($('#collab option:selected').length == 0)
-	{
+	if ($('#collab option:selected').length == 0) {
 		return error.text('Choose a faculty member to add.');
-	}
-	else if($('#list tbody tr[data-id*="'+ $('#collab option:selected').val() +'"]').length == 1)
-	{
+	} else if ($('#list tbody tr[data-id*="' + $('#collab option:selected').val() + '"]').length == 1) {
 		return error.text('This person has already been added as a collaborator.');
-	}
-	else if($('#roleID option:selected').val() == 'Lead Principal Investigator' && $('#list tbody tr[data-id*="Lead Principal Investigator"]').length >= 1)
-	{
+	} else if ($('#roleID option:selected').val() == 'Lead Principal Investigator' && $('#list tbody tr[data-id*="Lead Principal Investigator"]').length >= 1) {
 		return error.text('Lead Principal Investigator cannot be included more than once.');
-	}
-	else
-	{
+	} else {
 		$('#collab').siblings('strong').text('');
 	}
 
 	var displayName = $("#collab option:selected").val() == $('#auid').val() ? $('#collab option:selected').text() + '<span style="opacity: .5;"> &#183 You</span> ' : $('#collab option:selected').text(),
-	template = "<tr data-id='"+ $("#collab option:selected").text() + ',' + $("#collab option:selected").val() + ',' + $("#roleID option:selected").val() +"'><td>" + displayName + "</td><td>" + $("#roleID option:selected").text() + "</td><td> Pending </td><td style='text-align: center;'> <a class='removeCollabBtn'> Cancel </a> </td></tr>";
+	    template = "<tr data-id='" + $("#collab option:selected").text() + '|' + $("#collab option:selected").val() + '|' + $("#roleID option:selected").val() + "'><td>" + displayName + "</td><td>" + $("#roleID option:selected").text() + "</td><td> Pending </td><td style='text-align: center;'> <a class='removeCollabBtn btn btn-link'> Remove </a> </td></tr>";
 
 	$('<input/>', {
-		value: $("#collab option:selected").text() + ',' + $("#collab option:selected").val() + ',' + $("#roleID option:selected").val(),
+		value: $("#collab option:selected").text() + '|' + $("#collab option:selected").val() + '|' + $("#roleID option:selected").val(),
 		name: 'collaborators[]',
 		type: 'hidden'
 
 	}).appendTo($('.project-create-form'));
 
 	$(template).appendTo("#list tbody");
-})
+});
 
 // Remove the tr and hidden input whenever a user removes the collaborator from the list
-$("#list tbody").on('click', '.removeCollabBtn', function(e){
+$("#list tbody").on('click', '.removeCollabBtn', function (e) {
 	e.preventDefault();
-	$('input[value="'+ $(this).parents('tr').attr('data-id') +'"]').remove();
+	$('input[value="' + $(this).parents('tr').attr('data-id') + '"]').remove();
 	$(this).parents('tr').remove();
-})
+});
 
 var collaborators = $(".select2-collaborator");
-$( ".select2-collaborator" ).select2({     
-	width:'100%', 
-    ajax: {
-    	url: window.HELIX.env.url + "/api/collaborators",
-        dataType: 'json',
-        delay: 250,
-        data: function (params) {
-            return {
-                q: params.term // search term
-            };
-        },
-        processResults: function (data) {
-            return {
-                results: data
-            };
-        },
-        cache: true
-    },
-    placeholder: 'Search for faculty members...',
-    minimumInputLength: 3
+$(".select2-collaborator").select2({
+	width: '100%',
+	ajax: {
+		url: window.HELIX.env.url + "/api/collaborators",
+		dataType: 'json',
+		delay: 250,
+		data: function data(params) {
+			return {
+				q: params.term // search term
+			};
+		},
+		processResults: function processResults(data) {
+			return {
+				results: data
+			};
+		},
+		cache: true
+	},
+	placeholder: 'Search for team members...',
+	minimumInputLength: 3
 });
 
 $('.select2-roles').select2({
-	width:'95%',
-	minimumResultsForSearch: Infinity,
-	placeholder: 'Select a role...'
-})
-	
-	$('.select2-category').change(function(event){
-		var loadingScreen = $('#loading__screen');
+	width: '95%',
+	// minimumResultsForSearch: Infinity,
+	placeholder: 'Select a role...',
+	tags: true
+});
 
-		loadingScreen.css({
-			'position': 'fixed',
-			'top': '0',
-			'bottom': '0',
-			'left': '0',
-			'right': '0',
-			'z-index': '5',
-			'opacity': '.7',
-			'background': '#fff'
-		})
-		.html('<i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="color: #4a4a4a; position: absolute; top: 40%; left: 50%; margin-left: -25px;"></i>')
-		.show();
-
+var description = "";
+var watsonCount = 0;
+$("#description").focusout(function () {
+	var diffrence = Math.abs($('#description').val().length - description.length);
+	description = $('#description').val();
+	if (description.length > 200 && watsonCount < 3) {
+		$('.watson').remove();
 		$.ajax({
-			url: window.HELIX.env.url + '/api/interests/categories/' + event.target.value + '?type=' + $(this).attr('data-type')
-		})
-		.done(function(request){
-			var tags = $('.tags option:selected');
-
-			switch(request.type)
-			{
-				case 'category':
-					var subcategoryList = '', tagList = '';
-
-					for(var i = 0; i < request.subcategories.length; i++)
-					{
-						subcategoryList += "<option value='" + request.subcategories[i].id+"'>" + request.subcategories[i].title + "</option>";
-					}
-
-					for(var y = 0; y < request.tags.length; y++)
-					{
-						tagList += "<option value='" + request.tags[y].id+"'>" + request.tags[y].title + "</option>";
-					}
-
-					$('.subcategory').html(subcategoryList);
-					$('.tags').html(tagList).append(tags);
-				break;
-
-				case 'subcategory':
+			url: window.HELIX.env.url + "/api/watson/tags",
+			data: {
+				"data": description
+			},
+			type: "POST",
+			success: function success(data) {
+				data.forEach(function (tag) {
 					var tagList = '';
-
-					for (var i = 0; i < request.tags.length; i++) 
-					{			
-						tagList += "<option value='" + request.tags[i].id+"'>" + request.tags[i].title + "</option>";
-					}
-
-					$('.tags').html(tagList).append(tags);
-				break;
+					tagList += "<option class='watson' value='watson:" + tag.text + ":" + tag.relevance + "' selected>" + tag.text + "</option>";
+					$('.tags').append(tagList);
+				});
+				watsonCount++;
 			}
-		})
-		.fail(function(){
-			alert('There was an error loading the project interests. Please try again.');
-		})
-		.always(function(){
-			loadingScreen.hide();
 		});
-	});
+	};
+});
 
-
-
-	
 // sourceMappingURL=scripts.js.map
-/*
-| Used for step 3 - Add Collaborators
-*/
-$('.collaboratorActionBtn').on('click', function(e){
-	e.preventDefault();
 
-	if($('#loading__screen').length == 0)
-	{
-		$('<div/>', {
-			id: 'loading__screen'
-		})
-		.css({
-			'position': 'fixed',
-			'top': '0',
-			'bottom': '0',
-			'left': '0',
-			'right': '0',
-			'z-index': '5',
-			'opacity': '.7',
-			'background': '#fff'
-		})
-		.html('<div style="color: #4a4a4a; position: absolute; top: 40%; left: 50%; margin-left: -35px; font-weight: bold;">One moment...</div>')
-		.appendTo($('body'));
-	}
-	else
-	{
-		$('#loading__screen').show();
-	}
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
 
-	$.ajax({
-		url: $(this).data('url'),
-		context: this
-	})
-	.done(function(){
-		switch($(this).text())
-		{
-			case 'Approve':
-				$(this).parent().prev().text('Active');
-				$(this).removeClass('collaboratorActionBtn').addClass('removeCollabBtn').text('Remove');
+// removed by extract-text-webpack-plugin
 
-				$('<input/>', {
-					type: 'hidden',
-					name: 'collaborators[]',
-					value: $(this).parents('tr').data('id'),
-				}).appendTo($('.project-create-form'));
-			break;
-
-			case 'Cancel Invite':
-				$(this).parents('tr').remove();
-			break;
-		}
-	})
-	.fail(function(response){
-		var error = 'There was an error performing this action.';
-
-		if(response.status == 403)
-		{
-			error = response.responseJSON[0];
-		}
-
-		switch($(this).text())
-		{
-			case 'Approve':
-				alert(error);
-			break;
-
-			case 'Cancel Invite':
-				alert(error);
-			break;
-		}
-	})
-	.always(function(){
-		$('#loading__screen').hide();
-	});
-})
+/***/ })
+/******/ ]);

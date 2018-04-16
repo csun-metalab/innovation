@@ -8,7 +8,7 @@
 
       <div class="col-sm-12">
       {{-- <br> --}}
-      <a class="btn btn-default" style="float:right;" href="{{ url('project/step-1') }}">Add a New Project</a>
+      <a class="btn btn-default" style="float:right;" href="{{ url('project/create') }}">Add a New Project</a>
         <h1 class="type--header type--thin">Innovation Dashboard</h1>
       </div>
     </div>
@@ -28,12 +28,12 @@
                   {{-- expr --}}
                   <div class="panel__header cf mh--66">
                     <div class="pull-right">
-                      @can('is-owner', $project)
-                      <a class="pull-right" href="{{ url('project/'.$project->project_id.'/edit') }}"><i class="fa fa-edit" aria-hidden="true"></i> <strong>Edit</strong> </a><br>
-                      @if(!$project->cayuse_id)<a href="#" data-modal="#deleteModal" data-id="{{ $project->project_id }}" data-title="{{ $project->project_title }}" class="delete-modal-btn"><i class="fa fa-trash" aria-hidden="true"></i> <strong>Delete</strong> </a>@endif
-                      @else
-                      <strong>You cannot edit this project.</strong>
-                      @endcan
+ {{--                      @can('is-owner', $project)
+                        <a class="pull-right" href="{{ url('project/'.$project->project_id.'/edit') }}"><i class="fa fa-edit" aria-hidden="true"></i> <strong>Edit</strong> </a><br>
+                        @if(!$project->cayuse_id)<a href="#" data-modal="#deleteModal" data-id="{{ $project->project_id }}" data-title="{{ $project->project_title }}" class="delete-modal-btn"><i class="fa fa-trash" aria-hidden="true"></i> <strong>Delete</strong> </a>@endif
+                        @else
+                        <strong>You cannot edit this project.</strong>
+                      @endcan --}}
                     </div>
                   </div>
                   <div class="panel__content mh--400">

@@ -21,7 +21,7 @@ class Attribute extends Model
 	];
 
 	public function project() {
-        return $this->belongsTo('Helix\Models\Project','project_id');
+        return $this->belongsTo('Helix\Models\Project','project_id','project_id');
     }
 
     public function purpose() {

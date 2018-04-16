@@ -31,7 +31,7 @@ class UpdateCollaboratorsService implements UpdateCollaboratorsContract
             // $collaborator comes in as a string in the format: "name,members:XXXXXXX,role_position"
             foreach ($data['collaborators'] as $collaborator) {
                 // $result[0] = display_name, $result[1] = members:XXXXXX, $result[2] = role_position
-                $result = \explode(',', $collaborator);
+                $result = \explode('|', $collaborator);
                 // Create collab array with intelligible keys for readability purposes
                 $collab = [
                     'display_name' => $result[0],
@@ -82,8 +82,8 @@ class UpdateCollaboratorsService implements UpdateCollaboratorsContract
                 $emails = Person::whereIn('user_id', $memberIds)->pluck('email')->toArray();
 
                 $mailData = [
-                    'title' => $data['project_general']['title'],
-                    'description' => $data['project_general']['description'],
+                    'title' => $data['title'],
+                    'description' => $data['description'],
                     'feedbackurl' => url('feedback'),
                     'link' => url('project/' . $project->project_id),
                 ];

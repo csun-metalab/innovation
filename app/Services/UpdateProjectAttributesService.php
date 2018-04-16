@@ -13,11 +13,10 @@ class UpdateProjectAttributesService implements UpdateProjectAttributesContract
     {
         $project = Project::findOrFail($projectId);
 
-        $newProjectPurpose = $data['project_general']['project_purpose'];
-        $newSeekingStudents = $data['seeking']['students'];
-        $newStudentQualifications = $data['seeking']['qualifications'];
-        $newSeekingCollaborators = $data['seeking']['collaborators'];
-        $youtubeLink = $data['project_general']['youtube'];
+        // $newProjectPurpose = $data['project_general']['project_purpose'];
+        // $newSeekingStudents = $data['seeking']['students'];
+        // $newStudentQualifications = $data['seeking']['qualifications'];
+        // $newSeekingCollaborators = $data['seeking']['collaborators'];
         $project_id = $project->project_id;
 
         $project->attribute()->updateOrCreate(
@@ -27,18 +26,9 @@ class UpdateProjectAttributesService implements UpdateProjectAttributesContract
             ],
             // Attribute column values
             [
-                'purpose_name' => $newProjectPurpose,
-                'seeking_students' => $newSeekingStudents,
-                'seeking_collaborators' => $newSeekingCollaborators,
-                'student_qualifications' => $newStudentQualifications,
-            ]
-        );
-
-        $project->link()->updateOrCreate(
-            ['entity_id' => $project_id],
-            [
-                'link_type' => 'youtube',
-                'link' => $youtubeLink,
+                'purpose_name' => 'innovation',
+                'seeking_students' => 0,
+                'seeking_collaborators' => 0,
             ]
         );
     }

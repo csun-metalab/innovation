@@ -40,19 +40,6 @@ class Person extends MetaUser
     // This is used to keep track of related search terms
     public $relatedSearchTerms;
 
-    public function toSearchableArray()
-    {
-        $this->department_academicDepartments;
-        $array = $this->toArray();
-        if ($array['department_academic_departments']) {
-            dd($array);
-
-            return $array;
-        }
-
-        return [];
-    }
-
 
     public function profile_image()
     {

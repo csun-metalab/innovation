@@ -9,17 +9,15 @@ use Helix\Models\Tag;
 
 class CreateTagService implements CreateTagContract
 {
-    public function createTag($tagJson, $project_id, $relevance = 0.5)
+    public function createTag($project_id, $tags)
     {
-        foreach ($tagJson as $tag) {
-            if ($tag->relevance >= $relevance) {
+        foreach ($tags as $tag) {
                 $newTag = new Tag();
                 $newTag->project_id = $project_id;
-                $newTag->tag = $tag;
-                $newTag->relevance = $tag->relevance;
+                $newTag->tag = $tag['text'];
+                $newTag->relevance = $tag['relevance'];
                 $newTag->category = null;
                 $newTag->save();
-            }
         }
     }
 }

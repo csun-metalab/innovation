@@ -15,6 +15,7 @@ use Helix\Models\Research;
 use Laravel\Scout\Searchable;
 use Searchy;
 
+
 /**
  * Handles the search pages, query builders for those pages, and the functions
  * the AJAX calls from the filter.
@@ -44,13 +45,22 @@ class SearchController extends Controller
             $projects = $this->search();
         } else {
             $notFeatured = ['attribute.is_featured:0'];
-            $notFeatured = $this->buildAlgoliaProjectFilters($notFeatured);
+            $notFeatured = $this->buildAlgoliaProjectFilters();
             $isFeatured = ['attribute.is_featured:1'];
             $isFeatured = $this->buildAlgoliaProjectFilters($isFeatured);
 
+        
+            $featuredProjects = Project::search('')->with($isFeatured)->get();
+            if(count($featuredProjects) >= 3){
+                $featuredProjects->random(3);
+            }
+
             $projects = Project::search('')->with($notFeatured);
-            $featuredProjects = Project::search('')->with($isFeatured)->get()->random(3);
-            $projects = $projects->take($recentProjectsToConsider)->get()->random($recentProjectsToRandomlyShow);
+            $projects = $projects->take($recentProjectsToConsider)->get();
+
+            if(count($projects) >= $recentProjectsToRandomlyShow ){
+                $projects = $projects->random($recentProjectsToRandomlyShow);
+            }
         }
 
         $viewData = \compact('projects', 'featuredProjects', 'filters');
@@ -117,7 +127,7 @@ class SearchController extends Controller
         $requestedFilters = request()->all();
         $requestedFilters = collect($requestedFilters);
         // List of things from which to search.
-        $sponsor = Award::pluck('sponsor', 'sponsor_code')->sort()->unique();
+        // $sponsor = Award::pluck('sponsor', 'sponsor_code')->sort()->unique();
         $AcademicDepartments = AcademicDepartment::pluck('display_name', 'entities_id')->sort();
         $departments = [null => 'Filter by Department'];
         $purposes = Purpose::pluck('display_name', 'system_name')->sort();
@@ -215,7 +225,7 @@ class SearchController extends Controller
         $requestedFilters = collect($requestedFilters);
 
         // List of things from which to search.
-        $sponsor = Award::pluck('sponsor', 'sponsor_code')->sort()->unique();
+        // $sponsor = Award::pluck('sponsor', 'sponsor_code')->sort()->unique();
         $departments = AcademicDepartment::pluck('display_name', 'entities_id')->sort();
         $purposes = Purpose::pluck('display_name', 'system_name')->sort();
         $collaborators = ['student' => 'Student Contributors', 'faculty' => 'Faculty Collaborators'];
@@ -397,7 +407,7 @@ class SearchController extends Controller
         //   });
         // });
         } else {
-            $projectRulesFilters[] = 'visibility.policy:public';
+            // $projectRulesFilters[] = 'visibility.policy:public';
         }
 
         return $projectRulesFilters;
@@ -437,10 +447,9 @@ class SearchController extends Controller
             if ($data) {
                 foreach ($data as $person) {
                     $tmp['id'] = $person->user_id;
-                    $tmp['text'] = $person->common_name;
+                    $tmp['text'] = $person->display_name;
                     $results[] = $tmp;
                 }
-
                 return $results;
             }
         }

@@ -6,6 +6,7 @@ namespace Helix\Http\Controllers;
 
 use Auth;
 use DB;
+
 use Helix\Contracts\CreateSeekingContract;
 use Helix\Contracts\CreateTagContract;
 use Helix\Contracts\GetUniversityEventsContract;
@@ -15,7 +16,6 @@ use Helix\Contracts\UpdateProjectGeneralContract;
 use Helix\Contracts\UpdateProjectPolicyContract;
 use Helix\Contracts\UpdateProjectPurposeContract;
 use Helix\Contracts\VerifyProjectIdContract;
-use Helix\Http\Requests\ProjectStepOneCreate;
 use Helix\Models\Attribute;
 use Helix\Models\Interest;
 use Helix\Models\Invitation;
@@ -28,6 +28,12 @@ use Helix\Models\Seeking;
 use Illuminate\Http\Request;
 use Searchy;
 
+use WatsonSDK\Common\WatsonCredential;
+use WatsonSDK\Common\SimpleTokenProvider;
+use WatsonSDK\Services\NaturalLanguageUnderstanding;
+use WatsonSDK\Services\NaturalLanguageUnderstanding\AnalyzeModel;
+
+use Helix\Http\Requests\Project\ProjectCreate;
 /**
  * Essentially the resource controller for projects. In addition, this has the
  * three steps for creating/editing a project and AJAX calls in those forms.
@@ -63,10 +69,10 @@ class ProjectController extends Controller
         UpdateProjectAttributesContract $updateProjectAttributesContract,
         UpdateProjectPolicyContract $updateProjectPolicyContract,
         UpdateProjectPurposeContract $updateProjectPurposeContract,
-        CreateSeekingContract $createSeekingContract,
         CreateTagContract $createTagContract,
         GetUniversityEventsContract $getUniversityEventsContract,
-        UpdateCollaboratorsContract $updateCollaboratorsContract
+        UpdateCollaboratorsContract $updateCollaboratorsContract,
+        CreateSeekingContract $createSeekingContract
     ) {
         $this->middleware('auth', ['except' => [
             'index',
@@ -77,17 +83,18 @@ class ProjectController extends Controller
             'createAllProjectAttributes',
             'getCollaboratorsList',
             'getByCategoryType',
+            'getWatsonTags'
         ]]);
 
-        $this->middleware(['project-write', 'helix-roles'], ['only' => [
-            'create',
-            'step1',
-            'getStep2',
-            'step2',
-            'getStep3',
-            'store',
-            'destroy',
-        ]]);
+        // $this->middleware(['project-write', 'helix-roles'], ['only' => [
+        //     // 'create',
+        //     'step1',
+        //     'getStep2',
+        //     'step2',
+        //     'getStep3',
+        //     'store',
+        //     'destroy',
+        // ]]);
 
         $this->projectIdVerifier = $verifyProjectIdContract;
         $this->projectGeneralUpdater = $updateProjectGeneralContract;
@@ -113,16 +120,16 @@ class ProjectController extends Controller
             $project = Project::where('project_number', $id)->firstOrfail();
 
             return redirect("project/$project->slug");
-        } elseif (str_contains($id, 'projects:')) {
-            $project = Project::with('pi', 'members', 'award', 'link', 'image', 'visibility')->findOrFail($id);
+        } elseif (str_contains($id, 'innovate:')) {
+            $project = Project::with('pi', 'members', 'award', 'link', 'image', 'visibilityPolicy','tags')->findOrFail($id);
 
             return redirect("project/$project->slug");
         }
 
-        $project = Project::with('pi', 'members', 'award', 'link', 'image', 'visibility')->where('slug', $id)->firstOrFail();
-
+        $project = Project::with('pi', 'members', 'award', 'link', 'image', 'visibilityPolicy','tags')->where('slug', $id)->firstOrFail();
         // This is to check if there is a row in the attributes table corresponding to this project
         $attributes = Attribute::with('purpose')->findOrNew($project->project_id);
+
         if ($attributes->project_id == null) {
             $attributes->project_id = $project->project_id;
             $attributes->purpose_name = 'project';
@@ -146,7 +153,6 @@ class ProjectController extends Controller
                 return redirect('login');
             }
         }
-
         // return $project->award;
         // $membership = $this->sortMembers($membership);
         if (\count($project->award)) {
@@ -159,8 +165,7 @@ class ProjectController extends Controller
         }
         if ($api) {
             return $this->sendResponse($project, 'project');
-        }
-
+        };
         return view('pages.project.show', \compact('project', 'attributes'));
     }
 
@@ -178,7 +183,7 @@ class ProjectController extends Controller
             $id = Project::where('slug', $id)->firstOrFail()['project_id'];
         }
 
-        return redirect('project/step-1/' . $id);
+        return redirect('project/create/' . $id);
     }
 
     /**
@@ -192,44 +197,81 @@ class ProjectController extends Controller
      */
     public function create($projectId = null)
     {
-        // If user is coming from anywhere besides project/step-2 and if session has new-project
-        if (!str_contains(url()->previous(), 'step-2') && session('new-project')) {
-            session()->forget('new-project');
-        }
-        if (!session('new-project')) {
-            if ($projectId) {
-                //could probably eager load here
-                $project = Project::with('attribute', 'link')->findOrFail($projectId);
+        if ($projectId) {
+            //could probably eager load here
+            $project = Project::with('attribute', 'link')->findOrFail($projectId);
 
-                if ($project->attribute == null) {
-                    Attribute::create([
-                        'project_id' => $projectId,
-                        'is_featured' => 0,
-                        'seeking_collaborators' => 0,
-                        'seeking_students' => 0,
-                        'purpose_name' => 'project',
-                    ]);
-                }
-
-                $project_general = [
-                    'project_purpose' => $project->attribute ? $project->attribute->purpose_name : '',
-                    'project_type' => $project->getPolicyType(),
-                    'title' => $project->project_title,
-                    'description' => $project->abstract,
-                    'start_date' => \date('m/d/Y', \strtotime(\str_replace('-', '/', $project->project_begin_date))),
-                    'end_date' => $project->project_end_date ? \date('m/d/Y', \strtotime(\str_replace('-', '/', $project->project_end_date))) : null,
-                    'url' => $project->project_url ?: null,
-                    'cayuse_project' => null !== $project->cayuse_id ? true : false,
-                    'youtube' => $project->link ? $project->link->link : '',
-                ];
-
-                session()->put('new-project.project_general', $project_general);
+            if ($project->attribute == null) {
+                Attribute::create([
+                    'project_id' => $projectId,
+                    'is_featured' => 0,
+                    'seeking_collaborators' => 0,
+                    'seeking_students' => 0,
+                    'purpose_name' => 'project',
+                ]);
             }
-        }
-        $projectPurposes = Purpose::all()->pluck('display_name', 'system_name');
+            $project_general = [
+                'project_purpose' => $project->attribute ? $project->attribute->purpose_name : '',
+                'project_type' => $project->getPolicyType(),
+                'title' => $project->project_title,
+                'description' => $project->abstract,
+                'start_date' => \date('m/d/Y', \strtotime(\str_replace('-', '/', $project->project_begin_date))),
+                'end_date' => $project->project_end_date ? \date('m/d/Y', \strtotime(\str_replace('-', '/', $project->project_end_date))) : null,
+                'url' => $project->project_url ?: null,
+                'cayuse_project' => null !== $project->cayuse_id ? true : false,
+                'youtube' => $project->link ? $project->link->link : '',
+            ];
 
-        return view('pages.project.one', \compact('project', 'projectId', 'projectPurposes'));
+            session()->put('new-project.project_general', $project_general);
+        }
+
+        // $projectPurposes = Purpose::all()->pluck('display_name','system_name');
+        $projectPurposes = ['Test','test2'];
+
+        return view('pages.project.create', \compact('project', 'projectId','projectPurposes'));
     }
+    public function postCreate(Request $project, $projectId = null)
+    {
+        $projectAuthor = Auth::user()->user_id;
+        $projectData = [
+            'title'          => $project->title,
+            'description'    => $project->description,
+            'project_type'   => $project->project_type,
+            'project_author'  => $projectAuthor,
+            // 'start_date'     => date("m/d/Y", strtotime(str_replace('-','/', $project->project_begin_date))),
+            // 'end_date'       => $project->project_end_date ? date("m/d/Y", strtotime(str_replace('-','/', $project->project_end_date))) : NULL,
+            'url'            => $project->url ?: NULL,
+            'youtube'        => $project->video?: NULL,
+            'collaborators' =>  $project->collaborators
+        ];
+        $tags = $this->tagsDecode($project->tags);
+        $projectId = $this->projectIdVerifier->verifyId($projectId);
+        $this->projectGeneralUpdater->updateProjectGeneral($projectId, $projectData);
+        $this->projectPolicyUpdater->updateProjectPolicy($projectId, $projectData);
+        $this->collaboratorsUpdater->updateCollaborators($projectId, $projectData);
+        $this->projectAttributesUpdater->updateProjectAttributes($projectId,$projectData);
+        $this->createTagContract->createTag($projectId, $tags);
+        
+        Project::find($projectId)->firstOrFail()->searchable();
+
+        return view('pages.project.four', \compact('project'));
+    }
+    private function tagsDecode(array $tags)
+    {
+        foreach ($tags as &$tag) {
+            if(str_contains($tag,'watson:')){
+                $data = explode(':', $tag);
+                $text = $data[1];
+                $relevance = $data[2];
+            }else{
+                $text = $tag;
+                $relevance = 1;
+            }
+            $tag = compact('text','relevance');
+        }
+        return $tags;
+    }
+
 
     /**
      * Handles the information given from step 1 and session information.
@@ -239,7 +281,7 @@ class ProjectController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function step1(ProjectStepOneCreate $request, $projectId = null)
+    public function step1(StepOneRequest $request, $projectId = null)
     {
         if (session('new-project')) {
             if (\array_key_exists('project_general', session('new-project'))) {
@@ -306,16 +348,16 @@ class ProjectController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View|string
      */
-    public function getStep2($projectId = null)
-    {
-        if (!session('new-project')) {
-            return back();
-        }
+    // public function getStep2($projectId = null)
+    // {
+    //     if (!session('new-project')) {
+    //         return back();
+    //     }
 
-        // TODO: refactor everything to the back end
+    //     // TODO: refactor everything to the back end
 
-        return view('pages.project.two', \compact('categories', 'subcategories'));
-    }
+    //     return view('pages.project.two', \compact('categories', 'subcategories'));
+    // }
 
     /**
      * MARK FOR DELETION.
@@ -326,10 +368,10 @@ class ProjectController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function step2($projectId = null)
-    {
-        return redirect('project/step-3/' . $projectId ?: '');
-    }
+    // public function step2($projectId = null)
+    // {
+    //     return redirect('project/step-3/' . $projectId ?: '');
+    // }
 
     /**
      * Returns the view for step 3 and handles the AJAX call for populating
@@ -341,52 +383,52 @@ class ProjectController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View|int|string
      */
-    public function getStep3($projectId = null)
-    {
-        if (!session('new-project')) {
-            return back();
-        }
-        if (!session('new-project.collaborators')) {
-            if ($projectId) {
-                $projectCollaborators = Project::findOrFail($projectId)->allMembers->toArray();
-                if (!empty($projectCollaborators)) {
-                    session()->put('new-project.collaborators', stringifyCollaborators($projectCollaborators));
-                }
-            }
-        }
+    // public function getStep3($projectId = null)
+    // {
+    //     if (!session('new-project')) {
+    //         return back();
+    //     }
+    //     if (!session('new-project.collaborators')) {
+    //         if ($projectId) {
+    //             $projectCollaborators = Project::findOrFail($projectId)->allMembers->toArray();
+    //             if (!empty($projectCollaborators)) {
+    //                 session()->put('new-project.collaborators', stringifyCollaborators($projectCollaborators));
+    //             }
+    //         }
+    //     }
 
-        if (request()->wantsJson()) {
-            $results = 0;
+    //     if (request()->wantsJson()) {
+    //         $results = 0;
 
-            if (\array_key_exists('collaborators', session('new-project'))) {
-                $results = \json_encode(session('new-project')['collaborators']);
-            }
+    //         if (\array_key_exists('collaborators', session('new-project'))) {
+    //             $results = \json_encode(session('new-project')['collaborators']);
+    //         }
 
-            return $results;
-        }
-        $roles = Role::orderBy('rolename_id')->roleNames()->pluck('display_name', 'display_name');
-        $seekingCollaborators = 0;
-        $seekingStudents = 0;
-        $studentQualifications = null; // = '';
-        if (isset($projectId)) {
-            $project = Project::with('attribute')->findOrFail($projectId);
-            $invitations = $project->invitations()->whereNull('updated_at')->get();
-            $seekingCollaborators = $project->attribute ? $project->attribute->seeking_collaborators : $seekingCollaborators;
-            $seekingStudents = $project->attribute ? $project->attribute->seeking_students : $seekingStudents;
-            $studentQualifications = $project->attribute ? $project->attribute->student_qualifications : $studentQualifications;
-        }
+    //         return $results;
+    //     }
+    //     $roles = Role::orderBy('rolename_id')->roleNames()->pluck('display_name', 'display_name');
+    //     $seekingCollaborators = 0;
+    //     $seekingStudents = 0;
+    //     $studentQualifications = null; // = '';
+    //     if (isset($projectId)) {
+    //         $project = Project::with('attribute')->findOrFail($projectId);
+    //         $invitations = $project->invitations()->whereNull('updated_at')->get();
+    //         $seekingCollaborators = $project->attribute ? $project->attribute->seeking_collaborators : $seekingCollaborators;
+    //         $seekingStudents = $project->attribute ? $project->attribute->seeking_students : $seekingStudents;
+    //         $studentQualifications = $project->attribute ? $project->attribute->student_qualifications : $studentQualifications;
+    //     }
 
-        return view(
-            'pages.project.three',
-            \compact(
-                'roles',
-                'invitations',
-                'seekingCollaborators',
-                'seekingStudents',
-                'studentQualifications'
-            )
-        );
-    }
+    //     return view(
+    //         'pages.project.three',
+    //         \compact(
+    //             'roles',
+    //             'invitations',
+    //             'seekingCollaborators',
+    //             'seekingStudents',
+    //             'studentQualifications'
+    //         )
+    //     );
+    // }
 
     /**
      * MARK FOR DELETION.
@@ -437,51 +479,6 @@ class ProjectController extends Controller
         event(new \Helix\Events\Project\ProjectCreatedOrUpdated($project, session('new-project')));
 
         session()->forget('new-project');
-
-        return view('pages.project.four', \compact('project'));
-    }
-
-    public function postProjectCreation(Request $request, $projectId = null)
-    {
-        $collaborators = null !== request('collaborators') ? \array_filter(request('collaborators')) : [];
-
-        $projectData = [
-           'project_general' => [
-               'title' => \trim($request->title),
-               'cayuse_project' => false,
-               'project_type' => $request->project_type,
-               'project_purpose' => $request->project_purpose,
-               'description' => \trim($request->description),
-               'start_date' => $request->start_date,
-               'end_date' => $request->end_date,
-               'url' => \trim($request->url),
-               'youtube' => \trim($request->youtube),
-           ],
-            'interests' => $request->tags,
-            'collaborators' => [],
-            'seeking' => [
-                'collaborators' => 0,
-                'students' => 0,
-                'qualifications' => null,
-            ],
-        ];
-
-        if (!empty($collaborators)) {
-            $projectData['collaborators'] = $collaborators;
-            $projectData['seeking']['collaborators'] = $request->seekingCollaborators;
-            $projectData['seeking']['students'] = $request->seekingStudents;
-            if ($request->seekingStudents && $request->studentQualifications) {
-                $projectData['seeking']['qualifications'] = $request->studentQualifications;
-            }
-        }
-
-        $projectId = $this->projectIdVerifier->verifyId($projectId);
-
-        $this->projectGeneralUpdater->updateProjectGeneral($projectId, $projectData);
-        $this->projectAttributesUpdater->updateProjectAttributes($projectId, $projectData);
-        $this->projectPolicyUpdater->updateProjectPolicy($projectId, $projectData);
-        $this->projectPurposeUpdater->updateProjectPurpose($projectId, $projectData);
-        $this->collaboratorsUpdater->updateCollaborators($projectId, $projectData);
 
         return view('pages.project.four', \compact('project'));
     }
@@ -567,16 +564,13 @@ class ProjectController extends Controller
     public function getCollaboratorsList()
     {
         if (request()->filled('q')) {
-            $data = Searchy::search('users')->fields('display_name', 'first_name', 'last_name', 'middle_name')->query(request('q'))->getQuery()->limit(10)->get();
-            // $data = Person::where('display_name', 'LIKE', "%".request()->q."%")->take(5)->get();
-
+            $data = Person::search(request('q'))->get()->take(10);
             if ($data) {
                 foreach ($data as $person) {
                     $tmp['id'] = $person->user_id;
-                    $tmp['text'] = $person->common_name;
+                    $tmp['text'] = $person->display_name;
                     $results[] = $tmp;
                 }
-
                 return $results;
             }
         }
@@ -865,5 +859,25 @@ class ProjectController extends Controller
         Attribute::insert($newAttributeValues->toArray());
 
         return $newAttributeValues->count();
+    }
+
+    public function getWatsonTags(Request $request, $data = null, $relevance = 0.5)
+    {   
+        if($request->filled('data')){
+            $data = $request->get('data');
+        }
+        $nlu = new NaturalLanguageUnderstanding( WatsonCredential::initWithCredentials(env('WATSON_USER_NAME'), env('WATSON_PASSWORD')) );
+        $model = new AnalyzeModel($data, ['concepts'=>['limit'=>50]]);
+        $result = $nlu->analyze($model);
+        $responseData =  json_decode($result->getContent());
+
+        if($responseData){
+            $data = array_filter($responseData->concepts, function ($tag) use ($relevance) { 
+                return ($tag->relevance >= $relevance);
+            });
+        }else{
+            $data = null;
+        }
+        return $data;
     }
 }

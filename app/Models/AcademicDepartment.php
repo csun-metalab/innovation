@@ -10,7 +10,7 @@ use Laravel\Scout\Searchable;
 class AcademicDepartment extends Model
 {
     use Searchable;
-    protected $table = 'nemo.academicDepartments';
+    protected $table = 'academicDepartments';
     protected $primaryKey = 'entities_id';
     public $incrementing = false;
 

@@ -83,5 +83,4 @@
     return $('.project-create-form').submit();
   })
 </script>
-{!! Html::script('js/scripts.js') !!} 
 @stop

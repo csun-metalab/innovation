@@ -62,7 +62,7 @@
                   {{-- Managing the button and messagess for requesting to join the project. --}}
                   <div class="mlr--10-0">
                     {{-- this is where the project is going to check if seeking collaborators --}}
-                    @if($attributes->seeking_collaborators && count($project->policies) && $project->visibility->policy != 'private')
+                    @if($attributes->seeking_collaborators && count($project->policies) && $project->visibilityPolicy->policy != 'private')
                         <p class="type--marginless"><strong>Seeking Faculty</strong></p>
                         <div style="margin: 5px 0;">
                           @if(auth()->check() && auth()->user()->hasPendingInvitation($project))
@@ -83,7 +83,7 @@
                           @endif
                         </div>
                     @endif
-                    @if ($attributes->seeking_students && $project->visibility->policy != 'private')
+                    @if ($attributes->seeking_students && $project->visibilityPolicy->policy != 'private')
                         <p class="type--marginless"><strong>Seeking Students</strong></p>
                         <div class="mlr--10-0">
                           <a class="btn btn-default btn--full-width" href="{{ route('student-request-form',['projectId'=>$project->project_id]) }}"><i class="fa fa-envelope-o"></i>
@@ -91,7 +91,7 @@
                         </div>
                     @endif
                 </div>
-                @if(($attributes->seeking_collaborators || $attributes->seeking_students) && $project->visibility->policy != 'private')
+                @if( ($attributes->seeking_collaborators || $attributes->seeking_students) && $project->visibilityPolicy->policy != 'private')
                   <div class="type--header"></div>
                 @endif
                 <div>
@@ -110,10 +110,10 @@
                         <li>${{$project->awardTotal()}}</li>
                     </ul>
                 @endif
-                @if($project->pi)
+                {{-- @if($project->pi)
                     <p class="milli type--marginless"><strong>Project Timeline:</strong></p>
                     <p>{{$project->project_begin_date}} &ndash; {{$project->project_end_date}}</p>
-                @endif
+                @endif --}}
                 @if($project->project_url)
                     <p class="milli type--marginless"><strong>Project Web Page:</strong></p>
                     <ul class="list--unstyled">
@@ -131,7 +131,7 @@
                     @endif
                 @endif
                 &mdash;<br><br>
-                @if($project->pi)
+{{--                 @if($project->pi)
                     <p class="milli type--marginless"><strong>Lead Principal Investigator:</strong></p>
                     <div class="dropdown footer-styling">
                         <a title="{{ $project->pi->display_name }}" class="color--grey nodeco"><img
@@ -152,9 +152,9 @@
                             </li>
                         </div>
                     </div>
-                @endif
+                @endif --}}
                 <br><br>
-                @if(count($project->members)>0)
+                @if($project->members)
                     <p class="milli"><strong>Project Team:</strong></p>
                     <ul class="list">
                         @foreach($project->members as $member)
@@ -223,7 +223,7 @@
                         @endcan
                     {{-- Mobile view: Managing the button and messagess for requesting to join the project. --}}
                     <div class="mlr--10-0">
-                      @if($attributes->seeking_collaborators && count($project->policies) && $project->visibility->policy != 'private')
+                      @if($attributes->seeking_collaborators && count($project->policies) && $project->visibilityPolicy->policy != 'private')
                         <p class="type--marginless"><strong>Seeking Faculty</strong></p>
                         <div style="margin: 5px 0;">
                           @if(auth()->check() && auth()->user()->hasPendingInvitation($project))
@@ -246,7 +246,7 @@
                         </div>
                       @endif
                       {{-- if seeking students--}}
-                        @if($attributes->seeking_students && $project->visibility->policy != 'private')
+                        @if($attributes->seeking_students && $project->visibilityPolicy->policy != 'private')
                             <p class="type--marginless"><strong>Seeking Students</strong></p>
                             <div class="mlr--10-0">
                                 <a class="btn btn-default btn--full-width" href="{{ route('student-request-form',['projectId'=>$project->project_id]) }}"><i class="fa fa-envelope-o"></i>
@@ -254,7 +254,7 @@
                             </div>
                         @endif
                     </div>
-                    @if($project->visibility->policy != 'private' && ($attributes->seeking_collaborators || $attributes->seeking_students))
+                    @if($project->visibilityPolicy->policy != 'private' && ($attributes->seeking_collaborators || $attributes->seeking_students))
                       <div class="type--header"></div>
                     @endif
                     <div>
@@ -273,10 +273,10 @@
                             <li>${{$project->awardTotal()}}</li>
                         </ul>
                     @endif
-                    @if($project->pi)
+                    {{-- @if($project->pi)
                         <p class="milli type--marginless"><strong>Project Timeline:</strong></p>
                         <p>{{$project->project_begin_date}} &ndash; {{$project->project_end_date}}</p>
-                    @endif
+                    @endif --}}
                     @if($project->link)
                         @if($project->link->link_type == 'youtube')
                             @if($project->link->link)
@@ -362,6 +362,19 @@
                 </div>
                 <div class="article">
                     <p class="intro">{!! nl2br(e($project->abstract)) !!}</p>
+                    @if(count($project->tags))
+                    <div>
+                        <p><strong>Project Tags:</strong></p>
+                        @foreach($project->tags as $tag)
+                            <a 
+                               title="{{ $tag->tag }}"
+                               class="btn btn-primary btn-sm">
+                              {{$tag->tag}}
+                            </a>
+                        @endforeach
+                    </div>
+                    <br><br><br><br><br>
+                @endif
                 </div>
                 <br><br><br><br><br>
             </div>

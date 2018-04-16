@@ -14,14 +14,14 @@ class Project extends Model
 
     public static function boot()
     {
-        static::updated(function ($model) {
-            $model->user->touch();
-        });
+        // static::updated(function ($model) {
+        //     $model->user->touch();
+        // });
 
         parent::boot();
     }
 
-    protected $table = 'exploration.projects';
+    protected $table = 'projects';
     protected $primaryKey = 'project_id';
     protected $fillable = [
         'project_id',
@@ -44,7 +44,7 @@ class Project extends Model
         $this->department;
         $this->sponsor;
         $this->members;
-        $this->visibility;
+        $this->visibilityPolicy;
         $this->attribute;
         $array = $this->toArray();
 
@@ -68,7 +68,8 @@ class Project extends Model
 
     public function members()
     {
-        return $this->belongsToMany('Helix\Models\Person', 'nemo.memberships', 'parent_entities_id', 'individuals_id')->withPivot('role_position')->wherePivot('role_position', '!=', 'Lead Principal Investigator');
+        return $this->belongsToMany('Helix\Models\Person', 'nemo.memberships', 'parent_entities_id', 'individuals_id')->withPivot('role_position');
+        // ->wherePivot('role_position', '!=', 'Lead Principal Investigator');
     }
 
     public function authorities()
@@ -119,10 +120,10 @@ class Project extends Model
         return $this->hasMany('Helix\Models\Award', 'project_id', 'project_id');
     }
 
-    // public function interests()
-    // {
-    //     return $this->belongsToMany('Helix\Models\Research', 'fresco.expertise_entity', 'entities_id', 'expertise_id');
-    // }
+    public function tags()
+    {
+        return $this->hasMany('Helix\Models\Tag', 'project_id', 'project_id');
+    }
 
     public function department()
     {
@@ -177,7 +178,7 @@ class Project extends Model
         return $this->hasMany('Helix\Models\Invitation', 'project_id');
     }
 
-    public function visibility()
+    public function visibilityPolicy()
     {
         return $this->hasOne('Helix\Models\ProjectPolicy', 'project_id', 'project_id')->where('policy_type', 'visibility');
     }
@@ -254,12 +255,12 @@ class Project extends Model
     */
     public function isPrivate()
     {
-        return $this->visibility->policy == 'private';
+        return $this->visibilityPolicy->policy == 'private';
     }
 
     public function isInternal()
     {
-        return $this->visibility->policy == 'internal';
+        return $this->visibilityPolicy->policy == 'internal';
     }
 
     /*

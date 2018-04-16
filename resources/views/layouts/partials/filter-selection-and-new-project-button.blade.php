@@ -1,11 +1,11 @@
 <div class="cd-filter">
     <form>
-        <div class="cd-filter-block ">
+{{--         <div class="cd-filter-block ">
             {!! Form::label('sponsor','Filter by Sponsor')!!}
             <div class="cd-filter-content">
                 {!! Form::select('sponsor', $filters['sponsor'] , request()->get('sponsor') ?: null, ['placeholder'=> 'Sponsor...','class' => 'select2-sponsor' , 'style' => 'width: 100%'])!!}
             </div>
-        </div>
+        </div> --}}
         <div class="cd-filter-block">
             {!! Form::label('department','Filter by Department')!!}
             <div class="cd-filter-content">
@@ -39,5 +39,5 @@
 @else
     <a title="Filters" class="cd-filter-trigger"><i class="fa fa-filter"></i> Filters</a>
 @endif
-<a title="Add New Project" href="{{ url('project/step-1') }}" class="cd-filter-trigger-right"><i
+<a title="Add New Project" href="{{ url('project/create') }}" class="cd-filter-trigger-right"><i
             class="fa fa-plus"></i> Add a new project</a>

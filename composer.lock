@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "5bc943c876a4877a57641d06d617ca4a",
+    "content-hash": "eb95ec324d075e2946abdaa155a5cf65",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -228,6 +228,53 @@
                 "webprofiler"
             ],
             "time": "2018-03-06T08:35:31+00:00"
+        },
+        {
+            "name": "cognitivebuild/watsonphpsdk",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/CognitiveBuild/WatsonPHPSDK.git",
+                "reference": "d73ee6916415e2ab1846bc1a4a9563d708ce3bec"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/CognitiveBuild/WatsonPHPSDK/zipball/d73ee6916415e2ab1846bc1a4a9563d708ce3bec",
+                "reference": "d73ee6916415e2ab1846bc1a4a9563d708ce3bec",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.2",
+                "php": ">=5.6.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "WatsonSDK\\Common\\": "Source/Common",
+                    "WatsonSDK\\Services\\": "Source/Services"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "caopeng",
+                    "email": "dammer_66@163.com"
+                }
+            ],
+            "description": "PHP SDK for Watson so that the developer could apply Watson quickly in PHP applications",
+            "keywords": [
+                "ai",
+                "php",
+                "sdk",
+                "watson"
+            ],
+            "time": "2018-03-31T11:59:59+00:00"
         },
         {
             "name": "csun-metalab/laravel-directory-authentication",
@@ -5844,6 +5891,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "cognitivebuild/watsonphpsdk": 20,
         "tiesa/ldap": 20
     },
     "prefer-stable": true,

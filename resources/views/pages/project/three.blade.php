@@ -151,47 +151,5 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
-<script>
-  (function(){
-      $.getJSON("", function(collaborators){
-        var template, input;
-        template = input = "";
-
-        if(collaborators.length > 0)
-        {
-          collaborators.forEach(function(collaborator){
-            var member = collaborator.split(','),
-            displayName = member[1] == "{{ Auth::user()->user_id }}" ? member[0] + ' <span style="opacity: .5;">&#183 You</span>' : member[0];
-            // 0 = name, 1 = membersId, 2 = role_position
-            template += "<tr data-id='"+ member[0] + ',' + member[1] + ',' + member[2] +"'><td>" + displayName + "</td><td>" + member[2] + "</td><td>Active</td><td style='text-align: center'> <a class='removeCollabBtn'>Remove</a></td></tr>";
-
-            input += "<input type='hidden' name='collaborators[]' value='"+ member[0] + ',' + member[1] + ',' + member[2] +"'>";
-          });
-        }
-        else
-        {
-          template += '<tr data-id="{{ Auth::user()->display_name }},{{ Auth::user()->user_id }},Lead Principal Investigator"><td>{{ Auth::user()->display_name }} &#183 <span style="opacity: .5;">You</span></td><td>Lead Principal Investigator</td><td>Active</td><td style="text-align: center"> <a class="removeCollabBtn">Cancel</a></td></tr>';
-          input += "<input type='hidden' name='collaborators[]' value='{{ Auth::user()->display_name }},{{ Auth::user()->user_id }},Lead Principal Investigator'>";
-        }
-        $('#list tbody').append(template);
-        $('.project-create-form').append(input);
-      });
-  })()
-
-  $('.form-btn').on('click', function(e){
-    $('input[name=action]').val($(this).attr('data-action'));
-    return $('.project-create-form').submit();
-  });
-  function spinMe(this1)
-  {
-    this1.disabled = true;
-    this1.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Submitting';
-  }
-  //Student qualificaitons box logic
-  $('#seekingStudents').change(function(){
-      $('#studentQualifications').toggle();
-  });
-
-</script>
 {!! Html::script('js/scripts.js') !!}
 @stop

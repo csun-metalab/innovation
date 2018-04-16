@@ -32,3 +32,6 @@ Route::get('projects/{id}', 'ProjectController@apiProject'); // slug , id, cayus
 Route::get('{include}/projects', 'SearchController@apiProjects'); // with member / email for person
 Route::get('update/cayuse-projects', 'ProjectController@updateCayuseProjects');
 Route::get('init/project-attributes', 'ProjectController@createAllProjectAttributes');
+Route::post('/validateYoutube', 'ProjectController@validateYoutube')->name('validateYoutube');
+
+Route::post('/watson/tags','ProjectController@getWatsonTags');

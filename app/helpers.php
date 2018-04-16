@@ -111,11 +111,14 @@ function obfuscateId($id)
  */
 function generateNewProjectId()
 {
-    $project = Project::select(DB::raw('CONVERT(REPLACE(project_id, "projects:", ""), UNSIGNED INTEGER) as id'))
+    $project = Project::select(DB::raw('CONVERT(REPLACE(project_id, "innovate:", ""), UNSIGNED INTEGER) as id'))
           ->orderBy('id', 'DESC')
           ->first();
+    if($project == null){
+        return 'innovate:1';
+    }
 
-    return 'projects:' . ++$project->id;
+    return 'innovate:' . ++$project->id;
 }
 
 /**
@@ -156,7 +159,7 @@ function datePickerFormat($date)
 {
     return \date('m/d/Y', \strtotime($date));
 }
-function monthFormat($timestamp)
+function monthFormat(String $timestamp)
 {
     return \date('F-d-Y', \strtotime($timestamp));
 }
@@ -347,7 +350,7 @@ function guzzleRequest($url, $method = 'GET', $assoc = true)
     } catch (\GuzzleHttp\Exception\RequestException $e) {
         $responseJson = \json_encode(['success' => false]);
     } finally {
-        // $data = \json_decode($responseJson->getBody(), $assoc);
+        $data = \json_decode($responseJson->getBody(), $assoc);
     }
 
     return $data;
