@@ -230,7 +230,7 @@ class ProjectController extends Controller
 
         return view('pages.project.create', \compact('project', 'projectId','projectPurposes'));
     }
-    public function postCreate(Request $project, $projectId = null)
+    public function postCreate(ProjectCreate $project, $projectId = null)
     {
         $projectAuthor = Auth::user()->user_id;
         $projectData = [
@@ -241,7 +241,7 @@ class ProjectController extends Controller
             // 'start_date'     => date("m/d/Y", strtotime(str_replace('-','/', $project->project_begin_date))),
             // 'end_date'       => $project->project_end_date ? date("m/d/Y", strtotime(str_replace('-','/', $project->project_end_date))) : NULL,
             'url'            => $project->url ?: NULL,
-            'youtube'        => $project->video?: NULL,
+            'video'        => $project->video?: NULL,
             'collaborators' =>  $project->collaborators
         ];
         $tags = $this->tagsDecode($project->tags);
@@ -252,9 +252,9 @@ class ProjectController extends Controller
         $this->projectAttributesUpdater->updateProjectAttributes($projectId,$projectData);
         $this->createTagContract->createTag($projectId, $tags);
         
-        Project::find($projectId)->firstOrFail()->searchable();
-
-        return view('pages.project.four', \compact('project'));
+        $project = Project::find($projectId)->firstOrFail();
+        $project->searchable();
+        return redirect('project/' . $project->slug);
     }
     private function tagsDecode(array $tags)
     {

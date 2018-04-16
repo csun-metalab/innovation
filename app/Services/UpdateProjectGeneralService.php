@@ -23,10 +23,17 @@ class UpdateProjectGeneralService implements UpdateProjectGeneralContract
         $project->is_publishable = 1;
         $project->save();
         $project->searchable();
-        if(isset($data['url'])){
+        if(isset($data['video'])){
             Link::create([
                 'entity_id' => $projectId,
                 'link_type' => 'video',
+                'link'  =>  $data['video']
+            ]);
+        }
+        if(isset($data['url'])){
+            Link::create([
+                'entity_id' => $projectId,
+                'link_type' => 'url',
                 'link'  =>  $data['url']
             ]);
         }
