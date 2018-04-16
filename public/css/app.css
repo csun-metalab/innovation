@@ -1132,3 +1132,11 @@ select {
   color: white;
 }
 
+.form--error {
+  border-color: #d00d2d !important;
+}
+
+.label--error {
+  color: #d00d2d !important;
+}
+

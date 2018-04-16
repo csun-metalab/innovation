@@ -12,16 +12,17 @@
     </div>
     <div class="container">
       <br>
+      @include('layouts.partials.display-errors')
       <div class="row">
           <div class="col-xl-7">
             <div class="form__group">
-              {{Form::label('title','Project Title',['class'=>'label--required type--left type--thin'])}}
-              {{Form::text('title','',['placeholder'=> "Enter a title..", 'id' => 'title'])}}
+              {{Form::label('title','Project Title',['class'=>'label--required type--left '.($errors->first('title')?'label--error':'')] )}}
+              {{Form::text('title','',['placeholder'=> "Enter a title..", 'id' => 'title', 'class' => $errors->first('title')?'form--error':''] )}}
             </div>
           </div>
           <div class="col-xl-5">
             <div class="form__group">
-              {{Form::label('projectEvent','Term/Event',['class'=>'label--required type--left type--thin'])}}
+              {{Form::label('projectEvent','Term/Event',['class'=>'label--required type--left'])}}
               {{Form::select('projectEvent',['Select an Event','Bull Ring','I-Corps','Other'])}}
             </div>
           </div>
@@ -35,28 +36,28 @@
       <div class="row">
         <div class="col-xs-12">
           <div class="form__group">
-            {{Form::label('description','Description',['class'=>'label--required type--thin type--left'])}}
-            {{Form::textArea('description','',['placeholder'=>'Enter a description...', 'id'=>'description'])}}
+            {{Form::label('description','Description',['class'=>'label--required type--left '.($errors->first('description')?'label--error':'')] )}}
+            {{Form::textArea('description','',['placeholder'=>'Enter a description...', 'id'=>'description','class' => $errors->first('description')?'form--error':''])}}
           </div>
         </div>
       </div>
 
       <div class="row">
         <div class="col-xs-6">
-          <label for="youtube" class="type--thin type--left">Video
+          <label for="youtube" class="type--left"><span class={{$errors->first('video')?'label--error':''}}>Video</span>
               <div class="tooltip"><i class="fa fa-question-circle" aria-hidden="true"></i>
                   <span class="tooltiptext">
                       YouTube and Vimeo are the currently supported video-sharing web sites<br>
                   </span>
               </div>
           </label>
-          {!! Form::text('video', '', ['class'=>'form-control', 'placeholder' => 'http://', 'id' => 'youtube']) !!}
+          {!! Form::text('video', '', ['placeholder' => 'http://', 'id' => 'youtube','class'=>'form-control '. ($errors->first('video')?'form--error':'')]) !!}
           <small hidden="true" style="color:#ff0011" id="youtubemsg">* Video URL must be from YouTube or Vimeo</small>
         </div>
         <div class="col-xs-6">
           <div class="form__group">
-            {{Form::label('url','Website',['class'=>'type--thin type--left'])}}
-            {{Form::text('url','',['placeholder'=>'https://','id'=>'website'])}}
+            {{Form::label('url','Website',['class'=>'type--left '.($errors->first('url')?'label--error':'')] )}}
+            {{Form::text('url','',['placeholder'=>'https://','id'=>'website','class' => $errors->first('url')?'form--error':''])}}
           </div>
         </div>
       </div>
@@ -65,13 +66,13 @@
         <div class="row">
           <div class="col-lg-6 col-md-5">
               <div class="form__group">
-                {{Form::label('collaborators','Team Members',['class'=>'label--required type--left type--thin'])}}
+                {{Form::label('collaborators','Team Members',['class'=>'label--required type--left'])}}
                 {{Form::select('collaborators',[],null,['id'=>'collab','class'=>'select2-collaborator','placeholder'=>'Add a new member...'])}}
               </div>
           </div>
           <div class="col-xs-8 col-md-5">
             <div class="form__group">
-              {{Form::label('role','Role',['class'=>'label--required type--left type--thin'])}}
+              {{Form::label('role','Role',['class'=>'label--required type--left'])}}
               {{ Form::select ('roles', ['roles'], null,['class'=>'roles select2-roles', 'id'=>'roleID'] ) }}
                 <div class="tooltip" style="float:right"><i class="fa fa-question-circle" aria-hidden="true"></i>
                     <span class="tooltiptext">You may use name, email or student ID to select team member.<br>
@@ -142,7 +143,7 @@
         <div class="row">
           <div class="col-xs-12">
             <div class="form__group">
-              {{Form::label('tags','Tags',['class'=>'type--left type--thin'])}}
+              {{Form::label('tags','Tags',['class'=>'type--left'])}}
               {!!Form::select('tags[]', ['',''], null, ['class' => 'select2-tags tags', 'multiple' => 'multiple'])!!}
             </div>
           </div>

@@ -9,6 +9,7 @@ use Helix\Mailers\Mailer;
 use Helix\Models\Invitation;
 use Helix\Models\Person;
 use Helix\Models\Project;
+use Helix\Models\NemoMembership;
 
 class UpdateCollaboratorsService implements UpdateCollaboratorsContract
 {
@@ -27,7 +28,6 @@ class UpdateCollaboratorsService implements UpdateCollaboratorsContract
             // Grab the project's members, if any
             $projectMembers = \array_column($project->allMembers->toArray(), 'user_id');
             $existingMembers = $invitations = $memberIds = [];
-
             // $collaborator comes in as a string in the format: "name,members:XXXXXXX,role_position"
             foreach ($data['collaborators'] as $collaborator) {
                 // $result[0] = display_name, $result[1] = members:XXXXXX, $result[2] = role_position
@@ -44,6 +44,13 @@ class UpdateCollaboratorsService implements UpdateCollaboratorsContract
                     // Add collaborator to list of users to be synced to nemo.memberships
                     // NOTE: Lead PIs and auth users will not receive invitations, for now...
                     $existingMembers[$collab['id']] = ['role_position' => $collab['role_position']];
+
+                    NemoMembership::create([
+                        'parent_entities_id' => $project->project_id,
+                        'individuals_id' => $result[1],
+                        'role_position' => $result[2],
+                        'member_status' => 'Active',
+                    ]);
 
                     // If this iteration has the role of Lead PI
                     if ($collab['role_position'] == 'Lead Principal Investigator') {
