@@ -5,9 +5,14 @@ declare(strict_types=1);
 namespace Helix\Http\Controllers;
 
 use Auth;
+use Illuminate\Http\Request;
+//use Helix\Http\Requests\Request;
 use Helix\Models\Invitation;
 use Helix\Models\Project;
 use Illuminate\Support\Collection;
+use Helix\Models\Event;
+use Helix\Contracts\GetUniversityEventsContract;
+use Helix\Contracts\CreateUniversityEventContract;
 
 /**
  * Handles the functionality of a logged in faculty member which includes
@@ -15,12 +20,20 @@ use Illuminate\Support\Collection;
  */
 class PersonController extends Controller
 {
+
+    protected $universityEventsRetriever=null;
+    protected $universityEventCreator=null;
     /**
      * Implements the "auth" and "faculty" middleware. Every method should only
      * be accessed by logged in faculty members, and not staff members.
      */
-    public function __construct()
+    public function __construct(
+        GetUniversityEventsContract $universityEventsContract,
+        CreateUniversityEventContract $createUniversityEventContract
+    )
     {
+        $this->universityEventsRetriever = $universityEventsContract;
+        $this->universityEventCreator = $createUniversityEventContract;
         $this->middleware(['auth', 'helix-roles']);
     }
 
@@ -95,5 +108,19 @@ class PersonController extends Controller
             ->whereNull('from_id')
             ->whereNull('updated_at')
             ->get();
+    }
+
+    public function universityEvents(){
+       return $this->universityEventsRetriever->getUniversityEvents();
+    }
+
+    public function createUniversityEvent(Request $request){
+        $eventName = $request['event_name'];
+        $startDate = $request['start_date'];
+        $endDate = $request['end_date'];
+        $originator = $request['originator'];
+        $startDate = \Carbon\Carbon::parse($startDate)->format('Y-m-d');
+        $endDate = \Carbon\Carbon::parse($endDate)->format('Y-m-d');
+        return $this->universityEventCreator->createUniversityEvent($eventName,$startDate,$endDate,$originator);
     }
 }

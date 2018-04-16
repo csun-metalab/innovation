@@ -111,6 +111,10 @@ Route::group(['middleware' => ['web']], function () {
         Route::get('dashboard', 'PersonController@adminPanel');
         Route::get('dashboard/invitations', 'PersonController@dashboardInvitation')
             ->name('dashboard.invitations');
+        Route::get('dashboard/events', 'PersonController@universityEvents')
+            ->name('dashboard.events');
+        Route::post('dashboard/create-event', 'PersonController@createUniversityEvent')
+            ->name('dashboard.event.create');
     });
 
     Route::post('test', 'ProjectController@PostProjectCreation');

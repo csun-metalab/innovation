@@ -6,5 +6,5 @@ namespace Helix\Contracts;
 
 interface GetUniversityEventsContract
 {
-    public function getUniversityEvents($projectId);
+    public function getUniversityEvents();
 }
