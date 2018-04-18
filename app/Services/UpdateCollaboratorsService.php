@@ -9,6 +9,7 @@ use Helix\Mailers\Mailer;
 use Helix\Models\Invitation;
 use Helix\Models\Person;
 use Helix\Models\Project;
+use Helix\Models\NemoMembership;
 
 class UpdateCollaboratorsService implements UpdateCollaboratorsContract
 {
@@ -21,13 +22,13 @@ class UpdateCollaboratorsService implements UpdateCollaboratorsContract
 
     public function updateCollaborators($projectId, array $data)
     {
-        $project = Project::findOrFail($projectId);
         // If user has included collaborators
         if (\array_key_exists('collaborators', $data)) {
             // Grab the project's members, if any
-            $projectMembers = \array_column($project->allMembers->toArray(), 'user_id');
-            $existingMembers = $invitations = $memberIds = [];
-
+            $project = Project::with('members','invitations')->findOrFail($projectId);
+            $existingMembersIds = $project->members;
+            $invitationMemberIds = $project->invitations;
+            $memberIds = $invitations = [];
             // $collaborator comes in as a string in the format: "name,members:XXXXXXX,role_position"
             foreach ($data['collaborators'] as $collaborator) {
                 // $result[0] = display_name, $result[1] = members:XXXXXX, $result[2] = role_position
@@ -40,10 +41,17 @@ class UpdateCollaboratorsService implements UpdateCollaboratorsContract
                 ];
 
                 // If someone has been given a role position of Lead PI or this iteration is auth user
-                if ($collab['role_position'] == 'Lead Principal Investigator' || auth()->user()->user_id == $collab['id']) {
+                if (($collab['role_position'] == 'Lead Principal Investigator' || auth()->user()->user_id == $collab['id']) && (!$existingMembersIds->contains('user_id', auth()->user()->user_id ))) {
                     // Add collaborator to list of users to be synced to nemo.memberships
                     // NOTE: Lead PIs and auth users will not receive invitations, for now...
                     $existingMembers[$collab['id']] = ['role_position' => $collab['role_position']];
+
+                    NemoMembership::create([
+                        'parent_entities_id' => $project->project_id,
+                        'individuals_id' => $result[1],
+                        'role_position' => $result[2],
+                        'member_status' => 'Active',
+                    ]);
 
                     // If this iteration has the role of Lead PI
                     if ($collab['role_position'] == 'Lead Principal Investigator') {
@@ -54,9 +62,8 @@ class UpdateCollaboratorsService implements UpdateCollaboratorsContract
 
                     continue;
                 }
-
                 // If the collaborator isn't a member of the project yet
-                if (!\in_array($collab['id'], $projectMembers)) {
+                if ( (!$existingMembersIds->contains('user_id',$collab['id'])) && (!$invitationMemberIds->contains('user_id',$collab['id'])) ) {
                     // create an invitation for the new collaborator
                     $invitation = new Invitation([
                         'project_id' => $project->project_id,
