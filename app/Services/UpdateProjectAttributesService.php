@@ -26,7 +26,7 @@ class UpdateProjectAttributesService implements UpdateProjectAttributesContract
             ],
             // Attribute column values
             [
-                'purpose_name' => 'innovation',
+                // 'purpose_name' => 'innovation',
                 'seeking_students' => 0,
                 'seeking_collaborators' => 0,
             ]

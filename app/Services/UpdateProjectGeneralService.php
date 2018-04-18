@@ -13,8 +13,10 @@ class UpdateProjectGeneralService implements UpdateProjectGeneralContract
     public function updateProjectGeneral($projectId, array $data)
     {
         $project = Project::findOrFail($projectId);
-        $project->slug = slugify($data['title']);
-        $project->project_title = $data['title'];
+        if($project->project_title != $data['title']){
+            $project->slug = slugify($data['title']);
+            $project->project_title = $data['title'];
+        }
         $project->visibility = 1;
         $project->pi_members_id = $data['project_author'];
         //$project->project_begin_date = timestampFormat($data['project_general']['start_date']);
