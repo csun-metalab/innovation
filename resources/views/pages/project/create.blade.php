@@ -22,16 +22,17 @@
           </div>
           <div class="col-xl-5">
             <div class="form__group">
-              {{Form::label('projectEvent','Term/Event',['class'=>'label--required type--left'])}}
-              {{Form::select('projectEvent',['Select an Event','Bull Ring','I-Corps','Other'])}}
+                @if(isset($events) && count($events))
+                    @if(env('APP_NAME')=='SeniorDesign')
+                        {{Form::label('event_id','Term',['class'=>'label--required type--left type--thin'])}}
+                    @else
+                        {{Form::label('event_id','Event',['class'=>'label--required type--left type--thin'])}}
+                    @endif
+                        {{Form::select('event_id',$events)}}
+                @endif
+
             </div>
           </div>
-          {{-- <div class="col-xl-2">
-            <div class="form__group">
-              {{Form::label('project_type','Project Type',['class'=>'label--required type--left type--thin'])}}
-              {{ Form::select('project_type', $projectTypes) }}
-            </div>
-          </div> --}}
       </div>
       <div class="row">
         <div class="col-xs-12">
@@ -72,8 +73,10 @@
           </div>
           <div class="col-xs-8 col-md-5">
             <div class="form__group">
-              {{Form::label('role','Role',['class'=>'label--required type--left'])}}
-              {{ Form::select ('roles', ['roles'], null,['class'=>'roles select2-roles', 'id'=>'roleID'] ) }}
+
+              {{Form::label('role','Title',['class'=>'label--required type--left'])}}
+              {{ Form::select ('roles', $titles, null,['class'=>'roles select2-roles', 'id'=>'roleID'] ) }}
+
                 <div class="tooltip" style="float:right"><i class="fa fa-question-circle" aria-hidden="true"></i>
                     <span class="tooltiptext">You may use name, email or student ID to select team member.<br>
                     </span>

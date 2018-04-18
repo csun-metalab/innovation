@@ -19,8 +19,6 @@ class UpdateProjectGeneralService implements UpdateProjectGeneralContract
         }
         $project->visibility = 1;
         $project->pi_members_id = $data['project_author'];
-        //$project->project_begin_date = timestampFormat($data['project_general']['start_date']);
-        //$project->project_end_date = $data['project_general']['end_date'] ? timestampFormat($data['project_general']['end_date']) : null;
         $project->abstract = $data['description'];
         $project->is_publishable = 1;
         $project->save();

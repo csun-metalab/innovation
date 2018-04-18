@@ -24,6 +24,8 @@ use Helix\Models\Project;
 use Helix\Models\ProjectPolicy;
 use Helix\Models\Purpose;
 use Helix\Models\Role;
+use Helix\Models\Event;
+use Helix\Models\Title;
 use Helix\Models\Seeking;
 use Illuminate\Http\Request;
 use Searchy;
@@ -129,7 +131,7 @@ class ProjectController extends Controller
         $project = Project::with('pi', 'members', 'award', 'links', 'image', 'visibilityPolicy','tags')->where('slug', $id)->firstOrFail();
         // This is to check if there is a row in the attributes table corresponding to this project
         $attributes = Attribute::with('purpose')->findOrNew($project->project_id);
-
+        $event = Event::where('id', $attributes->event_id)->pluck('event_name');
         if ($attributes->project_id == null) {
             $attributes->project_id = $project->project_id;
             // $attributes->purpose_name = 'project';
@@ -166,7 +168,7 @@ class ProjectController extends Controller
         if ($api) {
             return $this->sendResponse($project, 'project');
         };
-        return view('pages.project.show', \compact('project', 'attributes'));
+        return view('pages.project.show', \compact('project', 'attributes', 'event'));
     }
 
     /**
@@ -188,13 +190,16 @@ class ProjectController extends Controller
 
     public function create()
     {
-        $projectPurposes = ['Test','test2'];
+        $events = Event::where('application', env('APP_NAME'))->pluck('event_name', 'id');
+        $titles = Title::where('application', env('APP_NAME'))->pluck('display_title', 'title_name');
         $projectStatus = 0;
         $project = new Project;
-        return view('pages.project.create', \compact('project','projectPurposes','projectStatus'));
+        return view('pages.project.create', \compact('project','projectPurposes','projectStatus','events','titles'));
     }
     public function edit($slug)
     {
+        $titles = Title::where('application', env('APP_NAME'))->pluck('display_title', 'title_name');
+        $events = Event::where('application', env('APP_NAME'))->pluck('event_name', 'id');
         $project = Project::with('members','tags','attribute','video','url','pendingInvitations')
                             ->slug($slug)
                             ->firstOrFail();
@@ -209,11 +214,14 @@ class ProjectController extends Controller
         $invitations = $project->pendingInvitations;
         $tagIds = array_keys($tags);
         $projectStatus = 1;
-        return view('pages.project.create', \compact('project','projectStatus','tags','tagIds','invitations'));
+        return view('pages.project.create', \compact('project','projectStatus','tags','tagIds','invitations','events','titles'));
     }
 
 
+
+
     public function postCreate(ProjectCreate $project, $slug = null)
+
     {
         $projectId = null;
         if($slug){
@@ -224,9 +232,8 @@ class ProjectController extends Controller
             'title'          => $project->title,
             'description'    => $project->description,
             'project_type'   => $project->project_type,
-            'project_author'  => $projectAuthor,
-            // 'start_date'     => date("m/d/Y", strtotime(str_replace('-','/', $project->project_begin_date))),
-            // 'end_date'       => $project->project_end_date ? date("m/d/Y", strtotime(str_replace('-','/', $project->project_end_date))) : NULL,
+            'project_author' => $projectAuthor,
+            'event_id'       =>  $project->event_id,
             'url'            => $project->url ?: NULL,
             'video'        => $project->video?: NULL,
             'collaborators' =>  $project->collaborators
