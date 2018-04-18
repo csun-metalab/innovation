@@ -13,6 +13,7 @@ class Event extends Model
     protected $table = 'events';
     protected $fillable = [
         'originator',
+        'application',
         'event_name',
         'start_date',
         'end_date'

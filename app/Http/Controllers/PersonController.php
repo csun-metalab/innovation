@@ -121,6 +121,7 @@ class PersonController extends Controller
         $originator = $request['originator'];
         $startDate = \Carbon\Carbon::parse($startDate)->format('Y-m-d');
         $endDate = \Carbon\Carbon::parse($endDate)->format('Y-m-d');
-        return $this->universityEventCreator->createUniversityEvent($eventName,$startDate,$endDate,$originator);
+        $application = env('APP_NAME');
+        return $this->universityEventCreator->createUniversityEvent($eventName,$startDate,$endDate,$originator,$application);
     }
 }

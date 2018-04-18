@@ -24,6 +24,7 @@ use Helix\Models\Project;
 use Helix\Models\ProjectPolicy;
 use Helix\Models\Purpose;
 use Helix\Models\Role;
+use Helix\Models\Event;
 use Helix\Models\Seeking;
 use Illuminate\Http\Request;
 use Searchy;
@@ -129,7 +130,7 @@ class ProjectController extends Controller
         $project = Project::with('pi', 'members', 'award', 'link', 'image', 'visibilityPolicy','tags')->where('slug', $id)->firstOrFail();
         // This is to check if there is a row in the attributes table corresponding to this project
         $attributes = Attribute::with('purpose')->findOrNew($project->project_id);
-
+        $event = Event::where('id', $attributes->event_id)->pluck('event_name');
         if ($attributes->project_id == null) {
             $attributes->project_id = $project->project_id;
             $attributes->purpose_name = 'project';
@@ -166,7 +167,7 @@ class ProjectController extends Controller
         if ($api) {
             return $this->sendResponse($project, 'project');
         };
-        return view('pages.project.show', \compact('project', 'attributes'));
+        return view('pages.project.show', \compact('project', 'attributes', 'event'));
     }
 
     /**
@@ -197,6 +198,7 @@ class ProjectController extends Controller
      */
     public function create($projectId = null)
     {
+        $events = Event::where('application', env('APP_NAME'))->pluck('event_name', 'id');
         if ($projectId) {
             //could probably eager load here
             $project = Project::with('attribute', 'link')->findOrFail($projectId);
@@ -228,7 +230,7 @@ class ProjectController extends Controller
         // $projectPurposes = Purpose::all()->pluck('display_name','system_name');
         $projectPurposes = ['Test','test2'];
 
-        return view('pages.project.create', \compact('project', 'projectId','projectPurposes'));
+        return view('pages.project.create', \compact('project', 'projectId','projectPurposes','events'));
     }
     public function postCreate(Request $project, $projectId = null)
     {
@@ -237,12 +239,11 @@ class ProjectController extends Controller
             'title'          => $project->title,
             'description'    => $project->description,
             'project_type'   => $project->project_type,
-            'project_author'  => $projectAuthor,
-            // 'start_date'     => date("m/d/Y", strtotime(str_replace('-','/', $project->project_begin_date))),
-            // 'end_date'       => $project->project_end_date ? date("m/d/Y", strtotime(str_replace('-','/', $project->project_end_date))) : NULL,
+            'project_author' => $projectAuthor,
+            'event_id'       =>  $project->event_id,
             'url'            => $project->url ?: NULL,
             'youtube'        => $project->video?: NULL,
-            'collaborators' =>  $project->collaborators
+            'collaborators'  =>  $project->collaborators
         ];
         $tags = $this->tagsDecode($project->tags);
         $projectId = $this->projectIdVerifier->verifyId($projectId);

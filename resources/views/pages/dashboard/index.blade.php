@@ -9,7 +9,11 @@
       <div class="col-sm-12">
       {{-- <br> --}}
       <a class="btn btn-default" style="float:right;" href="{{ url('project/create') }}">Add a New Project</a>
-        <h1 class="type--header type--thin">Innovation Dashboard</h1>
+        @if(env('APP_NAME')=='SeniorDesign')
+              <h1 class="type--header type--thin">Senior Design Dashboard</h1>
+        @else
+              <h1 class="type--header type--thin">Innovation Dashboard</h1>
+        @endif
       </div>
     </div>
   

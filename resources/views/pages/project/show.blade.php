@@ -95,8 +95,8 @@
                   <div class="type--header"></div>
                 @endif
                 <div>
-                    <p class="milli type--marginless"><strong>Project Type:</strong></p>
-                    <p>{{ $attributes->purpose->display_name }}</p>
+                    <p class="milli type--marginless"><strong>Event:</strong></p>
+                    <p>{{ $event[0] }}</p>
                 </div>
                 @if(count($project->award))
                     <p class="milli type--marginless"><strong>Project Sponsors:</strong></p>
@@ -258,8 +258,8 @@
                       <div class="type--header"></div>
                     @endif
                     <div>
-                        <p class="milli type--marginless"><strong>Project Type: </strong></p>
-                        <p>{{ $attributes->purpose->display_name }}</p>
+                        <p class="milli type--marginless"><strong>Event: </strong></p>
+                        <p>{{ $event[0] }}</p>
                     </div>
                     @if(count($project->award))
                         <p class="milli type--marginless"><strong>Project Sponsors:</strong></p>

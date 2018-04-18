@@ -26,7 +26,7 @@ class UpdateProjectAttributesService implements UpdateProjectAttributesContract
             ],
             // Attribute column values
             [
-                'purpose_name' => 'innovation',
+                'event_id' => $data['event_id'],
                 'seeking_students' => 0,
                 'seeking_collaborators' => 0,
             ]

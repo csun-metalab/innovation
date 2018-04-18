@@ -21,16 +21,16 @@
           </div>
           <div class="col-xl-5">
             <div class="form__group">
-              {{Form::label('projectEvent','Term/Event',['class'=>'label--required type--left type--thin'])}}
-              {{Form::select('projectEvent',['Select an Event','Bull Ring','I-Corps','Other'])}}
+                @if(isset($events) && count($events))
+                    @if(env('APP_NAME')=='SeniorDesign')
+                        {{Form::label('event_id','Term',['class'=>'label--required type--left type--thin'])}}
+                    @else
+                        {{Form::label('event_id','Event',['class'=>'label--required type--left type--thin'])}}
+                    @endif
+                        {{Form::select('event_id',$events)}}
+                @endif
             </div>
           </div>
-          {{-- <div class="col-xl-2">
-            <div class="form__group">
-              {{Form::label('project_type','Project Type',['class'=>'label--required type--left type--thin'])}}
-              {{ Form::select('project_type', $projectTypes) }}
-            </div>
-          </div> --}}
       </div>
       <div class="row">
         <div class="col-xs-12">
