@@ -71,8 +71,8 @@
           </div>
           <div class="col-xs-8 col-md-5">
             <div class="form__group">
-              {{Form::label('role','Role',['class'=>'label--required type--left type--thin'])}}
-              {{ Form::select ('roles', ['roles'], null,['class'=>'roles select2-roles', 'id'=>'roleID'] ) }}
+              {{Form::label('role','Title',['class'=>'label--required type--left type--thin'])}}
+              {{ Form::select ('roles', $titles ) }}
                 <div class="tooltip" style="float:right"><i class="fa fa-question-circle" aria-hidden="true"></i>
                     <span class="tooltiptext">You may use name, email or student ID to select team member.<br>
                     </span>

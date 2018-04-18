@@ -25,6 +25,7 @@ use Helix\Models\ProjectPolicy;
 use Helix\Models\Purpose;
 use Helix\Models\Role;
 use Helix\Models\Event;
+use Helix\Models\Title;
 use Helix\Models\Seeking;
 use Illuminate\Http\Request;
 use Searchy;
@@ -199,6 +200,7 @@ class ProjectController extends Controller
     public function create($projectId = null)
     {
         $events = Event::where('application', env('APP_NAME'))->pluck('event_name', 'id');
+        $titles = Title::where('application', env('APP_NAME'))->pluck('display_title', 'title_name');
         if ($projectId) {
             //could probably eager load here
             $project = Project::with('attribute', 'link')->findOrFail($projectId);
@@ -230,7 +232,7 @@ class ProjectController extends Controller
         // $projectPurposes = Purpose::all()->pluck('display_name','system_name');
         $projectPurposes = ['Test','test2'];
 
-        return view('pages.project.create', \compact('project', 'projectId','projectPurposes','events'));
+        return view('pages.project.create', \compact('project', 'projectId','projectPurposes','events','titles'));
     }
     public function postCreate(Request $project, $projectId = null)
     {

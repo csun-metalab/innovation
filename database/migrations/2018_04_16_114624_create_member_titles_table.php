@@ -17,6 +17,7 @@ class CreateMemberTitlesTable extends Migration
             $table->increments('id');
             $table->string('user_id');
             $table->string('title_name');
+            $table->string('application');
             $table->timestamps();
         });
     }
