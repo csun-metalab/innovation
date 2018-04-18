@@ -35,7 +35,7 @@
       <div class="row">
         <div class="col-xs-12">
           <div class="form__group">
-            {{Form::label('description','Description',['class'=>'label--required type--thin type--left'])}}
+            {{Form::label('description','Description',['class'=>'type--thin type--left'])}}
             {{Form::textArea('description','',['placeholder'=>'Enter a description...', 'id'=>'description'])}}
           </div>
         </div>
@@ -65,13 +65,13 @@
         <div class="row">
           <div class="col-lg-6 col-md-5">
               <div class="form__group">
-                {{Form::label('collaborators','Team Members',['class'=>'label--required type--left type--thin'])}}
+                {{Form::label('collaborators','Team Members',['class'=>'type--left type--thin'])}}
                 {{Form::select('collaborators',[],null,['id'=>'collab','class'=>'select2-collaborator','placeholder'=>'Add a new member...'])}}
               </div>
           </div>
           <div class="col-xs-8 col-md-5">
             <div class="form__group">
-              {{Form::label('role','Role',['class'=>'label--required type--left type--thin'])}}
+              {{Form::label('role','Role',['class'=>'type--left type--thin'])}}
               {{ Form::select ('roles', ['roles'], null,['class'=>'roles select2-roles', 'id'=>'roleID'] ) }}
                 <div class="tooltip" style="float:right"><i class="fa fa-question-circle" aria-hidden="true"></i>
                     <span class="tooltiptext">You may use name, email or student ID to select team member.<br>
@@ -120,6 +120,7 @@
                 </div> --}}
             </div>
         </div>
+        <hr>
 {{--      <hr>
           <div class="row">
             <div class="col-sm-12">
