@@ -194,10 +194,12 @@ class ProjectController extends Controller
         $titles = Title::where('application', env('APP_NAME'))->pluck('display_title', 'title_name');
         $projectStatus = 0;
         $project = new Project;
-        return view('pages.project.create', \compact('project','projectPurposes','projectStatus','events','titles');
+        return view('pages.project.create', \compact('project','projectPurposes','projectStatus','events','titles'));
     }
     public function edit($slug)
     {
+        $titles = Title::where('application', env('APP_NAME'))->pluck('display_title', 'title_name');
+        $events = Event::where('application', env('APP_NAME'))->pluck('event_name', 'id');
         $project = Project::with('members','tags','attribute','video','url','pendingInvitations')
                             ->slug($slug)
                             ->firstOrFail();
@@ -212,7 +214,7 @@ class ProjectController extends Controller
         $invitations = $project->pendingInvitations;
         $tagIds = array_keys($tags);
         $projectStatus = 1;
-        return view('pages.project.create', \compact('project','projectStatus','tags','tagIds','invitations'));
+        return view('pages.project.create', \compact('project','projectStatus','tags','tagIds','invitations','events','titles'));
     }
 
 
