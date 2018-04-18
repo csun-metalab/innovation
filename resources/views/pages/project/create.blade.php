@@ -51,13 +51,13 @@
                   </span>
               </div>
           </label>
-          {!! Form::text('video', $project->video->link?:'', ['placeholder' => 'http://', 'id' => 'youtube','class'=>'form-control '. ($errors->first('video')?'form--error':'')]) !!}
+          {!! Form::text('video', $project->video?$project->video->link:'', ['placeholder' => 'http://', 'id' => 'youtube','class'=>'form-control '. ($errors->first('video')?'form--error':'')]) !!}
           <small hidden="true" style="color:#ff0011" id="youtubemsg">* Video URL must be from YouTube or Vimeo</small>
         </div>
         <div class="col-xs-6">
           <div class="form__group">
             {{Form::label('url','Website',['class'=>'type--left '.($errors->first('url')?'label--error':'')] )}}
-            {{Form::text('url',$project->url->link?:'',['placeholder'=>'https://','id'=>'website','class' => $errors->first('url')?'form--error':''])}}
+            {{Form::text('url',$project->url?$project->url->link:'',['placeholder'=>'https://','id'=>'website','class' => $errors->first('url')?'form--error':''])}}
           </div>
         </div>
       </div>
