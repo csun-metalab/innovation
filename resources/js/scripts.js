@@ -117,12 +117,12 @@ $('.select2-roles').select2({
 	tags: true
 })
 
-var description = "";
+var description = $('#description').val();
 var watsonCount = 0;
 $( "#description" ).focusout(function() {
   var diffrence = Math.abs(( ($('#description').val().length) - (description.length) ));
-  description = $('#description').val();
-  if(description.length > 200 && watsonCount<3){
+  if($('#description').val().length > 200 && watsonCount<3 && $('#description').val() != description){
+  		description = $('#description').val();
 		$('.watson').remove();
 	  	$.ajax({
 			url: window.HELIX.env.url + "/api/watson/tags",

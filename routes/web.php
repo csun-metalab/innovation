@@ -59,22 +59,14 @@ Route::group(['middleware' => ['web']], function () {
         Route::post('create', 'ProjectController@postCreate')
             ->name('project.create.post');
 
-        Route::post('step-1/{projectId?}', 'ProjectController@step1')
-            ->name('project.edit.step-1.post');
-        Route::get('step-2/{projectId?}', 'ProjectController@getStep2')
-            ->name('project.edit.step-2');
-        Route::post('step-2/{projectId?}', 'ProjectController@step2')
-            ->name('project.edit.step-2.post');
-        Route::get('step-3/{projectId?}', 'ProjectController@getStep3')
-            ->name('project.edit.step-3');
-        Route::post('step-3/{projectId?}', 'ProjectController@store')
-            ->name('project.edit.step-3.post');
         Route::get('{id}', 'ProjectController@show')
             ->name('project.show');
         Route::get('{id}/delete', 'ProjectController@destroy')
             ->name('project.delete');
-        Route::get('{id}/edit', 'ProjectController@editRedirect')
+        Route::get('{id}/edit', 'ProjectController@edit')
             ->name('project.edit');
+        Route::post('{id}/edit', 'ProjectController@postCreate')
+            ->name('project.post.edit');
         // Image upload routes
         Route::get('{id}/upload-image', 'ImageController@create')
             ->name('project.photo-upload');

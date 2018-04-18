@@ -5,23 +5,24 @@
       <div class="container">
         <div class="row">
           <div class="col-sm-12">
-            <h1 class="type--white type--thin type--marginless">Create a Project</h1>
+            <h1 class="type--white type--thin type--marginless">{{$projectStatus?"Edit":"Create a"}} Project</h1>
           </div>
         </div>
       </div>
     </div>
     <div class="container">
       <br>
+      @include('layouts.partials.display-errors')
       <div class="row">
           <div class="col-xl-7">
             <div class="form__group">
-              {{Form::label('title','Project Title',['class'=>'label--required type--left type--thin'])}}
-              {{Form::text('title','',['placeholder'=> "Enter a title..", 'id' => 'title'])}}
+              {{Form::label('title','Project Title',['class'=>'label--required type--left '.($errors->first('title')?'label--error':'')] )}}
+              {{Form::text('title',$project->project_title?: '' , ['placeholder'=> "Enter a title..", 'id' => 'title', 'class' => $errors->first('title')?'form--error':''] )}}
             </div>
           </div>
           <div class="col-xl-5">
             <div class="form__group">
-              {{Form::label('projectEvent','Term/Event',['class'=>'label--required type--left type--thin'])}}
+              {{Form::label('projectEvent','Term/Event',['class'=>'label--required type--left'])}}
               {{Form::select('projectEvent',['Select an Event','Bull Ring','I-Corps','Other'])}}
             </div>
           </div>
@@ -35,28 +36,28 @@
       <div class="row">
         <div class="col-xs-12">
           <div class="form__group">
-            {{Form::label('description','Description',['class'=>'label--required type--thin type--left'])}}
-            {{Form::textArea('description','',['placeholder'=>'Enter a description...', 'id'=>'description'])}}
+            {{Form::label('description','Description',['class'=>'label--required type--left '.($errors->first('description')?'label--error':'')] )}}
+            {{Form::textArea('description',$project->abstract?: '',['placeholder'=>'Enter a description...', 'id'=>'description','class' => $errors->first('description')?'form--error':''])}}
           </div>
         </div>
       </div>
 
       <div class="row">
         <div class="col-xs-6">
-          <label for="youtube" class="type--thin type--left">Video
+          <label for="youtube" class="type--left"><span class={{$errors->first('video')?'label--error':''}}>Video</span>
               <div class="tooltip"><i class="fa fa-question-circle" aria-hidden="true"></i>
                   <span class="tooltiptext">
                       YouTube and Vimeo are the currently supported video-sharing web sites<br>
                   </span>
               </div>
           </label>
-          {!! Form::text('video', '', ['class'=>'form-control', 'placeholder' => 'http://', 'id' => 'youtube']) !!}
+          {!! Form::text('video', $project->video?$project->video->link:'', ['placeholder' => 'http://', 'id' => 'youtube','class'=>'form-control '. ($errors->first('video')?'form--error':'')]) !!}
           <small hidden="true" style="color:#ff0011" id="youtubemsg">* Video URL must be from YouTube or Vimeo</small>
         </div>
         <div class="col-xs-6">
           <div class="form__group">
-            {{Form::label('url','Website',['class'=>'type--thin type--left'])}}
-            {{Form::text('url','',['placeholder'=>'https://','id'=>'website'])}}
+            {{Form::label('url','Website',['class'=>'type--left '.($errors->first('url')?'label--error':'')] )}}
+            {{Form::text('url',$project->url?$project->url->link:'',['placeholder'=>'https://','id'=>'website','class' => $errors->first('url')?'form--error':''])}}
           </div>
         </div>
       </div>
@@ -65,13 +66,13 @@
         <div class="row">
           <div class="col-lg-6 col-md-5">
               <div class="form__group">
-                {{Form::label('collaborators','Team Members',['class'=>'label--required type--left type--thin'])}}
+                {{Form::label('collaborators','Team Members',['class'=>'label--required type--left'])}}
                 {{Form::select('collaborators',[],null,['id'=>'collab','class'=>'select2-collaborator','placeholder'=>'Add a new member...'])}}
               </div>
           </div>
           <div class="col-xs-8 col-md-5">
             <div class="form__group">
-              {{Form::label('role','Role',['class'=>'label--required type--left type--thin'])}}
+              {{Form::label('role','Role',['class'=>'label--required type--left'])}}
               {{ Form::select ('roles', ['roles'], null,['class'=>'roles select2-roles', 'id'=>'roleID'] ) }}
                 <div class="tooltip" style="float:right"><i class="fa fa-question-circle" aria-hidden="true"></i>
                     <span class="tooltiptext">You may use name, email or student ID to select team member.<br>
@@ -105,9 +106,9 @@
                         <td>Pending</td>
                         <td class="text--center">
                           @if(is_null($invitation->from_id))
-                          <a class="collaboratorActionBtn" data-url="{{ url('project/' . request()->route('projectId') . '/invitation/' . $invitation->id . '/accept') }}">Approve</a>
+                          <a class="collaboratorActionBtn" data-url="{{ url('project/' . $project->project_id . '/invitation/' . $invitation->id . '/accept') }}">Approve</a>
                           @else
-                          <a class="collaboratorActionBtn" data-url="{{ url('project/' . request()->route('projectId') . '/invitation/' . $invitation->id . '/cancel') }}">Cancel Invite</a>
+                          <a class="collaboratorActionBtn" data-url="{{ url('project/' . $project->project_id . '/invitation/' . $invitation->id . '/cancel') }}">Cancel Invite</a>
                           @endif
                         </td>
                       </tr>
@@ -142,8 +143,8 @@
         <div class="row">
           <div class="col-xs-12">
             <div class="form__group">
-              {{Form::label('tags','Tags',['class'=>'type--left type--thin'])}}
-              {!!Form::select('tags[]', ['',''], null, ['class' => 'select2-tags tags', 'multiple' => 'multiple'])!!}
+              {{Form::label('tags','Tags',['class'=>'type--left'])}}
+              {!!Form::select('tags[]', isset($tags)?$tags:[], isset($tagIds)?$tagIds:[], ['class' => 'select2-tags tags', 'multiple' => 'multiple'])!!}
             </div>
           </div>
         </div>
@@ -177,6 +178,9 @@
           $('input[name=action]').val($(this).attr('data-action'));
           return $('.project-create-form').submit();
         })
+          $('.select2-tags option').each(function(index){
+            $(this).addClass('watson');
+          });
     </script>
     <script type="text/javascript">
         $("#youtube").focusout(function() {
@@ -233,20 +237,17 @@
           infoArea.textContent = 'Uploaded ' + fileName + '!';
       }
   </script>
+  <script>var collaborators = {!! json_encode($project->members)!!};</script>
   <script>
-    var collaborators = $(".select2-collaborator");
     var template, input;
     template = input = "";
-
     if(collaborators.length > 1)
     {
-      collaborators.forEach(function(collaborator){
-        var member = collaborator.split(','),
-        displayName = member[1] == "{{ Auth::user()->user_id }}" ? member[0] + ' <span style="opacity: .5;">&#183 You</span>' : member[0];
+      collaborators.forEach(function(member){
         // 0 = name, 1 = membersId, 2 = role_position
-        template += "<tr data-id='"+ member[0] + '|' + member[1] + '|' + member[2] +"'><td>" + displayName + "</td><td>" + member[2] + "</td><td>Active</td><td style='text-align: center'> <a class='removeCollabBtn btn btn-link'>Remove</a></td></tr>";
+        template += "<tr data-id='"+ member['display_name'] + '|' + member['user_id'] + '|' + member['pivot']['role_position'] +"'><td>" + member['display_name'] + "</td><td>" + member['pivot']['role_position'] + "</td><td>Active</td><td style='text-align: center'> <a class='removeCollabBtn btn btn-link'>Remove</a></td></tr>";
 
-        input += "<input type='hidden' name='collaborators[]' value='"+ member[0] + '|' + member[1] + '|' + member[2] +"'>";
+        input += "<input type='hidden' name='collaborators[]' value='"+ member['display_name'] + '|' + member['user_id'] + '|' + member['pivot']['role_position'] +"'>";
       });
     }
     else

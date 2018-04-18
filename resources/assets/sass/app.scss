@@ -155,3 +155,10 @@ select {
 .alert--success {
   color: white;
 }
+
+.form--error{
+  border-color: $red !important;
+}
+.label--error{
+  color: $red !important;
+}
