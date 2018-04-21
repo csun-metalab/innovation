@@ -24,11 +24,16 @@
                     {!! Form::label('event_name', 'Event Name', ['class'=>'label--default label--required']) !!}
                     {!! Form::text('event_name','', ['placeholder'=>'Enter an event name', 'maxlength' => '50']) !!}
                     <br>
-                    {!! Form::label('start_date', 'Start Date', ['class'=>'label--default']) !!}
-                    {!! Form::text('start_date', '', ['class'=>'form-control datepicker', 'placeholder'=>'mm/dd/yyyy', 'type' => 'date', 'maxlength' => '10']) !!}
-                    <br>
-                    {!! Form::label('end_date', 'End Date', ['class'=>'label--default']) !!}
-                    {!! Form::text('end_date', '', ['class'=>'form-control datepicker', 'placeholder'=>'mm/dd/yyyy', 'type' => 'date', 'maxlength' => '10']) !!}
+                    <div class="row">
+                        <div class="col-md-6">
+                            {!! Form::label('start_date', 'Start Date', ['class'=>'label--default']) !!}
+                            {!! Form::text('start_date', '', ['class'=>'form-control datepicker', 'placeholder'=>'mm/dd/yyyy', 'type' => 'date', 'maxlength' => '10']) !!}
+                        </div>
+                        <div class="col-md-6">
+                            {!! Form::label('end_date', 'End Date', ['class'=>'label--default']) !!}
+                            {!! Form::text('end_date', '', ['class'=>'form-control datepicker', 'placeholder'=>'mm/dd/yyyy', 'type' => 'date', 'maxlength' => '10']) !!}
+                        </div>
+                    </div>
                     <br>
                     <div class="type--right">
                         {!! Form::submit('Create', ['title' => 'Create','class' => 'btn btn-primary']) !!}
@@ -36,21 +41,44 @@
                     </div>
                     <br>
                     <h3>Created Events</h3>
-                    @forelse($events as $event)
-                        <div class="row">
+                    <div class="bg--white" style="padding: 25px; border-radius: 3px;">
+                    <div class="row">
                         <div class="col-xs-1"></div>
-                            <div class="panel">
-                                <div class="panel__header" style="background-color: whitesmoke">
-                                    <h5>{{ $event->event_name }}</h5>{{ datePickerFormat($event->start_date) }} to {{ datePickerFormat($event->end_date) }}
-                                </div>
-                                <div class="panel__content">Created By {{$event->originator}}</div>
-                                <div class="type--right" style="padding-right: 10px; padding-bottom: 10px">
-                                    <button role="button" class="btn btn-primary">Delete</button>
-                                </div>
-                            </div>
-                        <div class="col-xs-1"></div>
+                        <div class="table--responsive">
+                            <table class="table">
+                                <thead>
+                                <tr class="table" style="text-transform: uppercase; border-bottom: darkgrey 1px solid;">
+                                    <th>Event</th>
+                                    <th style="text-align: center;">Start Date</th>
+                                    <th style="text-align: center;">End Date</th>
+                                    <th style="text-align: center;">Creator</th>
+                                    <th style="text-align: center;"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach($events as $event)
+                                    <tr style="border-bottom: lightgray 1px solid">
+                                        <td>
+                                            <div style="padding: 10px;">
+                                                {{ $event->event_name }}
+                                            </div>
+                                        </td>
+                                        <td style="text-align: center;padding: 10px;">{{ monthFormat($event->start_date) }}</td>
+                                        <td style="text-align: center;padding: 10px;">{{ monthFormat($event->end_date) }}</td>
+                                        <td style="text-align: center;padding: 10px;">{{$event->originator}}</td>
+                                        <td style="text-align: center;padding: 10px; width: 5%;">
+                                            <button role="button" class="btn btn-default"><i class="fa fa-times"></i></button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
                         </div>
-                        <br>
+                        <div class="col-xs-1"></div>
+                    </div>
+                    </div>
+                    <br>
+                    @forelse($events as $event)
                     @empty
                         <div style="margin: 15px 0; text-align: center;">
                             <h4>No Events.</h4>
