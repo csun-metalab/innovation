@@ -254,7 +254,7 @@ class ProjectController extends Controller
         $this->projectAttributesUpdater->updateProjectAttributes($projectId,$projectData);
         $this->createTagContract->createTag($projectId, $tags);
         foreach($projectData->seeking as $seeking){
-                $this->createSeekingContract->createSeeking($projectId,$seeking->title);
+                $this->createSeekingContract->createSeeking($projectId,$seeking);
         }
         $project = Project::find($projectId)->firstOrFail();
         $project->searchable();
