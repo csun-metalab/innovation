@@ -106,6 +106,7 @@ class ProjectController extends Controller
         $this->collaboratorsUpdater = $updateCollaboratorsContract;
         $this->getUniversityEventsContract = $getUniversityEventsContract;
         $this->createTagContract = $createTagContract;
+        $this->createSeekingContract = $createSeekingContract;
     }
 
     /**
@@ -132,6 +133,7 @@ class ProjectController extends Controller
         // This is to check if there is a row in the attributes table corresponding to this project
         $attributes = Attribute::with('purpose')->findOrNew($project->project_id);
         $event = Event::where('id', $attributes->event_id)->pluck('event_name');
+        $seeking = Seeking::where('project_id',$project->project_id);
         if ($attributes->project_id == null) {
             $attributes->project_id = $project->project_id;
             // $attributes->purpose_name = 'project';
@@ -168,7 +170,8 @@ class ProjectController extends Controller
         if ($api) {
             return $this->sendResponse($project, 'project');
         };
-        return view('pages.project.show', \compact('project', 'attributes', 'event'));
+
+        return view('pages.project.show', \compact('project', 'attributes', 'event', 'seeking'));
     }
 
     /**
@@ -233,14 +236,16 @@ class ProjectController extends Controller
             'description'    => $project->description,
             'project_type'   => $project->project_type,
             'project_author' => $projectAuthor,
-            'event_id'       =>  $project->event_id,
+            'event_id'       => $project->event_id,
             'url'            => $project->url ?: NULL,
-            'video'        => $project->video?: NULL,
-            'collaborators' =>  $project->collaborators
+            'video'          => $project->video?: NULL,
+            'collaborators'  => $project->collaborators,
+            'seeking'        => $project->seeking
         ];
         if(!$project->tags){
             $project->tags = [];
         }
+
         $tags = $this->tagsDecode($project->tags);
         $projectId = $this->projectIdVerifier->verifyId($projectId);
         $this->projectGeneralUpdater->updateProjectGeneral($projectId, $projectData);
@@ -248,7 +253,11 @@ class ProjectController extends Controller
         $this->collaboratorsUpdater->updateCollaborators($projectId, $projectData);
         $this->projectAttributesUpdater->updateProjectAttributes($projectId,$projectData);
         $this->createTagContract->createTag($projectId, $tags);
-        
+        foreach($projectData->seeking as $seeking){
+            for($i=0;$i<$seeking->quantity;$i++){
+                $this->createSeekingContract->createSeeking($projectId,$seeking->title);
+            }
+        }
         $project = Project::find($projectId)->firstOrFail();
         $project->searchable();
         return redirect('project/' . $projectId);
