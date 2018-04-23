@@ -34,7 +34,7 @@
           <div class="panel">
             <div class="panel__content">
               <br>
-              <p><img src="{{ asset('imgs/helix-icon.png') }}" style="width:80px;" alt="Scholarship Logo"></p>
+              <p><img src="{{ asset('imgs/innovation-icon.png') }}" style="width:80px;" alt="Innovation Logo"></p>
               <p><strong>Innovation <i class="fa fa-angle-right" aria-hidden="true"></i></strong></p>
             </div>
           </div>

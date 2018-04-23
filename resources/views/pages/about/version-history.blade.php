@@ -1,4 +1,4 @@
-<h2>Scholarship 1.6.1 <small>Release Date: 8/29/17</small></h2>
+<h2> 1.6.1 <small>Release Date: 8/29/17</small></h2>
 <p class="type--marginless">
 	<strong>Improvements:</strong>
 	<ol>
@@ -6,7 +6,7 @@
 		<li>Usability improvements to Student Request Form</li>
 	</ol>
 </p>
-<h2>Scholarship 1.6.0 <small>Release Date: 8/22/17</small></h2>
+<h2> 1.6.0 <small>Release Date: 8/22/17</small></h2>
 <p class="type--marginless">
 	<strong>New Features:</strong>
 	<ol>
@@ -23,7 +23,7 @@
 		<li>Staff should now be able to log in with corresponding access to projects</li>
 	</ol>
 </p>
-<h2>Scholarship 1.5.1 <small>Release Date: 8/15/17</small></h2>
+<h2> 1.5.1 <small>Release Date: 8/15/17</small></h2>
 <p class="type--marginless">
 	<strong>Improvements:</strong>
 	<ol>
@@ -39,7 +39,7 @@
 		<li>Users without listed projects should now be able to navigate the site normally after logging in</li>
 	</ol>
 </p>
-<h2>Scholarship 1.5.0 <small>Release Date: 8/8/17</small></h2>
+<h2> 1.5.0 <small>Release Date: 8/8/17</small></h2>
 <p class="type--marginless">
 	<strong>Features:</strong>
 	<ol>
@@ -51,7 +51,7 @@
 		<li>Search results now include additional suggestions based on term(s) searched</li>
 	</ol>
 </p>
-<h2>Scholarship 1.4.1 <small>Release Date: 8/1/17</small></h2>
+<h2> 1.4.1 <small>Release Date: 8/1/17</small></h2>
 <p class="type--marginless">
 	<strong>Improvements:</strong>
 	<ol>
@@ -64,7 +64,7 @@
 		<li>Department filter options should now be limited to Academic Departments</li>
 	</ol>
 </p>
-<h2>Scholarship 1.4.0 <small>Release Date: 7/25/17</small></h2>
+<h2> 1.4.0 <small>Release Date: 7/25/17</small></h2>
 <p class="type--marginless">
 	<strong>New Features:</strong>
 	<ol>
@@ -81,7 +81,7 @@
 		<li>View Profile button in profile search results should now function correctly</li>
 	</ol>
 </p>
-<h2>Scholarship 1.3.1 <small>Release Date: 7/18/17</small></h2>
+<h2> 1.3.1 <small>Release Date: 7/18/17</small></h2>
 <p class="type--marginless">
 	<strong>Improvements:</strong>
 	<ol>
@@ -94,7 +94,7 @@
 		<li>Project photo upload functionality should now be restored</li>
 	</ol>
 </p>
-<h2>Scholarship 1.3.0 <small>Release Date: 07/11/17</small></h2>
+<h2> 1.3.0 <small>Release Date: 07/11/17</small></h2>
 <p class="type--marginless">
 	<strong>New Features:</strong>
 	<ol>
@@ -115,7 +115,7 @@
 	</ol>
 </p>
 <hr>
-<h2>Scholarship 1.2.0 <small>Release Date: 06/27/17</small></h2>
+<h2> 1.2.0 <small>Release Date: 06/27/17</small></h2>
 <p class="type--marginless">
 	<strong>New Features:</strong>
 	<ol>
@@ -144,7 +144,7 @@
 	</ol>
 </p>
 <hr>
-<h2>Scholarship 1.1.0 <small>Release Date: 06/13/17</small></h2>
+<h2> 1.1.0 <small>Release Date: 06/13/17</small></h2>
 <p class="type--marginless">
 	<strong>New Features:</strong>
 	<ol>
@@ -167,7 +167,7 @@
 	</ol>
 </p>
 <hr>
-<h2>Scholarship 1.0.3 <small>Release Date: 02/21/17</small></h2>
+<h2> 1.0.3 <small>Release Date: 02/21/17</small></h2>
 <p class="type--marginless">
 	<strong>Bug Fixes:</strong>
 	<ol>
@@ -179,7 +179,7 @@
 </p>
 <hr>
 
-<h2>Scholarship 1.0.2 <small>Release Date: 12/08/16</small></h2>
+<h2> 1.0.2 <small>Release Date: 12/08/16</small></h2>
 <p class="type--marginless">
 	<strong>Bug Fixes:</strong>
 	<ol>
@@ -188,7 +188,7 @@
 </p>
 <hr>
 
-<h2>Scholarship 1.0.1 <small>Release Date: 12/01/16</small></h2>
+<h2> 1.0.1 <small>Release Date: 12/01/16</small></h2>
 <p class="type--marginless">
 	<strong>Improvements:</strong>
 	<ol>
@@ -205,7 +205,7 @@
 </p>
 <hr>
 
-<h2>Scholarship 1.0.0 <small>Pilot Release Date: 11/22/16</small></h2>
+<h2> 1.0.0 <small>Pilot Release Date: 11/22/16</small></h2>
 <p class="type--marginless">
 	<strong>Features:</strong>
 	<ol>

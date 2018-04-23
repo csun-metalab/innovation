@@ -30,7 +30,7 @@ class Controller extends BaseController
         $response = [
             'status'   => app('Illuminate\Http\Response')->status(),
             'success'  => app('Illuminate\Http\Response')->status() < 400 ? true : false,
-            'version'  => 'scholarship-1.0',
+            'version'  => 'innovation-1.0',
             'type'     => $type,
         ];
 
