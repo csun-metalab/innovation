@@ -124,6 +124,34 @@
                 </div> --}}
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <table id = "list" class="table table--padded table--bordered table--striped">
+                    <thead>
+                    <tr>
+                        <th><strong>Seeking Role</strong></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @if(isset($invitations) && count($invitations))
+                        @foreach($invitations as $invitation)
+                            <tr data-id="{{ $invitation->role_position }}">
+                                <td>{{ $invitation->role_position }}</td>
+                                <td class="text--center">
+                                    @if(is_null($invitation->from_id))
+                                        <a class="collaboratorActionBtn" data-url="{{ url('project/' . $project->project_id . '/invitation/' . $invitation->id . '/accept') }}">Approve</a>
+                                    @else
+                                        <a class="collaboratorActionBtn" data-url="{{ url('project/' . $project->project_id . '/invitation/' . $invitation->id . '/cancel') }}">Cancel Invite</a>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    @endif
+                    </tbody>
+                </table>
+            </div>
+        </div>
 {{--      <hr>
           <div class="row">
             <div class="col-sm-12">
