@@ -14,10 +14,6 @@ class Project extends Model
 
     public static function boot()
     {
-        // static::updated(function ($model) {
-        //     $model->user->touch();
-        // });
-
         parent::boot();
     }
 
@@ -46,11 +42,12 @@ class Project extends Model
         $this->members;
         $this->visibilityPolicy;
         $this->attribute;
-        $array = $this->toArray();
-
-        return $array;
+        return $this->toArray();
     }
-
+    public function scopeSlug($query,$slug)
+    {
+        return $query->where('slug',$slug);
+    }
     public function image()
     {
         return $this->hasOne('Helix\Models\Image', 'imageable_id', 'project_id');
@@ -69,7 +66,6 @@ class Project extends Model
     public function members()
     {
         return $this->belongsToMany('Helix\Models\Person', 'nemo.memberships', 'parent_entities_id', 'individuals_id')->withPivot('role_position');
-        // ->wherePivot('role_position', '!=', 'Lead Principal Investigator');
     }
 
     public function authorities()
@@ -142,9 +138,17 @@ class Project extends Model
      *
      * @return Laravel query builder
      */
-    public function link()
+    public function links()
     {
-        return $relationship = $this->hasOne('Helix\Models\Link', 'entity_id', 'project_id');
+        return $relationship = $this->hasMany('Helix\Models\Link', 'entity_id', 'project_id');
+    }
+    public function video()
+    {
+        return $this->hasOne('Helix\Models\Link', 'entity_id', 'project_id')->where('link_type', 'video');
+    }
+    public function url()
+    {
+        return $this->hasOne('Helix\Models\Link', 'entity_id', 'project_id')->where('link_type', 'url');
     }
 
     public function isFeatured()

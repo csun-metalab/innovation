@@ -7,10 +7,10 @@ namespace Helix\Http\Controllers;
 use Gate;
 use Helix\Mailers\Mailer;
 use Helix\Models\Invitation;
-use Helix\Models\NemoMembership;
 use Helix\Models\Person;
 use Helix\Models\Project;
 use Helix\Traits\ReCaptchaTrait;
+use Helix\Models\NemoMembership;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Validator;
 

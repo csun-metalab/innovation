@@ -11,7 +11,7 @@
   </li>
 
   <li class="nav__item nav__item--{{ Request::is('admin/dashboard/events') ? 'active' : ''}}">
-    <a title="My Interests" href="{{ url('admin/dashboard/events') }}" class="nav__link">Events</a>
+    <a title="Events" href="{{ url('admin/dashboard/events') }}" class="nav__link">Events</a>
   </li>
 
 </ul>

@@ -6,13 +6,22 @@
 
             <div class="row">
 
-                <div class="col-sm-12">
-                    <a class="btn btn-default" style="float:right;" href="{{ url('project/create') }}">Add a New
-                        Project</a>
-                    <h1 class="type--header type--thin">Innovation Dashboard</h1>
-                </div>
-            </div>
-            <div class="row">
+
+      <div class="col-sm-12">
+      <a class="btn btn-default" style="float:right;" href="{{ url('project/create') }}">Add a New Project</a>
+          @if(env('APP_NAME')=='SeniorDesign')
+              <h1 class="type--header type--thin">Senior Design Dashboard</h1>
+          @else
+              <h1 class="type--header type--thin">Innovation Dashboard</h1>
+          @endif
+      </div>
+    </div>
+
+    <div class="row">
+
+      <div class="col-lg-3">
+        @include("layouts.partials.admin-sidebar")
+      </div>
 
                 <div class="col-lg-3">
                     @include("layouts.partials.admin-sidebar")

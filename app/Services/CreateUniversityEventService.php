@@ -8,9 +8,10 @@ use Helix\Contracts\CreateUniversityEventContract;
 use Helix\Models\Event;
 
 class CreateUniversityEventService implements CreateUniversityEventContract{
-    public function createUniversityEvent($eventName,$startDate,$endDate,$originator)
+    public function createUniversityEvent($eventName,$startDate,$endDate,$originator,$application)
     {
         $event = new Event();
+        $event -> application = $application;
         $event -> originator = $originator;
         $event -> event_name = $eventName;
         $event -> start_date = $startDate;

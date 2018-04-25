@@ -24,6 +24,8 @@ use Helix\Models\Project;
 use Helix\Models\ProjectPolicy;
 use Helix\Models\Purpose;
 use Helix\Models\Role;
+use Helix\Models\Event;
+use Helix\Models\Title;
 use Helix\Models\Seeking;
 use Illuminate\Http\Request;
 use Searchy;
@@ -104,6 +106,7 @@ class ProjectController extends Controller
         $this->collaboratorsUpdater = $updateCollaboratorsContract;
         $this->getUniversityEventsContract = $getUniversityEventsContract;
         $this->createTagContract = $createTagContract;
+        $this->createSeekingContract = $createSeekingContract;
     }
 
     /**
@@ -121,18 +124,19 @@ class ProjectController extends Controller
 
             return redirect("project/$project->slug");
         } elseif (str_contains($id, 'innovate:')) {
-            $project = Project::with('pi', 'members', 'award', 'link', 'image', 'visibilityPolicy','tags')->findOrFail($id);
+            $project = Project::with('pi', 'members', 'award', 'links', 'image', 'visibilityPolicy','tags')->findOrFail($id);
 
             return redirect("project/$project->slug");
         }
 
-        $project = Project::with('pi', 'members', 'award', 'link', 'image', 'visibilityPolicy','tags')->where('slug', $id)->firstOrFail();
+        $project = Project::with('pi', 'members', 'award', 'links', 'image', 'visibilityPolicy','tags')->where('slug', $id)->firstOrFail();
         // This is to check if there is a row in the attributes table corresponding to this project
         $attributes = Attribute::with('purpose')->findOrNew($project->project_id);
-
+        $event = Event::where('id', $attributes->event_id)->pluck('event_name');
+        $seeking = Seeking::where('project_id',$project->project_id);
         if ($attributes->project_id == null) {
             $attributes->project_id = $project->project_id;
-            $attributes->purpose_name = 'project';
+            // $attributes->purpose_name = 'project';
             $attributes->save();
             $attributes->load('purpose');
         }
@@ -166,7 +170,8 @@ class ProjectController extends Controller
         if ($api) {
             return $this->sendResponse($project, 'project');
         };
-        return view('pages.project.show', \compact('project', 'attributes'));
+
+        return view('pages.project.show', \compact('project', 'attributes', 'event', 'seeking'));
     }
 
     /**
@@ -186,64 +191,61 @@ class ProjectController extends Controller
         return redirect('project/create/' . $id);
     }
 
-    /**
-     * MARK FOR DELETION.
-     *
-     * The first step of three when creating or editing a project.
-     *
-     * @param string $projectId Project id or null if this is a new project
-     *
-     * @return \Illuminate\View\View
-     */
-    public function create($projectId = null)
+    public function create()
     {
-        if ($projectId) {
-            //could probably eager load here
-            $project = Project::with('attribute', 'link')->findOrFail($projectId);
-
-            if ($project->attribute == null) {
-                Attribute::create([
-                    'project_id' => $projectId,
-                    'is_featured' => 0,
-                    'seeking_collaborators' => 0,
-                    'seeking_students' => 0,
-                    'purpose_name' => 'project',
-                ]);
-            }
-            $project_general = [
-                'project_purpose' => $project->attribute ? $project->attribute->purpose_name : '',
-                'project_type' => $project->getPolicyType(),
-                'title' => $project->project_title,
-                'description' => $project->abstract,
-                'start_date' => \date('m/d/Y', \strtotime(\str_replace('-', '/', $project->project_begin_date))),
-                'end_date' => $project->project_end_date ? \date('m/d/Y', \strtotime(\str_replace('-', '/', $project->project_end_date))) : null,
-                'url' => $project->project_url ?: null,
-                'cayuse_project' => null !== $project->cayuse_id ? true : false,
-                'youtube' => $project->link ? $project->link->link : '',
-            ];
-
-            session()->put('new-project.project_general', $project_general);
-        }
-
-        // $projectPurposes = Purpose::all()->pluck('display_name','system_name');
-        $projectPurposes = ['Test','test2'];
-
-        return view('pages.project.create', \compact('project', 'projectId','projectPurposes'));
+        $events = Event::where('application', env('APP_NAME'))->pluck('event_name', 'id');
+        $titles = Title::where('application', env('APP_NAME'))->pluck('display_title', 'title_name');
+        $projectStatus = 0;
+        $project = new Project;
+        return view('pages.project.create', \compact('project','projectPurposes','projectStatus','events','titles'));
     }
-    public function postCreate(Request $project, $projectId = null)
+    public function edit($slug)
     {
+        $titles = Title::where('application', env('APP_NAME'))->pluck('display_title', 'title_name');
+        $events = Event::where('application', env('APP_NAME'))->pluck('event_name', 'id');
+        $project = Project::with('members','tags','attribute','video','url','pendingInvitations')
+                            ->slug($slug)
+                            ->firstOrFail();
+        $tags = [];
+        foreach ($project->tags as $tag) {
+            if($tag->relevance < 1){
+                $tags['watson-stored:'.$tag->id.':'.$tag->relevance] = $tag->tag;
+            }else{
+                $tags['stored:'.$tag->id] = $tag->tag;
+            }
+        }
+        $invitations = $project->pendingInvitations;
+        $tagIds = array_keys($tags);
+        $projectStatus = 1;
+        return view('pages.project.create', \compact('project','projectStatus','tags','tagIds','invitations','events','titles'));
+    }
+
+
+
+
+    public function postCreate(ProjectCreate $project, $slug = null)
+
+    {
+        $projectId = null;
+        if($slug){
+            $projectId = Project::slug($slug)->firstOrFail()->project_id;
+        }
         $projectAuthor = Auth::user()->user_id;
         $projectData = [
             'title'          => $project->title,
             'description'    => $project->description,
             'project_type'   => $project->project_type,
-            'project_author'  => $projectAuthor,
-            // 'start_date'     => date("m/d/Y", strtotime(str_replace('-','/', $project->project_begin_date))),
-            // 'end_date'       => $project->project_end_date ? date("m/d/Y", strtotime(str_replace('-','/', $project->project_end_date))) : NULL,
+            'project_author' => $projectAuthor,
+            'event_id'       => $project->event_id,
             'url'            => $project->url ?: NULL,
-            'youtube'        => $project->video?: NULL,
-            'collaborators' =>  $project->collaborators
+            'video'          => $project->video?: NULL,
+            'collaborators'  => $project->collaborators,
+            'seeking'        => $project->seeking
         ];
+        if(!$project->tags){
+            $project->tags = [];
+        }
+
         $tags = $this->tagsDecode($project->tags);
         $projectId = $this->projectIdVerifier->verifyId($projectId);
         $this->projectGeneralUpdater->updateProjectGeneral($projectId, $projectData);
@@ -251,19 +253,22 @@ class ProjectController extends Controller
         $this->collaboratorsUpdater->updateCollaborators($projectId, $projectData);
         $this->projectAttributesUpdater->updateProjectAttributes($projectId,$projectData);
         $this->createTagContract->createTag($projectId, $tags);
-        
-        Project::find($projectId)->firstOrFail()->searchable();
-
-        return view('pages.project.four', \compact('project'));
+        foreach($projectData->seeking as $seeking){
+                $this->createSeekingContract->createSeeking($projectId,$seeking);
+        }
+        $project = Project::find($projectId)->firstOrFail();
+        $project->searchable();
+        return redirect('project/' . $projectId);
     }
     private function tagsDecode(array $tags)
     {
         foreach ($tags as &$tag) {
-            if(str_contains($tag,'watson:')){
+            if( str_contains($tag,'watson:') || str_contains($tag,'watson-stored:') ){
                 $data = explode(':', $tag);
                 $text = $data[1];
                 $relevance = $data[2];
-            }else{
+            }
+            else{
                 $text = $tag;
                 $relevance = 1;
             }
@@ -412,7 +417,7 @@ class ProjectController extends Controller
     //     $studentQualifications = null; // = '';
     //     if (isset($projectId)) {
     //         $project = Project::with('attribute')->findOrFail($projectId);
-    //         $invitations = $project->invitations()->whereNull('updated_at')->get();
+            // $invitations = $project->invitations()->whereNull('updated_at')->get();
     //         $seekingCollaborators = $project->attribute ? $project->attribute->seeking_collaborators : $seekingCollaborators;
     //         $seekingStudents = $project->attribute ? $project->attribute->seeking_students : $seekingStudents;
     //         $studentQualifications = $project->attribute ? $project->attribute->student_qualifications : $studentQualifications;
@@ -563,6 +568,7 @@ class ProjectController extends Controller
      */
     public function getCollaboratorsList()
     {
+        config(['scout.driver'=>'tntsearch']);
         if (request()->filled('q')) {
             $data = Person::search(request('q'))->get()->take(10);
             if ($data) {
