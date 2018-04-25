@@ -14,10 +14,6 @@ class Project extends Model
 
     public static function boot()
     {
-        // static::updated(function ($model) {
-        //     $model->user->touch();
-        // });
-
         parent::boot();
     }
 
@@ -46,9 +42,7 @@ class Project extends Model
         $this->members;
         $this->visibilityPolicy;
         $this->attribute;
-        $array = $this->toArray();
-
-        return $array;
+        return $this->toArray();
     }
     public function scopeSlug($query,$slug)
     {

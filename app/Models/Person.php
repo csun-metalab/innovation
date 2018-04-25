@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Helix\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Laravel\Scout\Searchable;
 use CSUNMetaLab\Authentication\MetaUser;
+use Laravel\Scout\Searchable;
 
 class Person extends MetaUser
 {
@@ -14,6 +14,8 @@ class Person extends MetaUser
 
     protected $table = 'users';
     protected $primaryKey = 'user_id';
+
+
     /**
      * user_id,
      * first_name,
@@ -34,6 +36,13 @@ class Person extends MetaUser
      * created_at,
      * updated_at,.
      */
+    public function toSearchableArray()
+    {
+        config(['scout.driver'=>'tntsearch']);
+        $search = $this->toArray();
+        $search['member_id'] = $this->getKey();
+        return $search;
+    }
     // this must be set for models that do not use an auto-incrementing PK
     public $incrementing = false;
 
