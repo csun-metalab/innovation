@@ -185,7 +185,7 @@ return [
         Intervention\Image\ImageServiceProvider::class,
         Algolia\Settings\ServiceProvider::class,
         Algolia\ScoutMacros\ServiceProvider::class,
-
+        TeamTNT\Scout\TNTSearchScoutServiceProvider::class,
         /*
          * Laravel Framework Service Providers...
          */

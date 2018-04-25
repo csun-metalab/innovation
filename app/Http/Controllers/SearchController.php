@@ -442,6 +442,7 @@ class SearchController extends Controller
      */
     public function getCollaboratorsList()
     {
+        config(['scout.driver'=>'tntsearch']);
         if (request()->filled('q')) {
             $data = Person::search(request('q'))->get()->take(10);
             if ($data) {
