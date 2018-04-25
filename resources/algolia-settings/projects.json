@@ -23,7 +23,8 @@
         "visibility.policy",
         "attribute.is_featured",
         "attribute.seeking_students",
-        "attribute.seeking_collaborators"
+        "attribute.seeking_collaborators",
+        "members.user_id"
     ],
     "attributesToSnippet": [
         "abstract:100"
