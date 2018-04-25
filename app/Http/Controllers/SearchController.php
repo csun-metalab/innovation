@@ -92,7 +92,7 @@ class SearchController extends Controller
 
 
         if ($requestedFilters->has('member')) {
-            $filters[] = 'members_id:"' . $requestedFilters->get('member') . '"';
+            $filters[] = 'members.user_id:"' . $requestedFilters->get('member') . '"';
         }
         if ($requestedFilters->get('department')) {
             $departmentNumber = $this->getDepartmentNumber($requestedFilters->get('department'));
