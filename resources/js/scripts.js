@@ -68,10 +68,10 @@ $("#addCollabBtn").on('click',function(e){
 	}
 
 	var displayName = $("#collab option:selected").val() == $('#auid').val() ? $('#collab option:selected').text() + '<span style="opacity: .5;"> &#183 You</span> ' : $('#collab option:selected').text(),
-	template = "<tr data-id='"+ $("#collab option:selected").text() + ',' + $("#collab option:selected").val() + ',' + $("#roleID option:selected").val() +"'><td>" + displayName + "</td><td>" + $("#roleID option:selected").text() + "</td><td> Pending </td><td style='text-align: center;'> <a class='removeCollabBtn'> Cancel </a> </td></tr>";
+	template = "<tr data-id='"+ $("#collab option:selected").text() + '|' + $("#collab option:selected").val() + '|' + $("#roleID option:selected").val() +"'><td>" + displayName + "</td><td>" + $("#roleID option:selected").text() + "</td><td> Pending </td><td style='text-align: center;'> <a class='removeCollabBtn btn btn-link'> Remove </a> </td></tr>";
 
 	$('<input/>', {
-		value: $("#collab option:selected").text() + ',' + $("#collab option:selected").val() + ',' + $("#roleID option:selected").val(),
+		value: $("#collab option:selected").text() + '|' + $("#collab option:selected").val() + '|' + $("#roleID option:selected").val(),
 		name: 'collaborators[]',
 		type: 'hidden'
 
@@ -106,78 +106,43 @@ $( ".select2-collaborator" ).select2({
         },
         cache: true
     },
-    placeholder: 'Search for faculty members...',
+    placeholder: 'Search for team members...',
     minimumInputLength: 3
 });
 
 $('.select2-roles').select2({
 	width:'95%',
-	minimumResultsForSearch: Infinity,
-	placeholder: 'Select a role...'
+	// minimumResultsForSearch: Infinity,
+	placeholder: 'Select a role...',
+	tags: true
 })
-	
-	$('.select2-category').change(function(event){
-		var loadingScreen = $('#loading__screen');
 
-		loadingScreen.css({
-			'position': 'fixed',
-			'top': '0',
-			'bottom': '0',
-			'left': '0',
-			'right': '0',
-			'z-index': '5',
-			'opacity': '.7',
-			'background': '#fff'
-		})
-		.html('<i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="color: #4a4a4a; position: absolute; top: 40%; left: 50%; margin-left: -25px;"></i>')
-		.show();
-
-		$.ajax({
-			url: window.HELIX.env.url + '/api/interests/categories/' + event.target.value + '?type=' + $(this).attr('data-type')
-		})
-		.done(function(request){
-			var tags = $('.tags option:selected');
-
-			switch(request.type)
+var description = $('#description').val();
+var watsonCount = 0;
+$( "#description" ).focusout(function() {
+  var diffrence = Math.abs(( ($('#description').val().length) - (description.length) ));
+  if($('#description').val().length > 200 && watsonCount<3 && $('#description').val() != description){
+  		description = $('#description').val();
+		$('.watson').remove();
+	  	$.ajax({
+			url: window.HELIX.env.url + "/api/watson/tags",
+			data: { 
+		        "data": description, 
+		    },
+		    type: "POST",
+			success: function(data)
 			{
-				case 'category':
-					var subcategoryList = '', tagList = '';
-
-					for(var i = 0; i < request.subcategories.length; i++)
-					{
-						subcategoryList += "<option value='" + request.subcategories[i].id+"'>" + request.subcategories[i].title + "</option>";
-					}
-
-					for(var y = 0; y < request.tags.length; y++)
-					{
-						tagList += "<option value='" + request.tags[y].id+"'>" + request.tags[y].title + "</option>";
-					}
-
-					$('.subcategory').html(subcategoryList);
-					$('.tags').html(tagList).append(tags);
-				break;
-
-				case 'subcategory':
+				data.forEach(function(tag){
 					var tagList = '';
-
-					for (var i = 0; i < request.tags.length; i++) 
-					{			
-						tagList += "<option value='" + request.tags[i].id+"'>" + request.tags[i].title + "</option>";
-					}
-
-					$('.tags').html(tagList).append(tags);
-				break;
+					tagList += "<option class='watson' value='watson:" + tag.text + ":"+ tag.relevance +"' selected>" + tag.text + "</option>";
+					$('.tags').append(tagList);
+				});
+				watsonCount++;
 			}
 		})
-		.fail(function(){
-			alert('There was an error loading the project interests. Please try again.');
-		})
-		.always(function(){
-			loadingScreen.hide();
-		});
-	});
-
-
+	};
+});
+		
 
 	
 // sourceMappingURL=scripts.js.map

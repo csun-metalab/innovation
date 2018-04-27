@@ -1,21 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Helix\Events\Individual;
 
-use Helix\Models\Person;
 use Helix\Events\Event;
+use Helix\Models\Person;
 use Illuminate\Queue\SerializesModels;
 
 class IndividualAddInterests extends Event
 {
-    public $interests;
     public $person;
 
     use SerializesModels;
 
-    public function __construct(Person $person, array $interests)
+    public function __construct(Person $person)
     {
-    	$this->person = $person;
-        $this->interests = $interests;
+        $this->person = $person;
     }
 }

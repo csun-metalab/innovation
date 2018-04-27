@@ -1,7 +1,8 @@
 <?php
 
-return [
+declare(strict_types=1);
 
+return [
     /*
     |--------------------------------------------------------------------------
     | Application Environment
@@ -12,6 +13,8 @@ return [
     | services your application utilizes. Set this in your ".env" file.
     |
     */
+
+    'name' => env('APP_NAME', 'Laravel'),
 
     'env' => env('APP_ENV', 'production'),
 
@@ -120,13 +123,11 @@ return [
     */
 
     'ldap' => [
-
-        'host' => env("LDAP_HOST"),
-        'basedn' => env("LDAP_BASE_DN"),
-        'dn' => env("LDAP_DN"),
-        'password' => env("LDAP_PASSWORD"),
-        'allow_no_pass' => env("LDAP_ALLOW_NO_PASS"),
-
+        'host' => env('LDAP_HOST'),
+        'basedn' => env('LDAP_BASE_DN'),
+        'dn' => env('LDAP_DN'),
+        'password' => env('LDAP_PASSWORD'),
+        'allow_no_pass' => env('LDAP_ALLOW_NO_PASS'),
     ],
 
     'feedback' => [
@@ -142,7 +143,7 @@ return [
     | nemo.memberships.
     |
     */
-    'application_entity_id' => env("APPLICATION_ENTITY_ID"),
+    'application_entity_id' => env('APPLICATION_ENTITY_ID'),
 
     /*
     |--------------------------------------------------------------------------
@@ -152,7 +153,7 @@ return [
     | This is the url that the application will like faculty profiles will link to
     |
     */
-    'faculty_profile_url' => env("FACULTY_PROFILE_URL", "http://www.csun.edu/faculty/profiles/"),
+    'faculty_profile_url' => env('FACULTY_PROFILE_URL', 'http://www.csun.edu/faculty/profiles/'),
 
     /*
     |--------------------------------------------------------------------------
@@ -162,7 +163,7 @@ return [
     | Whether to force SSL on the login screen and everything after.
     |
     */
-    'force_ssl_login' => env("FORCE_SSL_LOGIN", false),
+    'force_ssl_login' => env('FORCE_SSL_LOGIN', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -182,7 +183,9 @@ return [
         Clockwork\Support\Laravel\ClockworkServiceProvider::class,
         TomLingham\Searchy\SearchyServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
-
+        Algolia\Settings\ServiceProvider::class,
+        Algolia\ScoutMacros\ServiceProvider::class,
+        TeamTNT\Scout\TNTSearchScoutServiceProvider::class,
         /*
          * Laravel Framework Service Providers...
          */
@@ -208,19 +211,23 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
+        Illuminate\Notifications\NotificationServiceProvider::class,
 
         /*
          * Application Service Providers...
          */
+        Helix\Providers\BroadcastServiceProvider::class,
         Helix\Providers\AppServiceProvider::class,
         Helix\Providers\AuthServiceProvider::class,
         Helix\Providers\EventServiceProvider::class,
         Helix\Providers\RouteServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
         Helix\Providers\ViewComposerServiceProvider::class,
+        Helix\Providers\ProjectServiceProvider::class,
+        Helix\Providers\UniversityEventsServiceProvider::class,
 
         // META+Lab LDAP authentication service provider
-        METALab\Auth\Provider\AuthServiceProvider::class,
+        CSUNMetaLab\Authentication\Providers\AuthServiceProvider::class,
 
         // META+Lab load balancer service provider
         CSUNMetaLab\ProxyPass\Providers\ProxyPassServiceProvider::class,
@@ -238,42 +245,41 @@ return [
     */
 
     'aliases' => [
-
-        'App'       => Illuminate\Support\Facades\App::class,
-        'Artisan'   => Illuminate\Support\Facades\Artisan::class,
-        'Auth'      => Illuminate\Support\Facades\Auth::class,
-        'Blade'     => Illuminate\Support\Facades\Blade::class,
-        'Cache'     => Illuminate\Support\Facades\Cache::class,
-        'Config'    => Illuminate\Support\Facades\Config::class,
-        'Cookie'    => Illuminate\Support\Facades\Cookie::class,
-        'Crypt'     => Illuminate\Support\Facades\Crypt::class,
-        'DB'        => Illuminate\Support\Facades\DB::class,
-        'Eloquent'  => Illuminate\Database\Eloquent\Model::class,
-        'Event'     => Illuminate\Support\Facades\Event::class,
-        'File'      => Illuminate\Support\Facades\File::class,
-        'Gate'      => Illuminate\Support\Facades\Gate::class,
-        'Hash'      => Illuminate\Support\Facades\Hash::class,
-        'Lang'      => Illuminate\Support\Facades\Lang::class,
-        'Log'       => Illuminate\Support\Facades\Log::class,
-        'Mail'      => Illuminate\Support\Facades\Mail::class,
-        'Password'  => Illuminate\Support\Facades\Password::class,
-        'Queue'     => Illuminate\Support\Facades\Queue::class,
-        'Redirect'  => Illuminate\Support\Facades\Redirect::class,
-        'Redis'     => Illuminate\Support\Facades\Redis::class,
-        'Request'   => Illuminate\Support\Facades\Request::class,
-        'Response'  => Illuminate\Support\Facades\Response::class,
-        'Route'     => Illuminate\Support\Facades\Route::class,
-        'Schema'    => Illuminate\Support\Facades\Schema::class,
-        'Response'  => Illuminate\Support\Facades\Response::class,
+        'App' => Illuminate\Support\Facades\App::class,
+        'Artisan' => Illuminate\Support\Facades\Artisan::class,
+        'Auth' => Illuminate\Support\Facades\Auth::class,
+        'Blade' => Illuminate\Support\Facades\Blade::class,
+        'Cache' => Illuminate\Support\Facades\Cache::class,
+        'Config' => Illuminate\Support\Facades\Config::class,
+        'Cookie' => Illuminate\Support\Facades\Cookie::class,
+        'Crypt' => Illuminate\Support\Facades\Crypt::class,
+        'DB' => Illuminate\Support\Facades\DB::class,
+        'Eloquent' => Illuminate\Database\Eloquent\Model::class,
+        'Event' => Illuminate\Support\Facades\Event::class,
+        'File' => Illuminate\Support\Facades\File::class,
+        'Gate' => Illuminate\Support\Facades\Gate::class,
+        'Hash' => Illuminate\Support\Facades\Hash::class,
+        'Lang' => Illuminate\Support\Facades\Lang::class,
+        'Log' => Illuminate\Support\Facades\Log::class,
+        'Mail' => Illuminate\Support\Facades\Mail::class,
+        'Password' => Illuminate\Support\Facades\Password::class,
+        'Queue' => Illuminate\Support\Facades\Queue::class,
+        'Redirect' => Illuminate\Support\Facades\Redirect::class,
+        'Redis' => Illuminate\Support\Facades\Redis::class,
+        'Request' => Illuminate\Support\Facades\Request::class,
+        'Response' => Illuminate\Support\Facades\Response::class,
+        'Route' => Illuminate\Support\Facades\Route::class,
+        'Schema' => Illuminate\Support\Facades\Schema::class,
+        'Response' => Illuminate\Support\Facades\Response::class,
+        'notification' => Illuminate\Support\Facades\Notification::class,
         'Searchy' => TomLingham\Searchy\Facades\Searchy::class,
-        'Session'   => Illuminate\Support\Facades\Session::class,
-        'Storage'   => Illuminate\Support\Facades\Storage::class,
-        'URL'       => Illuminate\Support\Facades\URL::class,
+        'Session' => Illuminate\Support\Facades\Session::class,
+        'Storage' => Illuminate\Support\Facades\Storage::class,
+        'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
-        'View'      => Illuminate\Support\Facades\View::class,
-        'Form'      => Collective\Html\FormFacade::class,
-        'Html'      => Collective\Html\HtmlFacade::class,
-        'Image'     => Intervention\Image\Facades\Image::class
+        'View' => Illuminate\Support\Facades\View::class,
+        'Form' => Collective\Html\FormFacade::class,
+        'Html' => Collective\Html\HtmlFacade::class,
+        'Image' => Intervention\Image\Facades\Image::class,
     ],
-
 ];

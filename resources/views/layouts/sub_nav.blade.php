@@ -5,12 +5,6 @@
       <a class="tab__link tab__link--active" href="home">Home</a>
     </li>
     <li class="tab__list">
-     <a class="tab__link" href="faculty_profile">Profile</a>
-    </li>
-    <li class="tab__list">
-      <a class="tab__link" href="classes">Classes</a>
-    </li>
-    <li class="tab__list">
       <a class="tab__link" href="projects">Projects</a>
     </li>
     <li class="tab__list">
@@ -27,12 +21,6 @@
   <ul class="tabs cf">
     <li class="tab__list">
       <a class="tab__link" href="home">Home</a>
-    </li>
-    <li class="tab__list">
-     <a class="tab__link tab__link--active" href="faculty_profile">Profile</a>
-    </li>
-    <li class="tab__list">
-      <a class="tab__link" href="classes">Classes</a>
     </li>
     <li class="tab__list">
       <a class="tab__link" href="projects">Projects</a>
@@ -54,12 +42,6 @@
       <a class="tab__link" href="home">Home</a>
     </li>
     <li class="tab__list">
-     <a class="tab__link" href="faculty_profile">Profile</a>
-    </li>
-    <li class="tab__list">
-      <a class="tab__link tab__link--active" href="classes">Classes</a>
-    </li>
-    <li class="tab__list">
       <a class="tab__link" href="projects">Projects</a>
     </li>
     <li class="tab__list">
@@ -77,12 +59,6 @@
   <ul class="tabs cf">
     <li class="tab__list">
       <a class="tab__link" href="home">Home</a>
-    </li>
-    <li class="tab__list">
-     <a class="tab__link" href="faculty_profile">Profile</a>
-    </li>
-    <li class="tab__list">
-      <a class="tab__link" href="classes">Classes</a>
     </li>
     <li class="tab__list">
       <a class="tab__link tab__link--active" href="projects">Projects</a>
@@ -104,12 +80,6 @@
       <a class="tab__link" href="home">Home</a>
     </li>
     <li class="tab__list">
-     <a class="tab__link" href="faculty_profile">Profile</a>
-    </li>
-    <li class="tab__list">
-      <a class="tab__link" href="classes">Classes</a>
-    </li>
-    <li class="tab__list">
       <a class="tab__link" href="projects">Projects</a>
     </li>
     <li class="tab__list">
@@ -128,12 +98,6 @@
   <ul class="tabs cf">
     <li class="tab__list">
       <a class="tab__link" href="home">Home</a>
-    </li>
-    <li class="tab__list">
-     <a class="tab__link" href="faculty_profile">Profile</a>
-    </li>
-    <li class="tab__list">
-      <a class="tab__link" href="classes">Classes</a>
     </li>
     <li class="tab__list">
       <a class="tab__link" href="projects">Projects</a>

@@ -46,7 +46,6 @@
               <li>{{ Form::label('Project Theme') }}</li>
               <li class="margin-left--5"></li>
             </ul>
-            {{ Form::select('tags[]', $tags, null, ['class' => 'select2-tags tags', 'multiple' => 'multiple']) }}
           </div>
         </div>
       </div>        
@@ -78,66 +77,10 @@
       placeholder: 'Select a subcategory...'
     });
 
-    @if(session('new-project.interests'))
-    $.getJSON("{{ request()->url() }}", function(interests){
-        if(interests.length > 0)
-        {
-          interests.forEach(function(interest){
-            $('.select2-tags').append($('<option/>', {
-              value: interest.value,
-              text: interest.text,
-              selected: true
-            }));
-          })
-        }
-      });
-    @endif
-
-    // Select2 Options for interests
-    $(".select2-tags").select2({
-      allowClear: true,
-      createTag: function(tag){
-        var newTagText = $.trim(tag.term);
-        return {
-          id: newTagText + '--' + $('.subcategory option:selected').val() + '--' + $('.subcategory option:selected').text(),
-          text: newTagText
-        };
-      },
-      language: {
-         noResults: function(){
-             return 'No results found. Create your own by typing the Project Theme and then pressing Enter...';
-         }
-      },
-      placeholder: 'Select your project theme...',
-      tags: true,
-    })
-    .on('select2:selecting', function(event){
-        $('<option/>', {
-          id: event.params.args.data.id + '--' + event.params.args.data.text,
-          value: event.params.args.data.id + '--' + event.params.args.data.text,
-          text: event.params.args.data.text,
-          selected: true
-        }).appendTo(this);
-
-        $(this).find('option[value="' + event.params.args.data.id + '"]').remove();
-      })
-    .on('change', function(){
-      if(!$(this).siblings('ul').children('li:last-child').is(':visible'))
-      {
-        $(this).siblings('ul').children('li:last-child').show();
-      }
-
-      $(this).siblings('ul').children('li:last-child').html('&#183 Saving...');
-
-      setTimeout($.proxy(function(){
-        $(this).siblings('ul').children('li:last-child').html('&#183 Saved!').delay(100).fadeOut();
-      }, this), 300);
-    });
 
   $('.form-btn').on('click', function(e){
     $('input[name=action]').val($(this).attr('data-action'));
     return $('.project-create-form').submit();
   })
 </script>
-{!! Html::script('js/scripts.js') !!} 
 @stop

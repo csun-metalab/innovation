@@ -1,37 +1,36 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Helix\Providers;
 
-use Config;
-
-use Illuminate\Support\Facades\Blade;
+use AlgoliaSearch\Client as Algolia;
+use AlgoliaSearch\Version as AlgoliaUserAgent;
+use Helix\Engines\AdvancedAlgoliaEngine;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Scout\EngineManager;
 
 class AppServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap any application services.
-     *
-     * @return void
      */
     public function boot()
     {
-        //
+        resolve(EngineManager::class)->extend('advancedalgolia', function () {
+            AlgoliaUserAgent::$custom_value = '; Laravel Scout (custom driver)';
+
+            return new AdvancedAlgoliaEngine(new Algolia(
+                config('scout.algolia.id'),
+                config('scout.algolia.secret')
+            ));
+        });
     }
 
     /**
      * Register any application services.
-     *
-     * @return void
      */
     public function register()
     {
-        // register the service provider for the Debugbar if we are currently
-        // in a debuggable environment
-        if(config("app.debug")) {
-            $this->app->register(
-                'Barryvdh\Debugbar\ServiceProvider'
-            );
-        }
     }
 }

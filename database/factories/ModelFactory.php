@@ -17,11 +17,11 @@ $factory->define(Helix\Models\Person::class, function (Faker\Generator $faker) {
     ];
 });
 
-$factory->define(Helix\Models\Research::class, function(Faker\Generator $faker){
-  return [
-    'attribute_id' => generateNewResearchId()
-  ];
-});
+// $factory->define(Helix\Models\Research::class, function(Faker\Generator $faker){
+//   return [
+//     'attribute_id' => generateNewResearchId()
+//   ];
+// });
 
 $factory->define(Helix\Models\FrescoExpertiseEntity::class, function (Faker\Generator $faker){
   // No default values needed.

@@ -1,24 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Helix\Listeners\Project;
 
 use Helix\Events\Project\ProjectCreatedOrUpdated;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Helix\Models\Project;
 
 class UpdateProjectGeneral
 {
     // If user has changed project information from cayuse - update exploration.projects
     public function handle(ProjectCreatedOrUpdated $event)
     {
+        $project = Project::findOrFail($event->projectId);
 
-        $event->project->slug = slugify($event->session['project_general']['title']);
-        $event->project->project_title      = $event->session['project_general']['title'];
-        $event->project->project_url        = $event->session['project_general']['url'] ?: NULL;
-        $event->project->project_begin_date = timestampFormat($event->session['project_general']['start_date']);
-        $event->project->project_end_date   = $event->session['project_general']['end_date'] ? timestampFormat($event->session['project_general']['end_date']) : NULL;
-        $event->project->abstract           = $event->session['project_general']['description'];
-        $event->project->is_publishable     = 1;
-        $event->project->save();
+        $project->slug = slugify($event->data['project_general']['title']);
+        $project->project_title = $event->data['project_general']['title'];
+        $project->project_url = $event->data['project_general']['url'] ?: null;
+        $project->project_begin_date = timestampFormat($event->data['project_general']['start_date']);
+        $project->project_end_date = $event->data['project_general']['end_date'] ? timestampFormat($event->data['project_general']['end_date']) : null;
+        $project->abstract = $event->data['project_general']['description'];
+        $project->is_publishable = 1;
+        $project->save();
     }
 }

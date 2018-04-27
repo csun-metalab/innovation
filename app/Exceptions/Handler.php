@@ -1,14 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Helix\Exceptions;
 
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
-use Illuminate\Foundation\Validation\ValidationException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Foundation\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -29,23 +30,25 @@ class Handler extends ExceptionHandler
      *
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
      *
-     * @param  \Exception  $e
-     * @return void
+     * @param \Exception $e
+     * @param Exception  $exception
      */
-    public function report(Exception $e)
+    public function report(Exception $exception)
     {
-        return parent::report($e);
+        return parent::report($exception);
     }
 
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Exception  $e
+     * @param \Illuminate\Http\Request $request
+     * @param \Exception               $e
+     * @param Exception                $exception
+     *
      * @return \Illuminate\Http\Response
      */
-    public function render($request, Exception $e)
+    public function render($request, Exception $exception)
     {
-        return parent::render($request, $e);
+        return parent::render($request, $exception);
     }
 }

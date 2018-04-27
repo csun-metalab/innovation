@@ -35,7 +35,6 @@ $(document).ready(function() {
       token: $('html').data('token')
     }
   };
-
   // loop through the img tag with profile--icon class
   $(".load--icon").each(function() {
     var defaultImage = "http://www.csun.edu/faculty/imgs/profile-default.png";

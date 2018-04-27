@@ -1,10 +1,14 @@
-<?php namespace Helix\Models;
+<?php
+
+declare(strict_types=1);
+
+namespace Helix\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 class Departments extends Model
 {
-	protected $table = 'nemo.departments';
+    protected $table = 'nemo.departments';
     protected $primaryKey = 'entities_id';
     public $incrementing = false;
     /*
@@ -17,6 +21,4 @@ class Departments extends Model
      * created_at,
      * updated_at
      */
-
-
 }
