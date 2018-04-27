@@ -30,11 +30,11 @@ class ProjectCreate extends FormRequest
             'title' => 'required|min:3|max:256',
             'description' => 'required',
             'url' => 'nullable|url',
-            'youtube' => ['nullable', 'regex' => 'regex:#(https?://(?:www\.)?youtube\.com/watch\?v=([^&]+?))|((https?://(?:www\.)?)(youtu\.be){1})|((https?://(?:www\.)?(vimeo\.com){1}))#']
+            'video' => ['nullable', 'regex' => 'regex:#(https?://(?:www\.)?youtube\.com/watch\?v=([^&]+?))|((https?://(?:www\.)?)(youtu\.be){1})|((https?://(?:www\.)?(vimeo\.com){1}))#'],
+            'collaborators' => 'required|min:1'
         ];
         return $rules;
     }
-
     /**
      * Get the validation messages for the request.
      *
@@ -48,7 +48,8 @@ class ProjectCreate extends FormRequest
             'title.max' => 'The project title may not be greater than 256 characters.',
             'description.required' => 'A description of the project is required.',
             'url.url' => 'The website URL is not in the correct format.',
-            'youtube.regex' => 'The video URL is not in the correct format. Currently supported video hosting sites: YouTube, Vimeo'
+            'video.regex' => 'The video URL is not in the correct format. Currently supported video hosting sites: YouTube, Vimeo',
+            'collaborators.min' => 'There must be at least one team member.'
         ];
     }
 }

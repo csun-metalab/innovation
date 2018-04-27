@@ -30,7 +30,7 @@ class AuthServiceProvider extends ServiceProvider
 
         // The auth user is the Lead Principal Investigator or Editor
         Gate::define('is-owner', function (Person $person, Project $project) {
-            return $person->hasRoleOnProject(['Lead Principal Investigator', 'Co-Principal Investigator'], $project) || $person->hasRole('admin');
+            return $person->isMember($project) || $person->hasRole('admin');
         });
 
         // The auth user can accept or reject invitations

@@ -48,7 +48,7 @@
             <div class="col-md-3 hidden-sm-down">
                 @can('is-owner', $project)
                     <div class="mlr--10-0">
-                        <a class="btn btn-default btn--full-width" href="{{ url('project/step-1/' . $project->project_id) }}"><i class="fa fa-pencil"></i> Edit Project</a>
+                        <a class="btn btn-default btn--full-width" href="{{ url('project/' . $project->slug . '/edit') }}"><i class="fa fa-pencil"></i> Edit Project</a>
                     <br>
                     </div>
                     @if(is_null($project->cayuse_id))
@@ -95,8 +95,8 @@
                   <div class="type--header"></div>
                 @endif
                 <div>
-                    <p class="milli type--marginless"><strong>Project Type:</strong></p>
-                    <p>{{ $attributes->purpose->display_name }}</p>
+                    <p class="milli type--marginless"><strong>Event:</strong></p>
+                    <p>{{ $event[0] }}</p>
                 </div>
                 @if(count($project->award))
                     <p class="milli type--marginless"><strong>Project Sponsors:</strong></p>
@@ -208,7 +208,7 @@
                         @can('is-owner', $project)
                             <div class="mlr--10-0">
                                 <a class="btn btn-default btn--full-width"
-                                   href="{{ url('project/step-1/' . $project->project_id) }}"><i
+                                   href="{{ url('project/' . $project->slug .'/edit') }}"><i
                                             class="fa fa-pencil"></i> Edit Project</a>
                                 <br>
                             </div>
@@ -258,8 +258,8 @@
                       <div class="type--header"></div>
                     @endif
                     <div>
-                        <p class="milli type--marginless"><strong>Project Type: </strong></p>
-                        <p>{{ $attributes->purpose->display_name }}</p>
+                        <p class="milli type--marginless"><strong>Event: </strong></p>
+                        <p>{{ $event[0] }}</p>
                     </div>
                     @if(count($project->award))
                         <p class="milli type--marginless"><strong>Project Sponsors:</strong></p>

@@ -11,7 +11,7 @@ class VerifyProjectIdService implements VerifyProjectIdContract
 {
     public function verifyId($projectId)
     {
-        if (null === $projectId) {
+        if ($projectId == null) {
             $projectId = generateNewProjectId();
 
             Project::create([

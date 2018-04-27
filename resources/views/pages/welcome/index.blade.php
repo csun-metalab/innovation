@@ -11,7 +11,12 @@
 <div class="section section--lg">
   <div class="container type--center">
     {{--<img src="{{ asset('imgs/helix-icon.png') }}" style="width:80px; margin-bottom: 25px;" alt="HELIX Logo">--}}
-    <h1 class="mega type--thin type--marginless">Innovation</h1>
+    @if(env('APP_NAME')=='SeniorDesign')
+      <h1 class="mega type--thin type--marginless">Senior Design</h1>
+    @else
+      <h1 class="mega type--thin type--marginless">Innovation</h1>
+    @endif
+
     <!-- <h2 class="type--thin type--gray">Helping Everyone Link Interests &amp; Expertise.</h2> -->
     <h2 class="type--thin type--gray">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
     <br>

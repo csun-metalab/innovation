@@ -81,7 +81,6 @@ module.exports = __webpack_require__(4);
 | Used for step 3 - Add Collaborators
 */
 $('.collaboratorActionBtn').on('click', function (e) {
-	alert("here");
 	e.preventDefault();
 
 	if ($('#loading__screen').length == 0) {

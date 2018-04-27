@@ -16,7 +16,7 @@ class Attribute extends Model
 		'is_featured',
 		'seeking_collaborators',
 		'seeking_students',
-		'purpose_name',
+        'event_id',
         'student_qualifications'
 	];
 
