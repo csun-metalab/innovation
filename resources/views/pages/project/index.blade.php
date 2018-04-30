@@ -79,6 +79,9 @@
     <div class="row">
         @each('layouts.partials.project-panel',$projects, 'project' )
     </div>
+    <div style="fill:black">
+        <img src="{{ asset('/imgs/algolia_gray.svg') }}" width="100px" style="float: right" alt="algolia">
+    </div>
 @endsection
 @else
 @section('recent-projects')
@@ -124,9 +127,13 @@
                 <a href="{{ url("project") }}" class="btn btn-primary">See all Projects</a>
             </div>
         </div>
+        <div style="fill:black">
+            <img src="{{ asset('/imgs/algolia_gray.svg') }}" width="100px" style="float: right" alt="algolia">
+        </div>
     </div>
 @endsection
 @endif
+
 @section('filter-selection-and-new-project-button')
     @include('layouts.partials.filter-selection-and-new-project-button')
 @endsection
