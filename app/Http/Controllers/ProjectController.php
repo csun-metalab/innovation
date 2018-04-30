@@ -133,7 +133,7 @@ class ProjectController extends Controller
         // This is to check if there is a row in the attributes table corresponding to this project
         $attributes = Attribute::with('purpose')->findOrNew($project->project_id);
         $event = Event::where('id', $attributes->event_id)->pluck('event_name');
-        $seeking = Seeking::where('project_id',$project->project_id);
+        $seeking = Seeking::where('project_id',$project->project_id)->get();
         if ($attributes->project_id == null) {
             $attributes->project_id = $project->project_id;
             // $attributes->purpose_name = 'project';
