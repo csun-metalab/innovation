@@ -25,27 +25,29 @@
                 </div>
 
                 <div class="col-lg-9">
-                    <h3>Add a New Event</h3>
-                    {!! Form::open(array('url' => route('dashboard.event.create'))) !!}
-                    {!! Form::hidden('originator', Auth::user()->display_name) !!}
-                    {!! Form::label('event_name', 'Event Name', ['class'=>'label--default label--required']) !!}
-                    {!! Form::text('event_name','', ['placeholder'=>'Enter an event name', 'maxlength' => '50']) !!}
-                    <br>
-                    <div class="row">
-                        <div class="col-md-6">
-                            {!! Form::label('start_date', 'Start Date', ['class'=>'label--default']) !!}
-                            {!! Form::text('start_date', '', ['class'=>'form-control datepicker', 'placeholder'=>'mm/dd/yyyy', 'type' => 'date', 'maxlength' => '10']) !!}
+                    @if(Auth::user()->isAdmin())
+                        <h3>Add a New Event</h3>
+                        {!! Form::open(array('url' => route('dashboard.event.create'))) !!}
+                        {!! Form::hidden('originator', Auth::user()->display_name) !!}
+                        {!! Form::label('event_name', 'Event Name', ['class'=>'label--default label--required']) !!}
+                        {!! Form::text('event_name','', ['placeholder'=>'Enter an event name', 'maxlength' => '50']) !!}
+                        <br>
+                        <div class="row">
+                            <div class="col-md-6">
+                                {!! Form::label('start_date', 'Start Date', ['class'=>'label--default']) !!}
+                                {!! Form::text('start_date', '', ['class'=>'form-control datepicker', 'placeholder'=>'mm/dd/yyyy', 'type' => 'date', 'maxlength' => '10']) !!}
+                            </div>
+                            <div class="col-md-6">
+                                {!! Form::label('end_date', 'End Date', ['class'=>'label--default']) !!}
+                                {!! Form::text('end_date', '', ['class'=>'form-control datepicker', 'placeholder'=>'mm/dd/yyyy', 'type' => 'date', 'maxlength' => '10']) !!}
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            {!! Form::label('end_date', 'End Date', ['class'=>'label--default']) !!}
-                            {!! Form::text('end_date', '', ['class'=>'form-control datepicker', 'placeholder'=>'mm/dd/yyyy', 'type' => 'date', 'maxlength' => '10']) !!}
+                        <br>
+                        <div class="type--right">
+                            {!! Form::submit('Create', ['title' => 'Create','class' => 'btn btn-primary']) !!}
+                            {!! Form::close() !!}
                         </div>
-                    </div>
-                    <br>
-                    <div class="type--right">
-                        {!! Form::submit('Create', ['title' => 'Create','class' => 'btn btn-primary']) !!}
-                        {!! Form::close() !!}
-                    </div>
+                    @endif
                     <br>
                     <h3>Created Events</h3>
                     <div class="bg--white" style="padding: 25px; border-radius: 3px;">
@@ -74,7 +76,7 @@
                                             <td style="text-align: center;padding: 10px;">{{ monthFormat($event->start_date) }}</td>
                                             <td style="text-align: center;padding: 10px;">{{ monthFormat($event->end_date) }}</td>
                                             <td style="text-align: center;padding: 10px;">{{$event->originator}}</td>
-                                            
+
                                             @if(Auth::user()->isAdmin())
                                                 <td style="text-align: center;padding: 10px; width: 5%;">
                                                     <button role="button" class="btn btn-default"
