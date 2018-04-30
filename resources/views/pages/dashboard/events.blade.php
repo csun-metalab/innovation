@@ -15,13 +15,10 @@
                         @endif
                     </div>
                 </div>
-
                 <div class="row">
-
                     <div class="col-lg-3">
                         @include("layouts.partials.admin-sidebar")
                     </div>
-
                     <div class="col-lg-9">
                         <h3>Add a New Event</h3>
                         {!! Form::open(array('url' => route('dashboard.event.create'))) !!}
