@@ -170,7 +170,6 @@ class ProjectController extends Controller
         if ($api) {
             return $this->sendResponse($project, 'project');
         };
-
         return view('pages.project.show', \compact('project', 'attributes', 'event', 'seeking'));
     }
 

@@ -96,7 +96,7 @@
                 @endif
                 <div>
                     <p class="milli type--marginless"><strong>Event:</strong></p>
-                    <p>{{ $event[0] }}</p>
+                    <p>{{ $event->first() }}</p>
                 </div>
                 @if(count($project->award))
                     <p class="milli type--marginless"><strong>Project Sponsors:</strong></p>
@@ -259,7 +259,7 @@
                     @endif
                     <div>
                         <p class="milli type--marginless"><strong>Event: </strong></p>
-                        <p>{{ $event[0] }}</p>
+                        <p>{{ $event->first() }}</p>
                     </div>
                     @if(count($project->award))
                         <p class="milli type--marginless"><strong>Project Sponsors:</strong></p>

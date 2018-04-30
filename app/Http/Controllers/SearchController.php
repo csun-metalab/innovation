@@ -90,7 +90,6 @@ class SearchController extends Controller
 
         $filters = $this->enforeceProjectRules();
 
-
         if ($requestedFilters->has('member')) {
             $filters[] = 'members_id:"' . $requestedFilters->get('member') . '"';
         }
@@ -390,7 +389,7 @@ class SearchController extends Controller
         if (auth()->check()) {
             //if the logged-in user is an Admin, they can see all projects:
             if (auth()->user()->hasRole('admin')) {
-                return null;
+                return [];
             }
 
             // Other Logged-in users can see public (showcase), internal (institutional), and their own stealth projects.
@@ -409,7 +408,6 @@ class SearchController extends Controller
         } else {
             // $projectRulesFilters[] = 'visibility.policy:public';
         }
-
         return $projectRulesFilters;
     }
 
