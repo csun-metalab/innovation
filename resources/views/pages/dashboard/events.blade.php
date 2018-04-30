@@ -7,25 +7,23 @@
             <div class="row">
 
 
-      <div class="col-sm-12">
-      <a class="btn btn-default" style="float:right;" href="{{ url('project/create') }}">Add a New Project</a>
-          @if(env('APP_NAME')=='SeniorDesign')
-              <h1 class="type--header type--thin">Senior Design Dashboard</h1>
-          @else
-              <h1 class="type--header type--thin">Innovation Dashboard</h1>
-          @endif
-      </div>
-    </div>
+                <div class="col-sm-12">
+                    <a class="btn btn-default" style="float:right;" href="{{ url('project/create') }}">Add a New
+                        Project</a>
+                    @if(env('APP_NAME')=='SeniorDesign')
+                        <h1 class="type--header type--thin">Senior Design Dashboard</h1>
+                    @else
+                        <h1 class="type--header type--thin">Innovation Dashboard</h1>
+                    @endif
+                </div>
+            </div>
 
-    <div class="row">
-
-      <div class="col-lg-3">
-        @include("layouts.partials.admin-sidebar")
-      </div>
+            <div class="row">
 
                 <div class="col-lg-3">
                     @include("layouts.partials.admin-sidebar")
                 </div>
+
                 <div class="col-lg-9">
                     <h3>Add a New Event</h3>
                     {!! Form::open(array('url' => route('dashboard.event.create'))) !!}
@@ -51,40 +49,59 @@
                     <br>
                     <h3>Created Events</h3>
                     <div class="bg--white" style="padding: 25px; border-radius: 3px;">
-                    <div class="row">
-                        <div class="col-xs-1"></div>
-                        <div class="table--responsive">
-                            <table class="table">
-                                <thead>
-                                <tr class="table" style="text-transform: uppercase; border-bottom: darkgrey 1px solid;">
-                                    <th>Event</th>
-                                    <th style="text-align: center;">Start Date</th>
-                                    <th style="text-align: center;">End Date</th>
-                                    <th style="text-align: center;">Creator</th>
-                                    <th style="text-align: center;"></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($events as $event)
-                                    <tr style="border-bottom: lightgray 1px solid">
-                                        <td>
-                                            <div style="padding: 10px;">
-                                                {{ $event->event_name }}
-                                            </div>
-                                        </td>
-                                        <td style="text-align: center;padding: 10px;">{{ monthFormat($event->start_date) }}</td>
-                                        <td style="text-align: center;padding: 10px;">{{ monthFormat($event->end_date) }}</td>
-                                        <td style="text-align: center;padding: 10px;">{{$event->originator}}</td>
-                                        <td style="text-align: center;padding: 10px; width: 5%;">
-                                            <button role="button" class="btn btn-default"><i class="fa fa-times"></i></button>
-                                        </td>
+                        <div class="row">
+                            <div class="col-xs-1"></div>
+                            <div class="table--responsive">
+                                <table class="table">
+                                    <thead>
+                                    <tr class="table"
+                                        style="text-transform: uppercase; border-bottom: darkgrey 1px solid;">
+                                        <th>Event</th>
+                                        <th style="text-align: center;">Start Date</th>
+                                        <th style="text-align: center;">End Date</th>
+                                        <th style="text-align: center;">Creator</th>
+                                        <th style="text-align: center;"></th>
                                     </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($events as $event)
+                                        <tr style="border-bottom: lightgray 1px solid">
+                                            <td>
+                                                <div style="padding: 10px;">
+                                                    {{ $event->event_name }}
+                                                </div>
+                                            </td>
+                                            <td style="text-align: center;padding: 10px;">{{ monthFormat($event->start_date) }}</td>
+                                            <td style="text-align: center;padding: 10px;">{{ monthFormat($event->end_date) }}</td>
+                                            <td style="text-align: center;padding: 10px;">{{$event->originator}}</td>
+                                            
+                                            @if(Auth::user()->isAdmin())
+                                                <td style="text-align: center;padding: 10px; width: 5%;">
+                                                    <button role="button" class="btn btn-default"
+                                                            data-modal="#deleteEvent">
+                                                        <i class="fa fa-times"></i></button>
+                                                </td>
+                                            @endif
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="deleteEvent" class="modal__outer">
+                                <div class="modal">
+                                    <div class="modal__header"><strong>Delete Event</strong></div>
+                                    <div class="modal__content">Are you sure you want to delete this event?</div>
+                                    <div class="modal__footer">
+                                        <div class="pull-right">
+                                            <button class="btn btn-default" data-modal-close="#deleteEvent">Cancel
+                                            </button>
+                                            <button class="btn btn-primary">Delete</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-1"></div>
                         </div>
-                        <div class="col-xs-1"></div>
-                    </div>
                     </div>
                     <br>
                     @forelse($events as $event)
