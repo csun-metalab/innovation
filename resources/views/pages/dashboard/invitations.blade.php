@@ -45,7 +45,7 @@
 				</ul>
 			</div>
 		@empty
-			<div style="margin: 15px 0;">
+			<div>
 				<h3>No pending invitations.</h3>
 			</div>
 		@endforelse
