@@ -47,8 +47,8 @@
                             {!! Form::submit('Create', ['title' => 'Create','class' => 'btn btn-primary']) !!}
                             {!! Form::close() !!}
                         </div>
-                    @endif
                     <br>
+                    @endif
                     <h3>Created Events</h3>
                     <div class="bg--white" style="padding: 25px; border-radius: 3px;">
                         <div class="row">
