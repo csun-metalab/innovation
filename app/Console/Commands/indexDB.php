@@ -47,7 +47,8 @@ class indexDB extends Command
         $this->info(Artisan::output());
 
         $this->line("\nIndexing Users:");
-        Artisan::call('scout:import', ['model' => "Helix\Models\Person"]);
+        $this->info("This operation will take several minutes.");
+        Artisan::call('tntsearch:import', ['model' => "Helix\Models\Person"]);
         $this->info(Artisan::output());
     }
 }
