@@ -21,12 +21,10 @@
 
 
     <div class="cd-main-content">
-        @if(isset($filters) && $searchType == 'title')
         <div class="cd-tab-filter-wrapper">
             <div class="cd-tab-filter">
             </div>
         </div>
-        @endif
         <div class="container">
             <section class="cd-gallery">
                 @yield('session-flashes')

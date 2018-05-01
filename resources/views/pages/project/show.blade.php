@@ -3,23 +3,17 @@
 @section('content')
     <div class="container">
         <br>
-        <div class="row">
+        {{-- <div class="row">
             <div class="col-md-12">
-
-                {{-- Checks to see if there is an image for this project --}}
                 @if ($project->image)
                     <div id="projectPhoto" style="border-style:solid; position: relative";>
                         <img src="{{ env('IMAGE_VIEW_LOCATION').$project->image->src }}" class="img--fluid" alt="Default Project Photo for {{ $project->project_title }}">
-
-                        {{-- Checks to see if the user can edit the current project photo --}}
                         @can('is-owner', $project)
                             <div style="position:absolute;left: 50%; top: 50%; transform: translate(-50%, -50%);">
                                 <a class="btn btn-default btn--full-width" href="{{ route('project.photo-upload', ['id' => $project->project_id]) }}"><i class="fa fa-picture-o"></i> Edit Project Photo</a>
                             </div>
                         @endcan
                     </div>
-
-                {{-- There isn't a photo associated with the project --}}
                 @else
                     @can('is-owner', $project)
                         <div id="projectPhoto" style="border-style:dashed; position: relative;">
@@ -31,7 +25,7 @@
                     @endcan
                 @endif
             </div>
-        </div>
+        </div> --}}
         <br>
         <div id="toggle-featuerd-row" hidden class="row">
           {{-- Displays flash messages associated with interests --}}
@@ -51,12 +45,11 @@
                         <a class="btn btn-default btn--full-width" href="{{ url('project/' . $project->slug . '/edit') }}"><i class="fa fa-pencil"></i> Edit Project</a>
                     <br>
                     </div>
-                    @if(is_null($project->cayuse_id))
-                        {{-- Checks if this is a cayuse project, if not, then add the delete modal --}}
+{{--                     @if(is_null($project->cayuse_id))
                         <a href="#" data-modal="#deleteModal" data-title="{{ $project->project_title }}" data-id="{{ $project->project_id }}" class="btn btn-primary delete-modal-btn btn--full-width"><i class="fa fa-trash-o"></i> Delete Project</a>
                         @include('pages.project.partials.delete-modal')
                         <br>
-                    @endif
+                    @endif --}}
                   <div class="type--header"></div>
                 @endcan
                   {{-- Managing the button and messagess for requesting to join the project. --}}
@@ -114,21 +107,17 @@
                     <p class="milli type--marginless"><strong>Project Timeline:</strong></p>
                     <p>{{$project->project_begin_date}} &ndash; {{$project->project_end_date}}</p>
                 @endif --}}
-                @if($project->project_url)
+                @if($project->url)
                     <p class="milli type--marginless"><strong>Project Web Page:</strong></p>
                     <ul class="list--unstyled">
-                        <li><a href="{{$project->project_url}}">{{$project->project_url}}</a></li>
+                        <li><a href="{{$project->url->link}}">{{$project->url->link}}</a></li>
                     </ul>
                 @endif
-                @if($project->link)
-                    @if($project->link->link_type == 'youtube')
-                        @if($project->link->link)
-                            <p class="milli type--marginless"><strong>Project Video:</strong></p>
-                            <ul class="list--unstyled">
-                                <li><a href={{$project->link->link}}>View Video</a></li>
-                            </ul>
-                        @endif
-                    @endif
+                @if($project->video)
+                    <p class="milli type--marginless"><strong>Project Video:</strong></p>
+                    <ul class="list--unstyled">
+                        <li><a href={{$project->video->link}}>View Video</a></li>
+                    </ul>
                 @endif
                 &mdash;<br><br>
 {{--                 @if($project->pi)
@@ -171,12 +160,14 @@
                                                class="color--grey nodeco">View <b>{{ $member->display_name }}</b>'s
                                                 Projects</a>
                                         </li>
+                                        @if($member->affiliation=="faculty")
                                         <li>
                                             <a title="View {{ $member->display_name }}'s profile"
                                                href="{{$member->profile_url()}}" target="_blank"
                                                class="color--grey nodeco">View <b>{{ $member->display_name }}</b>'s
                                                 Profile</a>
                                         </li>
+                                        @endif
                                     </ul>
                                 </div>
                             </li>

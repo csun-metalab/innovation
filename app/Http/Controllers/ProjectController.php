@@ -124,16 +124,16 @@ class ProjectController extends Controller
 
             return redirect("project/$project->slug");
         } elseif (str_contains($id, 'innovate:')) {
-            $project = Project::with('pi', 'members', 'award', 'links', 'image', 'visibilityPolicy','tags')->findOrFail($id);
+            $project = Project::with('pi', 'members', 'award', 'video','url', 'image', 'visibilityPolicy','tags')->findOrFail($id);
 
             return redirect("project/$project->slug");
         }
 
-        $project = Project::with('pi', 'members', 'award', 'links', 'image', 'visibilityPolicy','tags')->where('slug', $id)->firstOrFail();
+        $project = Project::with('pi', 'members', 'award', 'video','url', 'image', 'visibilityPolicy','tags')->where('slug', $id)->firstOrFail();
         // This is to check if there is a row in the attributes table corresponding to this project
         $attributes = Attribute::with('purpose')->findOrNew($project->project_id);
         $event = Event::where('id', $attributes->event_id)->pluck('event_name');
-        $seeking = Seeking::where('project_id',$project->project_id);
+        $seeking = Seeking::where('project_id',$project->project_id)->get();
         if ($attributes->project_id == null) {
             $attributes->project_id = $project->project_id;
             // $attributes->purpose_name = 'project';
@@ -252,9 +252,9 @@ class ProjectController extends Controller
         $this->collaboratorsUpdater->updateCollaborators($projectId, $projectData);
         $this->projectAttributesUpdater->updateProjectAttributes($projectId,$projectData);
         $this->createTagContract->createTag($projectId, $tags);
-        foreach($projectData->seeking as $seeking){
-                $this->createSeekingContract->createSeeking($projectId,$seeking);
-        }
+        // foreach($projectData->seeking as $seeking){
+        //         $this->createSeekingContract->createSeeking($projectId,$seeking);
+        // }
         $project = Project::find($projectId)->firstOrFail();
         $project->searchable();
         return redirect('project/' . $projectId);
