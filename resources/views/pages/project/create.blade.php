@@ -128,7 +128,7 @@
                 </div> --}}
             </div>
         </div>
-
+{{-- 
         <div class="row">
             <div class="col-xs-8 col-md-11">
                 <div class="form__group">
@@ -146,8 +146,8 @@
                     <i class="fa fa-plus" aria-hidden="true"></i> Add
                 </a>
             </div>
-        </div>
-        <div class="row">
+        </div> --}}
+{{--         <div class="row">
             <div class="col-sm-12">
                 <table id="seek_list" class="table table--padded table--bordered table--striped">
                     <thead>
@@ -167,7 +167,7 @@
                     </tbody>
                 </table>
             </div>
-        </div>
+        </div> --}}
         <hr>
         {{--      <hr>
                   <div class="row">

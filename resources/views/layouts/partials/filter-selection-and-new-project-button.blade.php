@@ -6,7 +6,7 @@
                 {!! Form::select('sponsor', $filters['sponsor'] , request()->get('sponsor') ?: null, ['placeholder'=> 'Sponsor...','class' => 'select2-sponsor' , 'style' => 'width: 100%'])!!}
             </div>
         </div> --}}
-        <div class="cd-filter-block">
+{{--         <div class="cd-filter-block">
             {!! Form::label('department','Filter by Department')!!}
             <div class="cd-filter-content">
                 {!! Form::select('department', $filters['departments'] , request()->get('department') ?: null, ['placeholder' => 'Department...','class' => 'select2-departments' , 'style' => 'width: 100%'])!!}
@@ -17,7 +17,7 @@
             <div class="cd-filter-content">
                 {{ Form::select ('type', $filters['purposes'], request()->get('type')?: null,['class'=>'members select2-types', 'placeholder' => 'Type...', 'style' => 'width: 100%'] ) }}
             </div>
-        </div>
+        </div> --}}
         <div class="cd-filter-block">
             {!! Form::label('collaborators','Filter by Seeking Collaborators')!!}
             <div class="cd-filter-content">
