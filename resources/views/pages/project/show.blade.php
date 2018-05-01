@@ -87,10 +87,10 @@
                 @if( ($attributes->seeking_collaborators || $attributes->seeking_students) && $project->visibilityPolicy->policy != 'private')
                   <div class="type--header"></div>
                 @endif
-{{--                 <div>
+                <div>
                     <p class="milli type--marginless"><strong>Event:</strong></p>
-                    <p>{{ $event[0] }}</p>
-                </div> --}}
+                    <p>{{ $event->first() }}</p>
+                </div>
                 @if(count($project->award))
                     <p class="milli type--marginless"><strong>Project Sponsors:</strong></p>
                     @foreach($project->sponsorList as $sponsor)
@@ -248,10 +248,10 @@
                     @if($project->visibilityPolicy->policy != 'private' && ($attributes->seeking_collaborators || $attributes->seeking_students))
                       <div class="type--header"></div>
                     @endif
-{{--                     <div>
+                    <div>
                         <p class="milli type--marginless"><strong>Event: </strong></p>
-                        <p>{{ $event[0] }}</p>
-                    </div> --}}
+                        <p>{{ $event->first() }}</p>
+                    </div>
                     @if(count($project->award))
                         <p class="milli type--marginless"><strong>Project Sponsors:</strong></p>
                         @foreach($project->sponsorList as $sponsor)
