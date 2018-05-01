@@ -1,4 +1,8 @@
-<?php namespace Helix\models;
+<?php
+
+declare(strict_types=1);
+
+namespace Helix\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -9,17 +13,17 @@ class ProjectPolicy extends Model
 
     public function scopePolicyTypeIs($q, $policyType)
     {
-    	return $q->where('policy_type', $policyType)->first();
+        return $q->where('policy_type', $policyType)->first();
     }
 
     public function scopeInvitationPolicy($q, Project $project)
     {
-    	return $q->where('project_id', $project->project_id)->where('policy_type', 'invitation');
+        return $q->where('project_id', $project->project_id)->where('policy_type', 'invitation');
     }
 
     public function scopeApprovalPolicy($q, Project $project)
     {
-    	return $q->where('project_id', $project->project_id)->where('policy_type', 'approval');
+        return $q->where('project_id', $project->project_id)->where('policy_type', 'approval');
     }
 
     public function scopeVisibilityPolicy($q, Project $project)

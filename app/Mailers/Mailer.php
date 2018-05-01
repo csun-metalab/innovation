@@ -1,33 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Helix\Mailers;
 
+use Helix\Mail\GenericMailer;
 use Mail;
 
-class Mailer 
+class Mailer
 {
-
-	/**
-	* Send an email to one recipient processed in the request
-	*/
+    /**
+     * Send an email to one recipient processed in the request.
+     *
+     * @param mixed $view
+     * @param array $data
+     * @param mixed $email
+     * @param mixed $subject
+     */
     public function sendToOne($view, array $data, $email, $subject)
     {
-        return Mail::send($view, $data, function($message) use ($email, $subject)
-        {
-            $message->to($email)->subject($subject);
-        });
+        return Mail::to($email)->send(new GenericMailer($view, $data, $subject));
     }
 
     /*
     * Send an email to multiple recipients in the request
     */
     public function sendToMany($view, array $data, array $emails, $subject)
-    {   
-        return Mail::send($view, $data, function($message) use ($emails, $subject)
-        {
-            $message->to($emails)->subject($subject);
-        });
-    }   
+    {
+        return Mail::to($emails)->send(new GenericMailer($view, $data, $subject));
+    }
 
     /*
     |--------------------------------------------------------------------------------
@@ -36,24 +37,28 @@ class Mailer
     */
 
     /**
-    * Queue the email and send to one recipient
-    */
+     * Queue the email and send to one recipient.
+     *
+     * @param mixed $view
+     * @param array $data
+     * @param mixed $email
+     * @param mixed $subject
+     */
     public function queueToOne($view, array $data, $email, $subject)
     {
-    	return Mail::queue($view, $data, function($message) use ($email, $subject)
-    	{
-            $message->to($email)->subject($subject);
-        });
+        return Mail::to($email)->queue(new GenericMailer($view, $data, $subject));
     }
 
     /**
-    * Queue the email and send to multiple recipients
-    */
+     * Queue the email and send to multiple recipients.
+     *
+     * @param mixed $view
+     * @param array $data
+     * @param array $emails
+     * @param mixed $subject
+     */
     public function queueToMany($view, array $data, array $emails, $subject)
     {
-        return Mail::queue($view, $data, function($message) use ($emails, $subject)
-        {
-            $message->to($emails)->subject($subject);
-        });
+        return Mail::to($email)->queue(new GenericMailer($view, $data, $subject));
     }
 }

@@ -1,9 +1,9 @@
-<p>The Scholarship API gives information on regards to a member's active projects and a listing of all public projects shared on Scholarship. This service provides a gateway to access the information via a REST-ful API. The information is retrieved by creating a specific URI and giving values to filter the data. The information that is returned is a JSON object that contains a set of details and members attached to a particular project; the format of the JSON object is as follows:</p>
+<p>The API gives information on regards to a member's active projects and a listing of all public projects shared on Innovation. This service provides a gateway to access the information via a REST-ful API. The information is retrieved by creating a specific URI and giving values to filter the data. The information that is returned is a JSON object that contains a set of details and members attached to a particular project; the format of the JSON object is as follows:</p>
 <pre>
 <code>{
   "status": 200,
   "success": true,
-  "version": "scholarship-1.0",
+  "version": "innovation-1.0",
   "type": "project",
   "project": {
     "project_id": "projects:44",

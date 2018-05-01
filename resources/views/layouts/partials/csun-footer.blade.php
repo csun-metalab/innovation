@@ -8,7 +8,13 @@
   					</div>
   					<div class="col-sm-9">
   						<ul class="list--unstyled">
-  							<li><strong>Scholarship</strong> <br>&copy; California State University, Northridge</li>
+							@if(env('APP_NAME')=='SeniorDesign')
+								<li><strong>Senior Design</strong> <br>&copy; California State University, Northridge</li>
+
+							@else
+								<li><strong>Innovation</strong> <br>&copy; California State University, Northridge</li>
+
+							@endif
 							<li>18111 Nordhoff Street, Northridge, CA 91330</li>
 							<li>Phone: (818) 677-1200 / <a href="http://www.csun.edu/contact/" target="_blank">Contact Us</a></li>
   						</ul>

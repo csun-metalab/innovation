@@ -1,11 +1,18 @@
 <!DOCTYPE HTML>
 
+
+
 <html class="no-js" data-url="{{ url('/') }}" data-token="{{ csrf_token() }}" lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>@yield('title', 'Scholarship') | CSUN</title>
+    @if(env('APP_NAME')=='SeniorDesign')
+      <title>Senior Design | CSUN</title>
+    @else
+      <title>Innovation | CSUN</title>
+    @endif
+
     <meta name="description" content="@yield('description')">
     <link rel="icon" href="{{ asset('favicon.png') }}" type="image/x-icon">
     <link rel="shortcut icon" href="http://www.csun.edu/sites/default/themes/csun/favicon.ico">
@@ -53,5 +60,9 @@
  |_   _|   | |__   / _ \  | _ \
    |_|     |____| /_/ \_\ |___/
 -->
+
+
   </body>
 </html>
+
+

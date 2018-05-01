@@ -3,7 +3,7 @@
 {{-- META DATA --}}
 @section('title') Login @stop
 @section('description')
-Helping Experts Link Interests &amp; Expertise.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 @stop
 
 @section('content')

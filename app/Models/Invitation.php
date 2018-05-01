@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Helix\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -7,27 +9,31 @@ use Illuminate\Database\Eloquent\Model;
 class Invitation extends Model
 {
     protected $fillable = [
-        'project_id', 
-        'from_id', 
-        'recipient_id', 
-        'role_position', 
-        'accepted', 
-        'updated_at' 
+        'project_id',
+        'from_id',
+        'recipient_id',
+        'role_position',
+        'accepted',
+        'updated_at',
     ];
 
-    public function project(){
-        return $this->belongsTo('Helix\Models\Project');
+    public function project()
+    {
+        return $this->belongsTo('Helix\Models\Project', 'project_id');
     }
 
-    public function invitee(){
+    public function invitee()
+    {
         return $this->hasOne('Helix\Models\Person', 'user_id', 'recipient_id');
     }
 
-    public function inviter(){
+    public function inviter()
+    {
         return $this->hasOne('Helix\Models\Person', 'user_id', 'from_id');
     }
 
-    public function role() {
+    public function role()
+    {
         return $this->hasOne('Helix\Models\Role', 'rolename_id', 'role_position');
     }
 

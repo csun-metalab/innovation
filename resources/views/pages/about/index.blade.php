@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title',"What's New in Scholarship")
+@section('title',"What's New in Innovation")
 @section('content')
 <div class="section" style="background-color: #252525;">
     <div class="container">

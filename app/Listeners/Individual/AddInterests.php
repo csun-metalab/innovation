@@ -5,7 +5,6 @@ namespace Helix\Listeners\Individual;
 use Helix\Events\Individual\IndividualAddInterests;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Helix\Models\Research;
 use Helix\Models\Person;
 
 class AddInterests

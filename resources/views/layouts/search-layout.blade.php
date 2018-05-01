@@ -21,22 +21,19 @@
 
 
     <div class="cd-main-content">
-        @if(isset($filters) && $searchType == 'title')
         <div class="cd-tab-filter-wrapper">
             <div class="cd-tab-filter">
             </div>
         </div>
-        @endif
         <div class="container">
             <section class="cd-gallery">
                 @yield('session-flashes')
                 @yield('filter-selection-and-new-project-button')
                 @yield('featured-projects')
                 @yield('recent-projects')
+                @yield('results')
                 @yield('results-titles-and-abstracts')
                 @yield('results-projects-research-interests')
-                @yield('results-members-research-interests')
-                @yield('results-faculty-members')
                 @yield('pagination-links')
                 @yield('no-results-message')
             </section>

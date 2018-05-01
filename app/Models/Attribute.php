@@ -16,12 +16,12 @@ class Attribute extends Model
 		'is_featured',
 		'seeking_collaborators',
 		'seeking_students',
-		'purpose_name',
+        'event_id',
         'student_qualifications'
 	];
 
 	public function project() {
-        return $this->belongsTo('Helix\Models\Project','project_id');
+        return $this->belongsTo('Helix\Models\Project','project_id','project_id');
     }
 
     public function purpose() {

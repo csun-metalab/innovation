@@ -24,12 +24,12 @@
 
 <div class="section">
   <div class="container">
-    @if($project->attributes->getQualifications())
+    @if($project->attribute->getQualifications())
         <div class="row">
             <div class="col-sm-12">
                 <h3>Required Qualifications</h3>
                 <p>
-                {!! nl2br(e($project->attributes->student_qualifications))  !!}
+                {!! nl2br(e($project->attribute->student_qualifications))  !!}
                 </p>
             </div>
         </div>

@@ -3,23 +3,17 @@
 @section('content')
     <div class="container">
         <br>
-        <div class="row">
+        {{-- <div class="row">
             <div class="col-md-12">
-
-                {{-- Checks to see if there is an image for this project --}}
                 @if ($project->image)
                     <div id="projectPhoto" style="border-style:solid; position: relative";>
                         <img src="{{ env('IMAGE_VIEW_LOCATION').$project->image->src }}" class="img--fluid" alt="Default Project Photo for {{ $project->project_title }}">
-
-                        {{-- Checks to see if the user can edit the current project photo --}}
                         @can('is-owner', $project)
                             <div style="position:absolute;left: 50%; top: 50%; transform: translate(-50%, -50%);">
                                 <a class="btn btn-default btn--full-width" href="{{ route('project.photo-upload', ['id' => $project->project_id]) }}"><i class="fa fa-picture-o"></i> Edit Project Photo</a>
                             </div>
                         @endcan
                     </div>
-
-                {{-- There isn't a photo associated with the project --}}
                 @else
                     @can('is-owner', $project)
                         <div id="projectPhoto" style="border-style:dashed; position: relative;">
@@ -31,7 +25,7 @@
                     @endcan
                 @endif
             </div>
-        </div>
+        </div> --}}
         <br>
         <div id="toggle-featuerd-row" hidden class="row">
           {{-- Displays flash messages associated with interests --}}
@@ -48,21 +42,20 @@
             <div class="col-md-3 hidden-sm-down">
                 @can('is-owner', $project)
                     <div class="mlr--10-0">
-                        <a class="btn btn-default btn--full-width" href="{{ url('project/step-1/' . $project->project_id) }}"><i class="fa fa-pencil"></i> Edit Project</a>
+                        <a class="btn btn-default btn--full-width" href="{{ url('project/' . $project->slug . '/edit') }}"><i class="fa fa-pencil"></i> Edit Project</a>
                     <br>
                     </div>
-                    @if(is_null($project->cayuse_id))
-                        {{-- Checks if this is a cayuse project, if not, then add the delete modal --}}
+{{--                     @if(is_null($project->cayuse_id))
                         <a href="#" data-modal="#deleteModal" data-title="{{ $project->project_title }}" data-id="{{ $project->project_id }}" class="btn btn-primary delete-modal-btn btn--full-width"><i class="fa fa-trash-o"></i> Delete Project</a>
                         @include('pages.project.partials.delete-modal')
                         <br>
-                    @endif
+                    @endif --}}
                   <div class="type--header"></div>
                 @endcan
                   {{-- Managing the button and messagess for requesting to join the project. --}}
                   <div class="mlr--10-0">
                     {{-- this is where the project is going to check if seeking collaborators --}}
-                    @if($attributes->seeking_collaborators && count($project->policies) && $project->visibility->policy != 'private')
+                    @if($attributes->seeking_collaborators && count($project->policies) && $project->visibilityPolicy->policy != 'private')
                         <p class="type--marginless"><strong>Seeking Faculty</strong></p>
                         <div style="margin: 5px 0;">
                           @if(auth()->check() && auth()->user()->hasPendingInvitation($project))
@@ -83,7 +76,7 @@
                           @endif
                         </div>
                     @endif
-                    @if ($attributes->seeking_students && $project->visibility->policy != 'private')
+                    @if ($attributes->seeking_students && $project->visibilityPolicy->policy != 'private')
                         <p class="type--marginless"><strong>Seeking Students</strong></p>
                         <div class="mlr--10-0">
                           <a class="btn btn-default btn--full-width" href="{{ route('student-request-form',['projectId'=>$project->project_id]) }}"><i class="fa fa-envelope-o"></i>
@@ -91,12 +84,12 @@
                         </div>
                     @endif
                 </div>
-                @if(($attributes->seeking_collaborators || $attributes->seeking_students) && $project->visibility->policy != 'private')
+                @if( ($attributes->seeking_collaborators || $attributes->seeking_students) && $project->visibilityPolicy->policy != 'private')
                   <div class="type--header"></div>
                 @endif
                 <div>
-                    <p class="milli type--marginless"><strong>Project Type:</strong></p>
-                    <p>{{ $attributes->purpose->display_name }}</p>
+                    <p class="milli type--marginless"><strong>Event:</strong></p>
+                    <p>{{ $event->first() }}</p>
                 </div>
                 @if(count($project->award))
                     <p class="milli type--marginless"><strong>Project Sponsors:</strong></p>
@@ -110,28 +103,24 @@
                         <li>${{$project->awardTotal()}}</li>
                     </ul>
                 @endif
-                @if($project->pi)
+                {{-- @if($project->pi)
                     <p class="milli type--marginless"><strong>Project Timeline:</strong></p>
                     <p>{{$project->project_begin_date}} &ndash; {{$project->project_end_date}}</p>
-                @endif
-                @if($project->project_url)
+                @endif --}}
+                @if($project->url)
                     <p class="milli type--marginless"><strong>Project Web Page:</strong></p>
                     <ul class="list--unstyled">
-                        <li><a href="{{$project->project_url}}">{{$project->project_url}}</a></li>
+                        <li><a href="{{$project->url->link}}">{{$project->url->link}}</a></li>
                     </ul>
                 @endif
-                @if($project->link)
-                    @if($project->link->link_type == 'youtube')
-                        @if($project->link->link)
-                            <p class="milli type--marginless"><strong>Project Video:</strong></p>
-                            <ul class="list--unstyled">
-                                <li><a href={{$project->link->link}}>View Video</a></li>
-                            </ul>
-                        @endif
-                    @endif
+                @if($project->video)
+                    <p class="milli type--marginless"><strong>Project Video:</strong></p>
+                    <ul class="list--unstyled">
+                        <li><a href={{$project->video->link}}>View Video</a></li>
+                    </ul>
                 @endif
                 &mdash;<br><br>
-                @if($project->pi)
+{{--                 @if($project->pi)
                     <p class="milli type--marginless"><strong>Lead Principal Investigator:</strong></p>
                     <div class="dropdown footer-styling">
                         <a title="{{ $project->pi->display_name }}" class="color--grey nodeco"><img
@@ -152,9 +141,9 @@
                             </li>
                         </div>
                     </div>
-                @endif
+                @endif --}}
                 <br><br>
-                @if(count($project->members)>0)
+                @if($project->members)
                     <p class="milli"><strong>Project Team:</strong></p>
                     <ul class="list">
                         @foreach($project->members as $member)
@@ -171,12 +160,14 @@
                                                class="color--grey nodeco">View <b>{{ $member->display_name }}</b>'s
                                                 Projects</a>
                                         </li>
+                                        @if($member->affiliation=="faculty")
                                         <li>
                                             <a title="View {{ $member->display_name }}'s profile"
                                                href="{{$member->profile_url()}}" target="_blank"
                                                class="color--grey nodeco">View <b>{{ $member->display_name }}</b>'s
                                                 Profile</a>
                                         </li>
+                                        @endif
                                     </ul>
                                 </div>
                             </li>
@@ -208,7 +199,7 @@
                         @can('is-owner', $project)
                             <div class="mlr--10-0">
                                 <a class="btn btn-default btn--full-width"
-                                   href="{{ url('project/step-1/' . $project->project_id) }}"><i
+                                   href="{{ url('project/' . $project->slug .'/edit') }}"><i
                                             class="fa fa-pencil"></i> Edit Project</a>
                                 <br>
                             </div>
@@ -223,7 +214,7 @@
                         @endcan
                     {{-- Mobile view: Managing the button and messagess for requesting to join the project. --}}
                     <div class="mlr--10-0">
-                      @if($attributes->seeking_collaborators && count($project->policies) && $project->visibility->policy != 'private')
+                      @if($attributes->seeking_collaborators && count($project->policies) && $project->visibilityPolicy->policy != 'private')
                         <p class="type--marginless"><strong>Seeking Faculty</strong></p>
                         <div style="margin: 5px 0;">
                           @if(auth()->check() && auth()->user()->hasPendingInvitation($project))
@@ -246,7 +237,7 @@
                         </div>
                       @endif
                       {{-- if seeking students--}}
-                        @if($attributes->seeking_students && $project->visibility->policy != 'private')
+                        @if($attributes->seeking_students && $project->visibilityPolicy->policy != 'private')
                             <p class="type--marginless"><strong>Seeking Students</strong></p>
                             <div class="mlr--10-0">
                                 <a class="btn btn-default btn--full-width" href="{{ route('student-request-form',['projectId'=>$project->project_id]) }}"><i class="fa fa-envelope-o"></i>
@@ -254,12 +245,12 @@
                             </div>
                         @endif
                     </div>
-                    @if($project->visibility->policy != 'private' && ($attributes->seeking_collaborators || $attributes->seeking_students))
+                    @if($project->visibilityPolicy->policy != 'private' && ($attributes->seeking_collaborators || $attributes->seeking_students))
                       <div class="type--header"></div>
                     @endif
                     <div>
-                        <p class="milli type--marginless"><strong>Project Type: </strong></p>
-                        <p>{{ $attributes->purpose->display_name }}</p>
+                        <p class="milli type--marginless"><strong>Event: </strong></p>
+                        <p>{{ $event->first() }}</p>
                     </div>
                     @if(count($project->award))
                         <p class="milli type--marginless"><strong>Project Sponsors:</strong></p>
@@ -273,10 +264,10 @@
                             <li>${{$project->awardTotal()}}</li>
                         </ul>
                     @endif
-                    @if($project->pi)
+                    {{-- @if($project->pi)
                         <p class="milli type--marginless"><strong>Project Timeline:</strong></p>
                         <p>{{$project->project_begin_date}} &ndash; {{$project->project_end_date}}</p>
-                    @endif
+                    @endif --}}
                     @if($project->link)
                         @if($project->link->link_type == 'youtube')
                             @if($project->link->link)
@@ -362,20 +353,20 @@
                 </div>
                 <div class="article">
                     <p class="intro">{!! nl2br(e($project->abstract)) !!}</p>
-                </div>
-                @if(count($project->interests))
+                    @if(count($project->tags))
                     <div>
-                        <p><strong>Project Themes:</strong></p>
-                        @foreach($project->interests as $interest)
-                            <a href="{{ route('search.research-interests', ['query' => $interest->title]) }}"
-                               title="{{ $interest->title }}"
+                        <p><strong>Project Tags:</strong></p>
+                        @foreach($project->tags as $tag)
+                            <a 
+                               title="{{ $tag->tag }}"
                                class="btn btn-primary btn-sm">
-                              {{$interest->title}}
+                              {{$tag->tag}}
                             </a>
                         @endforeach
                     </div>
                     <br><br><br><br><br>
                 @endif
+                </div>
                 <br><br><br><br><br>
             </div>
         </div>
