@@ -16,7 +16,8 @@ class WelcomeController extends Controller
 {
     public function index()
     {
-    	return view('pages.welcome.index');
+    	return redirect('project');
+//    	return view('pages.welcome.index');
     }
     public function aboutIndex()
     {
