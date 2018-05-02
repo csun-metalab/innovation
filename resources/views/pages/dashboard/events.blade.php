@@ -70,6 +70,7 @@
                                                 <td style="text-align: center;padding: 10px;">{{ monthFormat($event->end_date) }}</td>
                                                 <td style="text-align: center;padding: 10px;">{{$event->originator}}</td>
                                                 <td style="text-align: center;padding: 10px; width: 5%;">
+
                                                     <button role="button" class="btn btn-default"
                                                             data-modal="#deleteEvent">
                                                         <i class="fa fa-times"></i></button>

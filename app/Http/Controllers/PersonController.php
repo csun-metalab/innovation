@@ -124,4 +124,10 @@ class PersonController extends Controller
         $application = env('APP_NAME');
         return $this->universityEventCreator->createUniversityEvent($eventName,$startDate,$endDate,$originator,$application);
     }
+
+    public function deleteUniversityEvent(Request $request){
+        $event_id = $request->get('event_id');
+        $event = Event::where('id',$event_id)->get();
+        $event->softDeletes();
+    }
 }

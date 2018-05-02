@@ -107,6 +107,8 @@ Route::group(['middleware' => ['web']], function () {
             ->name('dashboard.events');
         Route::post('dashboard/create-event', 'PersonController@createUniversityEvent')
             ->name('dashboard.event.create');
+        Route::post('dashboard/delete-event', 'PersonController@deleteUniversityEvent')
+            ->name('dashboard.event.delete');
     });
 
     Route::post('test', 'ProjectController@PostProjectCreation');
