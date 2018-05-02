@@ -23,11 +23,12 @@ class GenericMailer extends Mailable
      * @param array  $data
      * @param string $subject
      */
-    public function __construct(String $view, array $data, String $subject)
+    public function __construct(String $view, array $data, String $subject, array $replyTo)
     {
         $this->view = $view;
         $this->subject = $subject;
         $this->data = $data;
+        $this->replyTo = $replyTo;
     }
 
     /**
@@ -38,6 +39,7 @@ class GenericMailer extends Mailable
     public function build()
     {
         return $this->from(config('mail.username'))
+                    ->replyTo($this->replyTo)
                     ->subject($this->subject)
                     ->view($this->view)
                     ->with($this->data);

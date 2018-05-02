@@ -128,7 +128,7 @@
             </div>
         </div>
 
-        <div class="row">
+{{--         <div class="row">
             <div class="col-xs-8 col-md-11">
                 <div class="form__group">
                     {{Form::label('role','Seeking Roles',['class'=>'type--left'])}}
@@ -146,7 +146,7 @@
                     <i class="fa fa-plus" aria-hidden="true"></i> Add
                 </a>
             </div>
-        </div>
+        </div> --}}
         <div class="row">
             <div class="col-sm-12">
                 <table id="seek_list" class="table table--padded table--bordered table--striped">
@@ -293,7 +293,7 @@
             $('input[name=action]').val($(this).attr('data-action'));
             return $('.project-create-form').submit();
         });
-
+        {{--
         //Seeking Roles js
         var seek_template, seek_input;
         seek_template = seek_input = "";
@@ -316,7 +316,7 @@
         function spinMe(this1) {
             this1.disabled = true;
             this1.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Submitting';
-        }
+        }--}}
 
         //Student qualificaitons box logic
         $('#seekingStudents').change(function () {

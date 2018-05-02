@@ -41,7 +41,7 @@ class UpdateCollaboratorsService implements UpdateCollaboratorsContract
                 ];
 
                 // If someone has been given a role position of Lead PI or this iteration is auth user
-                if (($collab['role_position'] == 'Lead Principal Investigator' || auth()->user()->user_id == $collab['id']) && (!$existingMembersIds->contains('user_id', auth()->user()->user_id ))) {
+                if ( ($collab['role_position'] == 'Lead Principal Investigator' || auth()->user()->user_id == $collab['id'])) {
                     // Add collaborator to list of users to be synced to nemo.memberships
                     // NOTE: Lead PIs and auth users will not receive invitations, for now...
                     $existingMembers[$collab['id']] = ['role_position' => $collab['role_position']];
@@ -96,7 +96,7 @@ class UpdateCollaboratorsService implements UpdateCollaboratorsContract
                 ];
 
                 // Send out emails to new collaborators
-                $this->mailer->sendToMany('emails.project_invite', $mailData, $emails, 'You have been invited to join a project!');
+                $this->mailer->sendToMany('emails.project_invite', $mailData, $emails, 'You have been invited to join a project!', ["address" => auth()->user()->email,"name" => auth()->user()->display_name]);
 
                 // Save invitations to helix.invitations
                 $project->invitations()->saveMany($invitations);
