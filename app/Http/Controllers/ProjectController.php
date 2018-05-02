@@ -869,7 +869,7 @@ class ProjectController extends Controller
     public function getWatsonTags(Request $request, $data = null)
     {   
         $relevance = env('WATSON_RELEVANCE_MIN');
-        $tagLimit = env('WATSON_RESULT_LIMIT');
+        $tagLimit = (int) env('WATSON_RESULT_LIMIT');
         if($request->filled('data')){
             $data = $request->get('data');
         }
@@ -877,7 +877,6 @@ class ProjectController extends Controller
         $model = new AnalyzeModel($data, ['concepts'=>['limit'=> $tagLimit]]);
         $result = $nlu->analyze($model);
         $responseData =  json_decode($result->getContent());
-
         if($responseData){
             $data = array_filter($responseData->concepts, function ($tag) use ($relevance) { 
                 return ($tag->relevance >= $relevance);
