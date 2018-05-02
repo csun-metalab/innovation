@@ -130,13 +130,12 @@ class ProjectController extends Controller
             return redirect("project/$project->slug");
         }
 
-        $project = Project::with('pi', 'members', 'award', 'links', 'image', 'visibilityPolicy','tags')->where('slug', $id)->firstOrFail();
+        $project = Project::with('pi', 'members', 'award', 'links', 'image', 'visibilityPolicy','tags','likes')->where('slug', $id)->firstOrFail();
         // This is to check if there is a row in the attributes table corresponding to this project
         $attributes = Attribute::with('purpose')->findOrNew($project->project_id);
         $event = Event::where('id', $attributes->event_id)->pluck('event_name');
         $seeking = Seeking::where('project_id',$project->project_id)->get();
-        $likes = ProjectLikes::where('project_id',$project->project_id)->get();
-        $likesCount = count($likes);
+        $likes = $project->likes();
         if ($attributes->project_id == null) {
             $attributes->project_id = $project->project_id;
             // $attributes->purpose_name = 'project';
@@ -174,7 +173,7 @@ class ProjectController extends Controller
             return $this->sendResponse($project, 'project');
         };
 
-        return view('pages.project.show', \compact('project', 'attributes', 'event', 'seeking'));
+        return view('pages.project.show', \compact('project', 'attributes', 'event', 'seeking', 'likes'));
     }
 
     /**

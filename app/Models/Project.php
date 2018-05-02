@@ -182,6 +182,10 @@ class Project extends Model
         return $this->hasMany('Helix\Models\Invitation', 'project_id');
     }
 
+    public function likes(){
+        return ProjectLikes::where('project_id',$this->project_id)->count();
+    }
+
     public function visibilityPolicy()
     {
         return $this->hasOne('Helix\Models\ProjectPolicy', 'project_id', 'project_id')->where('policy_type', 'visibility');
@@ -303,6 +307,10 @@ class Project extends Model
     public function pendingInvitations()
     {
         return $this->invitations()->whereNull('updated_at');
+    }
+
+    public function countLikes($project_id){
+        return ProjectLikes::where('project_id',$project_id)->count();
     }
 
     /*
