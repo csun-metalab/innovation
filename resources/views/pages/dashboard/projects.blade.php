@@ -30,16 +30,16 @@
               <div class="col-lg-6">
                 <div class="panel ">
                   {{-- expr --}}
-                  <div class="panel__header cf mh--66">
-                    <div class="pull-right">
- {{--                      @can('is-owner', $project)
-                        <a class="pull-right" href="{{ url('project/'.$project->project_id.'/edit') }}"><i class="fa fa-edit" aria-hidden="true"></i> <strong>Edit</strong> </a><br>
-                        @if(!$project->cayuse_id)<a href="#" data-modal="#deleteModal" data-id="{{ $project->project_id }}" data-title="{{ $project->project_title }}" class="delete-modal-btn"><i class="fa fa-trash" aria-hidden="true"></i> <strong>Delete</strong> </a>@endif
-                        @else
-                        <strong>You cannot edit this project.</strong>
-                      @endcan --}}
-                    </div>
-                  </div>
+                  {{--<div class="panel__header cf mh--66">--}}
+                    {{--<div class="pull-right">--}}
+ {{--                      @can('is-owner', $project)--}}
+                        {{--<a class="pull-right" href="{{ url('project/'.$project->project_id.'/edit') }}"><i class="fa fa-edit" aria-hidden="true"></i> <strong>Edit</strong> </a><br>--}}
+                        {{--@if(!$project->cayuse_id)<a href="#" data-modal="#deleteModal" data-id="{{ $project->project_id }}" data-title="{{ $project->project_title }}" class="delete-modal-btn"><i class="fa fa-trash" aria-hidden="true"></i> <strong>Delete</strong> </a>@endif--}}
+                        {{--@else--}}
+                        {{--<strong>You cannot edit this project.</strong>--}}
+                      {{--@endcan --}}
+                    {{--</div>--}}
+                  {{--</div>--}}
                   <div class="panel__content mh--400">
                     <p><strong><a title="{{ ("$project->project_title") }}" class="color--grey" href="{{ url("project/$project->slug") }}">{{ $project->project_title }}</a></strong></p>
                     <p>{{ str_limit($project->abstract, 140, '...') }}</p>

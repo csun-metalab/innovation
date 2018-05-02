@@ -5,7 +5,8 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm-12">
-                    <h1 class="type--white type--thin type--marginless">{{$projectStatus?"Edit":"Create a"}} Project</h1>
+                    <h1 class="type--white type--thin type--marginless">{{$projectStatus?"Edit":"Create a"}}
+                        Project</h1>
                 </div>
             </div>
         </div>
@@ -66,7 +67,7 @@
         <br>
         <hr>
         <div class="row">
-            <div class="col-xs-12 col-md-6">
+            <div class="col-lg-6 col-md-5">
                 <div class="form__group">
                     {{Form::label('collaborators','Team Members',['class'=>'type--left'])}}
                     {{Form::select('collaborators',[],null,['id'=>'collab','class'=>'select2-collaborator','placeholder'=>'Add a new member...'])}}
@@ -74,11 +75,9 @@
             </div>
             <div class="col-xs-8 col-md-5">
                 <div class="form__group">
-
-                    {{Form::label('role','Role',['class'=>'type--left'])}}
+                    {{Form::label('role','Title',['class'=>'type--left'])}}
                     {{ Form::select ('roles', $titles, null,['class'=>'roles select2-roles', 'id'=>'roleID'] ) }}
-
-                    <div class="tooltip" style="display: inline-block"><i class="fa fa-question-circle" aria-hidden="true"></i>
+                    <div class="tooltip" style="float:right"><i class="fa fa-question-circle" aria-hidden="true"></i>
                         <span class="tooltiptext">You may use name, email or student ID to select team member.<br>
                     </span>
                     </div>
@@ -123,19 +122,20 @@
                     @endif
                     </tbody>
                 </table>
-                {{-- <div id="research-collabs">
+                {{--<div id="research-collabs">
                   <collaborators project_status="create"></collaborators>
-                </div> --}}
+                </div>--}}
             </div>
         </div>
-{{-- 
+
         <div class="row">
             <div class="col-xs-8 col-md-11">
                 <div class="form__group">
                     {{Form::label('role','Seeking Roles',['class'=>'type--left'])}}
                     {{ Form::select ('roles', $titles, null,['class'=>'roles select2-roles', 'id'=>'roleID'] ) }}
 
-                    <div class="tooltip" style="display: inline-block"><i class="fa fa-question-circle" aria-hidden="true"></i>
+                    <div class="tooltip" style="display: inline-block"><i class="fa fa-question-circle"
+                                                                          aria-hidden="true"></i>
                         <span class="tooltiptext">Looking for a specific role? Select the role you need or create your own.<br>
                     </span>
                     </div>
@@ -146,8 +146,8 @@
                     <i class="fa fa-plus" aria-hidden="true"></i> Add
                 </a>
             </div>
-        </div> --}}
-{{--         <div class="row">
+        </div>
+        <div class="row">
             <div class="col-sm-12">
                 <table id="seek_list" class="table table--padded table--bordered table--striped">
                     <thead>
@@ -167,27 +167,9 @@
                     </tbody>
                 </table>
             </div>
-        </div> --}}
+        </div>
         <hr>
-        {{--      <hr>
-                  <div class="row">
-                    <div class="col-sm-12">
-                      <div class="uploader type--center" id="upload-image">
-                        <form class="type--center">
-                          <span id="upload">
-                          <h1 class="fa fa-upload mega"></h1>
-                          <br>
-                          <strong >Upload a cover photo</strong>
-                          </span>
-                          <!-- <img src="" id="hide"/> -->
-                          <br>
-                          <input id="photoLoad" type="file" accept="image/*" onload="fileName()">
-                          <div id="filePreview"></div>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-                  <hr> --}}
+
         <div class="row">
             <div class="col-xs-12">
                 <div class="form__group">
