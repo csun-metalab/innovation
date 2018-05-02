@@ -97,8 +97,7 @@ Route::group(['middleware' => ['web']], function () {
         // This route is called when the student submits the request form.
         Route::post('{projectId}/student-request/sent', 'InvitationController@processStudentRequest')
             ->name('student-request-sent');
-        Route::post('/likeProject', 'ProjectController@likeProject')
-            ->name('project.like');
+
     });
     // route for youtube validation
     Route::group(['prefix' => 'admin'], function () {
