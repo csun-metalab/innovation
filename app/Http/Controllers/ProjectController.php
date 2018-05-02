@@ -866,16 +866,17 @@ class ProjectController extends Controller
         return $newAttributeValues->count();
     }
 
-    public function getWatsonTags(Request $request, $data = null, $relevance = 0.5)
+    public function getWatsonTags(Request $request, $data = null)
     {   
+        $relevance = env('WATSON_RELEVANCE_MIN');
+        $tagLimit = (int) env('WATSON_RESULT_LIMIT');
         if($request->filled('data')){
             $data = $request->get('data');
         }
         $nlu = new NaturalLanguageUnderstanding( WatsonCredential::initWithCredentials(env('WATSON_USER_NAME'), env('WATSON_PASSWORD')) );
-        $model = new AnalyzeModel($data, ['concepts'=>['limit'=>50]]);
+        $model = new AnalyzeModel($data, ['concepts'=>['limit'=> $tagLimit]]);
         $result = $nlu->analyze($model);
         $responseData =  json_decode($result->getContent());
-
         if($responseData){
             $data = array_filter($responseData->concepts, function ($tag) use ($relevance) { 
                 return ($tag->relevance >= $relevance);
