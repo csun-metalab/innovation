@@ -27,6 +27,7 @@ use Helix\Models\Role;
 use Helix\Models\Event;
 use Helix\Models\Title;
 use Helix\Models\Seeking;
+use Helix\Models\ProjectLikes;
 use Illuminate\Http\Request;
 use Searchy;
 
@@ -134,6 +135,8 @@ class ProjectController extends Controller
         $attributes = Attribute::with('purpose')->findOrNew($project->project_id);
         $event = Event::where('id', $attributes->event_id)->pluck('event_name');
         $seeking = Seeking::where('project_id',$project->project_id)->get();
+        $likes = ProjectLikes::where('project_id',$project->project_id)->get();
+        $likesCount = count($likes);
         if ($attributes->project_id == null) {
             $attributes->project_id = $project->project_id;
             // $attributes->purpose_name = 'project';
@@ -885,5 +888,28 @@ class ProjectController extends Controller
             $data = null;
         }
         return $data;
+    }
+
+    /**
+     * @param Request $request
+     */
+    public function likeProject(Request $request){
+        $user_id = $request->get('user_id');
+        $project_id = $request->get('project_id');
+        $like = ProjectLikes::where('project_id', $project_id) -> where('user_id', $user_id)->get();
+        if($like->isEmpty()){
+            $newLike = new ProjectLikes();
+            $newLike->user_id = $user_id;
+            $newLike->project_id = $project_id;
+        }
+        else{
+            if($like->trashed()){
+                $like->restore;
+            }
+            else{
+                $like->softDeletes();
+            }
+        }
+        return back();
     }
 }
