@@ -42,6 +42,7 @@ class Project extends Model
         $this->members;
         $this->visibilityPolicy;
         $this->attribute;
+        $this->countLikes;
         return $this->toArray();
     }
     public function scopeSlug($query,$slug)

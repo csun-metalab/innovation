@@ -909,6 +909,7 @@ class ProjectController extends Controller
                 $like->softDeletes();
             }
         }
+        $like->searchable();
         return back();
     }
 }
