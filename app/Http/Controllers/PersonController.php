@@ -126,6 +126,7 @@ class PersonController extends Controller
     }
 
     public function deleteUniversityEvent(Request $request){
+        dd($request);
         $event_id = $request->get('event_id');
         $event = Event::where('id',$event_id)->get();
         $event->softDeletes();

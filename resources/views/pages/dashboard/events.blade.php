@@ -70,9 +70,7 @@
                                                 <td style="text-align: center;padding: 10px;">{{ monthFormat($event->end_date) }}</td>
                                                 <td style="text-align: center;padding: 10px;">{{$event->originator}}</td>
                                                 <td style="text-align: center;padding: 10px; width: 5%;">
-
-                                                    <button role="button" class="btn btn-default"
-                                                            data-modal="#deleteEvent">
+                                                    <button id="{{ $event->id }}" role="button" class="modal-toggle btn btn-default">
                                                         <i class="fa fa-times"></i></button>
                                                 </td>
                                             </tr>
@@ -88,7 +86,7 @@
                                             <div class="pull-right">
                                                 <button class="btn btn-default" data-modal-close="#deleteEvent">Cancel
                                                 </button>
-                                                <button class="btn btn-primary">Delete</button>
+                                                <button class="btn btn-primary" id="confirmEventDelete">Delete</button>
                                             </div>
                                         </div>
                                     </div>
@@ -113,12 +111,36 @@
     </div>
     {!! Html::script('js/metaphor.js') !!}
     <script>
-        $('.delete-modal-btn').on('click', function () {
-            $('#deleteModal form').attr({
-                action: $('html').data('url') + '/project/' + $(this).data('id') + '/delete',
-                method: 'GET'
-            });
-            $('#deleteModal .modal__content h3').text($(this).data('title'));
+        $('.modal-toggle').click(function () {
+            $('#confirmEventDelete').data('event-id', this.id);
+            $('#deleteEvent').toggleClass('modal--show');
+        });
+        $('#confirmEventDelete').on('click', function () {
+            var eventId = $(this).data('event-id');
+            $.post($('html').data('url') + '/admin/dashboard/delete-event',
+                {id: eventId}
+                ,function(data, status){
+                    alert("Data: " + data + "\nStatus: " + status);
+                });
+//            $.ajax({
+//                url: $('html').data('url') + '/admin/dashboard/delete-event',
+//                type: "POST",
+//                data: JSON.stringify([{
+//                    eventId: eventId ,
+//                    datBoii: 'tony'}
+//                ]),
+//                contentType: "application/json; charset=utf-8",
+//                dataType   : "json",
+//                success    : function(){
+//                    console.log("hella works");
+//                }
+//            });
+// $('#deleteModal form').attr({
+//                action: $('html').data('url') + '/dashboard/delete-event',
+//                method: 'POST',
+//                data: $(this).data('data-event-id')
+//            });
+//            $('#deleteModal .modal__content h3').text($(this).data('title'));
         })
     </script>
 @stop
