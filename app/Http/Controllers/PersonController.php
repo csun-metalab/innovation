@@ -13,6 +13,7 @@ use Illuminate\Support\Collection;
 use Helix\Models\Event;
 use Helix\Contracts\GetUniversityEventsContract;
 use Helix\Contracts\CreateUniversityEventContract;
+use Illuminate\Support\Facades\Redirect;
 
 /**
  * Handles the functionality of a logged in faculty member which includes
@@ -123,5 +124,21 @@ class PersonController extends Controller
         $endDate = \Carbon\Carbon::parse($endDate)->format('Y-m-d');
         $application = env('APP_NAME');
         return $this->universityEventCreator->createUniversityEvent($eventName,$startDate,$endDate,$originator,$application);
+    }
+
+    public function deleteUniversityEvent(Request $request){
+        $event_id = $request['id'];
+        $event = Event::where('id',$event_id)->first();
+        if(is_null($event)){
+            return ([
+                'message'=>'Event could not be deleted.',
+                'success' => 'false'
+            ]);
+        }
+        $event->delete();
+        return ([
+            'message'=>'Event "'.$event->event_name.'" has been deleted.',
+            'success' => 'true'
+        ]);
     }
 }
