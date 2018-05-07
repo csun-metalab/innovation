@@ -128,8 +128,17 @@ class PersonController extends Controller
 
     public function deleteUniversityEvent(Request $request){
         $event_id = $request[0]['id'];
-        $event = Event::where('id',$event_id)->firstOrFail();
+        $event = Event::where('id',$event_id)->first();
+        if(is_null($event)){
+            return ([
+                'message'=>'Event could not be deleted.',
+                'success' => 'false'
+            ]);
+        }
         $event->delete();
-        return back()->with('message','Event \"'.$event->event_name.'\" has been deleted.');
+        return ([
+            'message'=>'Event "'.$event->event_name.'" has been deleted.',
+            'success' => 'true'
+        ]);
     }
 }

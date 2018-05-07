@@ -63,7 +63,7 @@
                                         </thead>
                                         <tbody>
                                         @foreach($events as $event)
-                                            <tr style="border-bottom: lightgray 1px solid">
+                                            <tr style="border-bottom: lightgray 1px solid" id="{{ $event->id }}" >
                                                 <td>
                                                     <div style="padding: 10px;">
                                                         {{ $event->event_name }}
@@ -89,7 +89,7 @@
                                             <div class="pull-right">
                                                 <button class="btn btn-default" data-modal-close="#deleteEvent">Cancel
                                                 </button>
-                                                <button class="btn btn-primary" id="confirmEventDelete">Delete</button>
+                                                <button class="btn btn-primary" id="confirmEventDelete" >Delete</button>
                                             </div>
                                         </div>
                                     </div>
@@ -133,10 +133,15 @@
                 },
                 contentType: "application/json; charset=utf-8",
                 dataType   : "json",
-                success    : function(){
-                    console.log("Success");
+                success    : function(data){
+                    console.log(data);
+                    if (data.success=="true"){
+                        $('#'+eventId).remove();
+                    }
+                    $('#deleteEvent').toggleClass('modal--show');
                 }
             });
+
         })
     </script>
 @stop
