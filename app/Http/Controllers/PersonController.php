@@ -127,7 +127,7 @@ class PersonController extends Controller
     }
 
     public function deleteUniversityEvent(Request $request){
-        $event_id = $request[0]['id'];
+        $event_id = $request['id'];
         $event = Event::where('id',$event_id)->first();
         if(is_null($event)){
             return ([

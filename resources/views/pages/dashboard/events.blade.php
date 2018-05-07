@@ -123,11 +123,11 @@
             $.ajax({
                 url: $('html').data('url') + '/admin/dashboard/delete-event',
                 type: "POST",
-                data: JSON.stringify([
+                data: JSON.stringify(
                     {
                     id: eventId
                     }
-                ]),
+                ),
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
