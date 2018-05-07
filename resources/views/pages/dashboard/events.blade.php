@@ -1,6 +1,9 @@
 @extends('layouts.master')
 
 @section('content')
+    <head>
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+    </head>
     <div class="section">
         <div class="container">
             @if(Auth::user()->isAdmin())
@@ -116,31 +119,24 @@
             $('#deleteEvent').toggleClass('modal--show');
         });
         $('#confirmEventDelete').on('click', function () {
-            var eventId = $(this).data('event-id');
-            $.post($('html').data('url') + '/admin/dashboard/delete-event',
-                {id: eventId}
-                ,function(data, status){
-                    alert("Data: " + data + "\nStatus: " + status);
-                });
-//            $.ajax({
-//                url: $('html').data('url') + '/admin/dashboard/delete-event',
-//                type: "POST",
-//                data: JSON.stringify([{
-//                    eventId: eventId ,
-//                    datBoii: 'tony'}
-//                ]),
-//                contentType: "application/json; charset=utf-8",
-//                dataType   : "json",
-//                success    : function(){
-//                    console.log("hella works");
-//                }
-//            });
-// $('#deleteModal form').attr({
-//                action: $('html').data('url') + '/dashboard/delete-event',
-//                method: 'POST',
-//                data: $(this).data('data-event-id')
-//            });
-//            $('#deleteModal .modal__content h3').text($(this).data('title'));
+            eventId = $(this).data('event-id');
+            $.ajax({
+                url: $('html').data('url') + '/admin/dashboard/delete-event',
+                type: "POST",
+                data: JSON.stringify([
+                    {
+                    id: eventId
+                    }
+                ]),
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                contentType: "application/json; charset=utf-8",
+                dataType   : "json",
+                success    : function(){
+                    console.log("Success");
+                }
+            });
         })
     </script>
 @stop

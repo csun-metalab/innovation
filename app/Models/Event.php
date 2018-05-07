@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Helix\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Event extends Model
 {
-    protected $softDelete = true;
+    use SoftDeletes;
+    protected $dates = ['deleted_at'];
     protected $table = 'events';
     protected $fillable = [
         'originator',

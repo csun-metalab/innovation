@@ -13,6 +13,7 @@ use Illuminate\Support\Collection;
 use Helix\Models\Event;
 use Helix\Contracts\GetUniversityEventsContract;
 use Helix\Contracts\CreateUniversityEventContract;
+use Illuminate\Support\Facades\Redirect;
 
 /**
  * Handles the functionality of a logged in faculty member which includes
@@ -126,9 +127,9 @@ class PersonController extends Controller
     }
 
     public function deleteUniversityEvent(Request $request){
-        dd($request);
-        $event_id = $request->get('event_id');
-        $event = Event::where('id',$event_id)->get();
-        $event->softDeletes();
+        $event_id = $request[0]['id'];
+        $event = Event::where('id',$event_id)->firstOrFail();
+        $event->delete();
+        return back()->with('message','Event \"'.$event->event_name.'\" has been deleted.');
     }
 }
