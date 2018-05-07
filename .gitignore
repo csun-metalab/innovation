@@ -14,4 +14,4 @@ yarn-error.log
 /storage/debugbar
 .php_cs.cache
 /bower_components
-/storage/*.index
+/storage/*.index*

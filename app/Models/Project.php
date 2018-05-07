@@ -119,7 +119,7 @@ class Project extends Model
 
     public function tags()
     {
-        return $this->hasMany('Helix\Models\Tag', 'project_id', 'project_id');
+        return $this->hasMany('Helix\Models\Tag', 'project_id', 'project_id')->where('relevance','>=',env('WATSON_RELEVANCE_MIN'));
     }
 
     public function department()

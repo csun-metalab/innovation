@@ -125,12 +125,12 @@ class ProjectController extends Controller
 
             return redirect("project/$project->slug");
         } elseif (str_contains($id, 'innovate:')) {
-            $project = Project::with('pi', 'members', 'award', 'links', 'image', 'visibilityPolicy','tags')->findOrFail($id);
+            $project = Project::with('pi', 'members', 'award', 'video','url', 'image', 'visibilityPolicy','tags')->findOrFail($id);
 
             return redirect("project/$project->slug");
         }
 
-        $project = Project::with('pi', 'members', 'award', 'links', 'image', 'visibilityPolicy','tags','likes')->where('slug', $id)->firstOrFail();
+        $project = Project::with('pi', 'members', 'award', 'video','url','links', 'image', 'visibilityPolicy','tags','likes')->where('slug', $id)->firstOrFail();
         // This is to check if there is a row in the attributes table corresponding to this project
         $attributes = Attribute::with('purpose')->findOrNew($project->project_id);
         $event = Event::where('id', $attributes->event_id)->pluck('event_name');
@@ -172,7 +172,6 @@ class ProjectController extends Controller
         if ($api) {
             return $this->sendResponse($project, 'project');
         };
-
         return view('pages.project.show', \compact('project', 'attributes', 'event', 'seeking', 'likes'));
     }
 
@@ -255,9 +254,9 @@ class ProjectController extends Controller
         $this->collaboratorsUpdater->updateCollaborators($projectId, $projectData);
         $this->projectAttributesUpdater->updateProjectAttributes($projectId,$projectData);
         $this->createTagContract->createTag($projectId, $tags);
-        foreach($projectData->seeking as $seeking){
-                $this->createSeekingContract->createSeeking($projectId,$seeking);
-        }
+        // foreach($projectData->seeking as $seeking){
+        //         $this->createSeekingContract->createSeeking($projectId,$seeking);
+        // }
         $project = Project::find($projectId)->firstOrFail();
         $project->searchable();
         return redirect('project/' . $projectId);
@@ -869,16 +868,17 @@ class ProjectController extends Controller
         return $newAttributeValues->count();
     }
 
-    public function getWatsonTags(Request $request, $data = null, $relevance = 0.5)
+    public function getWatsonTags(Request $request, $data = null)
     {   
+        $relevance = env('WATSON_RELEVANCE_MIN');
+        $tagLimit = (int) env('WATSON_RESULT_LIMIT');
         if($request->filled('data')){
             $data = $request->get('data');
         }
         $nlu = new NaturalLanguageUnderstanding( WatsonCredential::initWithCredentials(env('WATSON_USER_NAME'), env('WATSON_PASSWORD')) );
-        $model = new AnalyzeModel($data, ['concepts'=>['limit'=>50]]);
+        $model = new AnalyzeModel($data, ['concepts'=>['limit'=> $tagLimit]]);
         $result = $nlu->analyze($model);
         $responseData =  json_decode($result->getContent());
-
         if($responseData){
             $data = array_filter($responseData->concepts, function ($tag) use ($relevance) { 
                 return ($tag->relevance >= $relevance);
