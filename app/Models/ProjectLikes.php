@@ -11,5 +11,6 @@ class ProjectLikes extends Model
     protected $fillable = [
         'user_id',
         'project_id',
+        'type'
     ];
 }

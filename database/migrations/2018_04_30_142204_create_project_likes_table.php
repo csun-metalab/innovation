@@ -17,6 +17,7 @@ class CreateProjectLikesTable extends Migration
             $table->increments('id');
             $table->integer('user_id');
             $table->integer('project_id');
+            $table->string('type');
             $table->softDeletes();
             $table->timestamps();
         });

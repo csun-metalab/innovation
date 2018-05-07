@@ -895,6 +895,10 @@ class ProjectController extends Controller
     public function likeProject(Request $request){
         $user_id = $request->get('user_id');
         $project_id = $request->get('project_id');
+        $type = $request->get('type');
+        if(is_null($type)){
+            $type = 'normal';
+        }
         $like = ProjectLikes::where('project_id', $project_id) -> where('user_id', $user_id)->get();
         if($like->isEmpty()){
             $newLike = new ProjectLikes();
