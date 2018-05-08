@@ -209,7 +209,9 @@
             return $('.project-create-form').submit();
         })
         $('.select2-tags option').each(function (index) {
-            $(this).addClass('watson');
+            if(this.value.search('watson-stored:') > -1){
+                $(this).addClass('watson');
+            }
         });
     </script>
     <script type="text/javascript">

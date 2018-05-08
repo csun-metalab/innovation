@@ -262,6 +262,8 @@ class ProjectController extends Controller
     private function tagsDecode(array $tags)
     {
         foreach ($tags as &$tag) {
+            $stored=false;
+
             if( str_contains($tag,'watson:') || str_contains($tag,'watson-stored:') ){
                 $data = explode(':', $tag);
                 $text = $data[1];
@@ -271,7 +273,10 @@ class ProjectController extends Controller
                 $text = $tag;
                 $relevance = 1;
             }
-            $tag = compact('text','relevance');
+            if(str_contains($tag,'stored:')){
+                $stored = true;
+            }
+            $tag = compact('text','relevance','stored');
         }
         return $tags;
     }
