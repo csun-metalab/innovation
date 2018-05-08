@@ -500,7 +500,7 @@ class ProjectController extends Controller
 
         // If project is cayuse project
         if (null !== $project->cayuse_id) {
-            return redirect('project')->with('error', 'You are unable to delete this project.');
+            return redirect('project')->with('error', 'You are unable to archive this project.');
         }
 
         // Lazy load the interests to a project to iterate and decrement
@@ -525,7 +525,7 @@ class ProjectController extends Controller
             $url = 'admin/dashboard';
         }
 
-        return redirect($url)->with('success', 'Project Successfully Deleted');
+        return redirect($url)->with('success', 'Project Successfully Archived');
     }
 
     /**
