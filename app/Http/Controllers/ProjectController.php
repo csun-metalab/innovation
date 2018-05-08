@@ -504,16 +504,14 @@ class ProjectController extends Controller
         }
 
         // Lazy load the interests to a project to iterate and decrement
-        $project->load('interests');
-
+        $project->load('tags');
         // Grabs all the projects research interests and decrements each interest
-        foreach ($project->interests as $interest) {
-            $interest->decrement('count');
+        foreach ($project->tags as $tags) {
+            $tags->delete();
         }
 
         DB::transaction(function () use ($project) {
             $project->allMembers()->detach();
-            $project->interests()->detach();
             $project->invitations()->delete();
             $project->policies()->delete();
             $project->delete();
