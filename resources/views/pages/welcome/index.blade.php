@@ -106,7 +106,7 @@
           <p><img src={{ asset('imgs/speech-bubble.png') }} alt=""></p>
           <h2>Be A Part Of The Collaboration.</h2>
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-          <p><a title="Explore Projects" href="{{ url('project/step-1') }}" class="btn btn-primary-outline btn-lg">Create A Project</a></p>
+          <p><a title="Explore Projects" href="{{ url('project/create') }}" class="btn btn-primary-outline btn-lg">Create A Project</a></p>
           <br><br>
         </div>
       </div>
