@@ -6,5 +6,5 @@ namespace Helix\Contracts;
 
 interface CreateUniversityEventContract
 {
-    public function createUniversityEvent($eventName,$startDate,$endDate,$originator,$application);
+    public function createUniversityEvent($data);
 }

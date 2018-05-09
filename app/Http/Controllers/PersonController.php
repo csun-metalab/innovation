@@ -14,6 +14,7 @@ use Helix\Models\Event;
 use Helix\Contracts\GetUniversityEventsContract;
 use Helix\Contracts\CreateUniversityEventContract;
 use Illuminate\Support\Facades\Redirect;
+use Helix\Http\Requests\UniversityEvent;
 
 /**
  * Handles the functionality of a logged in faculty member which includes
@@ -115,15 +116,16 @@ class PersonController extends Controller
        return $this->universityEventsRetriever->getUniversityEvents();
     }
 
-    public function createUniversityEvent(Request $request){
-        $eventName = $request['event_name'];
-        $startDate = $request['start_date'];
-        $endDate = $request['end_date'];
-        $originator = $request['originator'];
-        $startDate = \Carbon\Carbon::parse($startDate)->format('Y-m-d');
-        $endDate = \Carbon\Carbon::parse($endDate)->format('Y-m-d');
-        $application = env('APP_NAME');
-        return $this->universityEventCreator->createUniversityEvent($eventName,$startDate,$endDate,$originator,$application);
+    public function createUniversityEvent(UniversityEvent $request){
+        $data = [
+            'application' => env('APP_NAME'),
+            'originator' => $request['originator'],
+            'eventName' => $request['event_name'],
+            'startDate' => \Carbon\Carbon::parse($request['start_date'])->format('Y-m-d'),
+            'endDate' => \Carbon\Carbon::parse($request['end_date'])->format('Y-m-d'),
+            'description' => $request['description']?:null
+        ];
+        return $this->universityEventCreator->createUniversityEvent($data);
     }
 
     public function deleteUniversityEvent(Request $request){
