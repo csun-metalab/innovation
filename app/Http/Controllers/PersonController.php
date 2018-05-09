@@ -35,7 +35,7 @@ class PersonController extends Controller
     {
         $this->universityEventsRetriever = $universityEventsContract;
         $this->universityEventCreator = $createUniversityEventContract;
-        $this->middleware(['auth', 'helix-roles']);
+        $this->middleware(['auth', 'roles']);
     }
 
     /**
