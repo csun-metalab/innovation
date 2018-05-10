@@ -23,7 +23,7 @@
       <div class="col-sm-8 col-sm-offset-2 type--center">
         <p>Congratulations Your Project Has Been Created!</p>
         <br>
-        <a title="View Project" href="{{ url('project/' . $project->project_id) }}" class="btn btn-default">View Project</a>
+        <a title="View Project" href="{{ urlAppName('/project/' . $project->project_id) }}" class="btn btn-default">View Project</a>
        <a title="View Project" href="{{ route('project.photo-upload', ['id' => $project->project_id]) }}" class="btn btn-primary">Upload Image</a>
 
       </div>

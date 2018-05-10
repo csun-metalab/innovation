@@ -30,7 +30,7 @@
         </a>
       </div>
       <div class="col-sm-3 type--center">
-        <a href="{{ url('project') }}" style="color: #4a4a4a; text-decoration:none;">
+        <a href="{{ urlAppName('/project') }}" style="color: #4a4a4a; text-decoration:none;">
           <div class="panel">
             <div class="panel__content">
               <br>

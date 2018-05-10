@@ -27,7 +27,7 @@
 
         <div class="cd-filter-block">
             {!! Form::button('Apply Filter', ['title' => 'Filter Projects','class' => 'btn btn-primary pull-right', 'role' => 'button', 'type' => 'submit']) !!}
-            <a title="Clear Filters" class="pull-left" href="{{ url('/project') }}">Clear Filters</a>
+            <a title="Clear Filters" class="pull-left" href="{{ urlAppName('/project') }}">Clear Filters</a>
         </div>
         <br><br>
     </form>
@@ -40,6 +40,6 @@
     <a title="Filters" class="cd-filter-trigger"><i class="fa fa-filter"></i> Filters</a>
 @endif
 @auth
-<a title="Add New Project" href="{{ url('project/create') }}" class="cd-filter-trigger-right"><i
+<a title="Add New Project" href="{{ urlAppName('/project/create') }}" class="cd-filter-trigger-right"><i
             class="fa fa-plus"></i> Add a new project</a>
 @endauth

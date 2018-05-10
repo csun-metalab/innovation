@@ -19,7 +19,7 @@
                         <br>
                         <h1 id="description" style="margin-left:50px;text-align:center;width:400px;color:#4A4A4A; font-family: Open Sans,Helvetica Neue,Helvetica, Arial, sans-serif; font-weight: 200;font-size:15px;">{{$project->abstract}}</h1>
                         <br><br>
-                            <a href="{{ url('project/' . $project->project_id . '/create/step-1') }}" style="margin-left:170px;background-color:#D0021B; border:1px solid #D0021B;border-radius:3px;color:#ffffff;display:inline-block;font-family:sans-serif;font-size:16px;line-height:22px;text-align:center;text-decoration:none;width:150px;-webkit-text-size-adjust:none;mso-hide:all;">View Project</a> 
+                            <a href="{{ urlAppName('/project/' . $project->project_id . '/create/step-1') }}" style="margin-left:170px;background-color:#D0021B; border:1px solid #D0021B;border-radius:3px;color:#ffffff;display:inline-block;font-family:sans-serif;font-size:16px;line-height:22px;text-align:center;text-decoration:none;width:150px;-webkit-text-size-adjust:none;mso-hide:all;">View Project</a>
                 </td>
             </table>
             </td>

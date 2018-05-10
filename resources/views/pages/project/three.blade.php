@@ -117,9 +117,9 @@
                     <td>Pending</td>
                     <td class="text--center">
                       @if(is_null($invitation->from_id))
-                      <a class="collaboratorActionBtn" data-url="{{ url('project/' . request()->route('projectId') . '/invitation/' . $invitation->id . '/accept') }}">Approve</a>
+                      <a class="collaboratorActionBtn" data-url="{{ urlAppName('/project/' . request()->route('projectId') . '/invitation/' . $invitation->id . '/accept') }}">Approve</a>
                       @else
-                      <a class="collaboratorActionBtn" data-url="{{ url('project/' . request()->route('projectId') . '/invitation/' . $invitation->id . '/cancel') }}">Cancel Invite</a>
+                      <a class="collaboratorActionBtn" data-url="{{ urlAppName('/project/' . request()->route('projectId') . '/invitation/' . $invitation->id . '/cancel') }}">Cancel Invite</a>
                       @endif
                     </td>
                   </tr>

@@ -3,7 +3,6 @@
 namespace Helix\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use Helix\Http\Requests;
 use Helix\Http\Controllers\Controller;
 
@@ -14,10 +13,14 @@ use Helix\Http\Controllers\Controller;
  */
 class WelcomeController extends Controller
 {
+    public function __construct(Request $request)
+    {
+        $this->prefix  = $request->route()->getPrefix();
+    }
+
     public function index()
     {
-    	return redirect('project');
-//    	return view('pages.welcome.index');
+    	return redirect($this->prefix.'/project');
     }
     public function aboutIndex()
     {

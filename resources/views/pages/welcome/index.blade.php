@@ -11,7 +11,7 @@
 <div class="section section--lg">
   <div class="container type--center">
     {{--<img src="{{ asset('imgs/helix-icon.png') }}" style="width:80px; margin-bottom: 25px;" alt="HELIX Logo">--}}
-    @if(env('APP_NAME')=='SeniorDesign')
+    @if(getAppName()=='SeniorDesign')
       <h1 class="mega type--thin type--marginless">Senior Design</h1>
     @else
       <h1 class="mega type--thin type--marginless">Innovation</h1>
@@ -20,7 +20,7 @@
     <!-- <h2 class="type--thin type--gray">Helping Everyone Link Interests &amp; Expertise.</h2> -->
     <h2 class="type--thin type--gray">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
     <br>
-    <p><a title="Explore Projects" href="{{ url('project') }}" class="btn btn-primary-outline btn-lg">Explore Projects</a></p>
+    <p><a title="Explore Projects" href="{{ urlAppName('/project') }}" class="btn btn-primary-outline btn-lg">Explore Projects</a></p>
     {{--<p class="milli type--uppercase type--gray type--marginless">v1.6.1-Public-Beta</p>--}}
   </div>
 </div>
@@ -106,7 +106,7 @@
           <p><img src={{ asset('imgs/speech-bubble.png') }} alt=""></p>
           <h2>Be A Part Of The Collaboration.</h2>
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-          <p><a title="Explore Projects" href="{{ url('project/create') }}" class="btn btn-primary-outline btn-lg">Create A Project</a></p>
+          <p><a title="Explore Projects" href="{{ urlAppName('/project/create') }}" class="btn btn-primary-outline btn-lg">Create A Project</a></p>
           <br><br>
         </div>
       </div>

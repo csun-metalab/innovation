@@ -14,10 +14,10 @@ What's New
     <nav class="bs-docs-sidebar">
       <ul class="nav nav-stacked sidebar">
           <li class="{{ setActive(['about/whats-new','about/whats-new/*']) }}">
-              <a title="What's New" href="{{ url('about/whats-new') }}">What's New</a>
+              <a title="What's New" href="{{ urlAppName('/about/whats-new') }}">What's New</a>
           </li>
           <li class="{{ setActive(['about/api','about/api/*']) }}">
-              <a title="API Documentation" href="{{ url('about/api') }}">API Documentation</a>
+              <a title="API Documentation" href="{{ urlAppName('/about/api') }}">API Documentation</a>
           </li>
 
       </ul>

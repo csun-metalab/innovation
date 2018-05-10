@@ -24,7 +24,7 @@
             <div class="col-xl-5">
                 <div class="form__group">
                     @if(isset($events) && count($events))
-                        @if(env('APP_NAME')=='SeniorDesign')
+                        @if(getAppName()=='SeniorDesign')
                             {{Form::label('event_id','Term',['class'=>'label--required type--left type--thin'])}}
                         @else
                             {{Form::label('event_id','Event',['class'=>'label--required type--left type--thin'])}}
@@ -110,10 +110,10 @@
                                 <td class="text--center">
                                     @if(is_null($invitation->from_id))
                                         <a class="collaboratorActionBtn"
-                                           data-url="{{ url('project/' . $project->project_id . '/invitation/' . $invitation->id . '/accept') }}">Approve</a>
+                                           data-url="{{ urlAppName('/project/' . $project->project_id . '/invitation/' . $invitation->id . '/accept') }}">Approve</a>
                                     @else
                                         <a class="collaboratorActionBtn"
-                                           data-url="{{ url('project/' . $project->project_id . '/invitation/' . $invitation->id . '/cancel') }}">Cancel
+                                           data-url="{{ urlAppName('/project/' . $project->project_id . '/invitation/' . $invitation->id . '/cancel') }}">Cancel
                                             Invite</a>
                                     @endif
                                 </td>

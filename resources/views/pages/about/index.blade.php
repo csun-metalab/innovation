@@ -29,7 +29,7 @@
       <div class="col-md-3">
         <ul class="nav">
           <li class="nav__item nav__item--{{ setActive(['about/version-history']) }}">
-            <a href="{{ url('about/version-history') }}" class="nav__link">Version History</a>
+            <a href="{{ urlAppName('/about/version-history') }}" class="nav__link">Version History</a>
           </li>
         {{-- <li class="nav__item nav__item--{{ setActive(['about/faq']) }}">
         <a href="{{ url('about/faq') }}" class="nav__link">FAQ</a>
@@ -38,7 +38,7 @@
             <a href="{{ url('about/api') }}" class="nav__link">API Documentation</a>
           </li> --}}
           <li class="nav__item nav__item--{{ setActive(['about/browser-support']) }}">
-            <a href="{{ url('about/browser-support') }}" class="nav__link">Browser Support</a>
+            <a href="{{ urlAppName('/about/browser-support') }}" class="nav__link">Browser Support</a>
           </li>
         </ul>
         <br>

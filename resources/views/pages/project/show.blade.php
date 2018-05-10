@@ -42,7 +42,7 @@
             <div class="col-md-3 hidden-sm-down">
                 @can('is-owner', $project)
                     <div class="mlr--10-0">
-                        <a class="btn btn-default btn--full-width" href="{{ url('project/' . $project->slug . '/edit') }}"><i class="fa fa-pencil"></i> Edit Project</a>
+                        <a class="btn btn-default btn--full-width" href="{{ urlAppName('/project/' . $project->slug . '/edit') }}"><i class="fa fa-pencil"></i> Edit Project</a>
                     <br>
                     </div>
 {{--                     @if(is_null($project->cayuse_id))
@@ -156,7 +156,7 @@
                                     <ul class="dropdown-content">
                                         <li>
                                             <a title="View {{ $member->display_name }}'s projects"
-                                               href="{{ url("project?member=".$member->user_id)}}"
+                                               href="{{ urlAppName("/project?member=".$member->user_id)}}"
                                                class="color--grey nodeco">View <b>{{ $member->display_name }}</b>'s
                                                 Projects</a>
                                         </li>
@@ -199,7 +199,7 @@
                         @can('is-owner', $project)
                             <div class="mlr--10-0">
                                 <a class="btn btn-default btn--full-width"
-                                   href="{{ url('project/' . $project->slug .'/edit') }}"><i
+                                   href="{{ urlAppName('/project/' . $project->slug .'/edit') }}"><i
                                             class="fa fa-pencil"></i> Edit Project</a>
                                 <br>
                             </div>
@@ -296,7 +296,7 @@
                             <div class="dropdown-content">
                                 <li>
                                     <a title="See {{ $project->pi->display_name }}'s projects"
-                                       href="{{ url("project?member=".$project->pi->user_id)}}"
+                                       href="{{ urlAppName("/project?member=".$project->pi->user_id)}}"
                                        class="color--grey nodeco">View <b>{{ $project->pi->display_name }}</b>'s
                                         Projects</a>
                                 </li>
@@ -331,7 +331,7 @@
                                                 <ul class="dropdown-content">
                                                     <li>
                                                         <a title="View {{ $member->display_name }}'s projects"
-                                                           href="{{ url("project?member=".$member->user_id)}}"
+                                                           href="{{ urlAppName("/project?member=".$member->user_id)}}"
                                                            class="color--grey nodeco">View
                                                             <b>{{ $member->display_name }}</b>'s Projects</a>
                                                     </li>

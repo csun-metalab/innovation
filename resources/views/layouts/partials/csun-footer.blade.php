@@ -8,7 +8,7 @@
   					</div>
   					<div class="col-sm-9">
   						<ul class="list--unstyled">
-							@if(env('APP_NAME')=='SeniorDesign')
+							@if(getAppName()=='SeniorDesign')
 								<li><strong>Senior Design</strong> <br>&copy; California State University, Northridge</li>
 
 							@else

@@ -142,7 +142,7 @@
                 </div>
                 <br>
                 <div class="type--center">
-                      <a href="{{ url("project/$projectId") }}" class="btn btn-default">Cancel</a>
+                      <a href="{{ urlAppName("/project/$projectId") }}" class="btn btn-default">Cancel</a>
                       {!! Form::submit('Next Step', ['title' => 'Next Step','class' => 'btn btn-primary', 'style' => 'width: 132px']) !!}
                 </div>
                 <br><br><br>

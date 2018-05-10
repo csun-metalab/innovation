@@ -12,105 +12,118 @@ declare(strict_types=1);
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::group(['middleware' => ['web']], function () {
-    // Helix Welcome
-    Route::get('/', 'WelcomeController@index')
-        ->name('welcome');
-    Route::get('about/version-history', 'WelcomeController@aboutIndex')
-        ->name('about.versions');
-    Route::get('about/browser-support', 'WelcomeController@aboutIndex')
-        ->name('about.browsers');
-    // Route::get('about/faq', 'WelcomeController@aboutIndex');
-    // Route::get('about/api', 'WelcomeController@aboutIndex');
-    // FEEDBACK
-    Route::get('feedback', 'FeedbackController@getIndex');
-    Route::post('feedback', 'FeedbackController@postIndex');
-    //Search
 
-    // Route::get('search/research-interests','SearchController@searchByResearchInterest')
-    //     ->name('search.research-interests');
-    // Route::get('search/research-interests/faculty', 'SearchController@seeMorePeopleByResearchInterests')
-    //     ->name("see-more-faculty");
-    // Route::get('search/research-interests/projects', 'SearchController@seeMoreProjectsByResearchInterests')
-    //     ->name('see-more-projects');
-    Route::get('search/everything', 'SearchController@allSearchResults')
-        ->name('all-search-results');
-    Route::get('search/members', 'SearchController@searchForMember')
-        ->name('search.member-search');
-    // Route::get('browse/research-interests','SearchController@browseAllResearchInterests')
-    //     ->name('browse.research-interests');
-    // Authentication
-    Route::get('login', 'AuthController@getLogin')
-        ->name('login');
-    Route::post('login', 'AuthController@postLogin')
-        ->name('login.post');
-    Route::get('logout', 'AuthController@getLogout')
-        ->name('logout');
-    // Projects
-    Route::group(['prefix' => 'project'], function () {
-        Route::get('/', 'SearchController@index')
-            ->name('search.projects');
+$appNames = [
+    'Innovation',
+    'SeniorDesign',
+//    'Scholarship'
+];
 
-        Route::get('new', function () {
-            return view('pages.project.create');
+foreach($appNames as $appName){
+    Route::group(['prefix' => $appName],function() {
+        Route::group(['middleware' => ['web']], function (){
+            // Helix Welcome
+            Route::get('/', 'WelcomeController@index')
+                ->name('welcome');
+            Route::get('about/version-history', 'WelcomeController@aboutIndex')
+                ->name('about.versions');
+            Route::get('about/browser-support', 'WelcomeController@aboutIndex')
+                ->name('about.browsers');
+            // Route::get('about/faq', 'WelcomeController@aboutIndex');
+            // Route::get('about/api', 'WelcomeController@aboutIndex');
+            // FEEDBACK
+            Route::get('feedback', 'FeedbackController@getIndex');
+            Route::post('feedback', 'FeedbackController@postIndex');
+            //Search
+
+            // Route::get('search/research-interests','SearchController@searchByResearchInterest')
+            //     ->name('search.research-interests');
+            // Route::get('search/research-interests/faculty', 'SearchController@seeMorePeopleByResearchInterests')
+            //     ->name("see-more-faculty");
+            // Route::get('search/research-interests/projects', 'SearchController@seeMoreProjectsByResearchInterests')
+            //     ->name('see-more-projects');
+            Route::get('search/everything', 'SearchController@allSearchResults')
+                ->name('all-search-results');
+            Route::get('search/members', 'SearchController@searchForMember')
+                ->name('search.member-search');
+            // Route::get('browse/research-interests','SearchController@browseAllResearchInterests')
+            //     ->name('browse.research-interests');
+            // Authentication
+            Route::get('login', 'AuthController@getLogin')
+                ->name('login');
+            Route::post('login', 'AuthController@postLogin')
+                ->name('login.post');
+            Route::get('logout', 'AuthController@getLogout')
+                ->name('logout');
+            // Projects
+            Route::group(['prefix' => 'project'], function () {
+                Route::get('/', 'SearchController@index')
+                    ->name('search.projects');
+
+                Route::get('new', function () {
+                    return view('pages.project.create');
+                });
+                Route::get('create', 'ProjectController@create')
+                    ->name('project.create.get');
+                Route::post('create', 'ProjectController@postCreate')
+                    ->name('project.create.post');
+
+                Route::get('{id}', 'ProjectController@show')
+                    ->name('project.show');
+                Route::get('{id}/delete', 'ProjectController@destroy')
+                    ->name('project.delete');
+                Route::get('{id}/edit', 'ProjectController@edit')
+                    ->name('project.edit');
+                Route::post('{id}/edit', 'ProjectController@postCreate')
+                    ->name('project.post.edit');
+                // Image upload routes
+                Route::get('{id}/upload-image', 'ImageController@create')
+                    ->name('project.photo-upload');
+                Route::post('{id}/store-image', 'ImageController@store')
+                    ->name('project.photo-store');
+                Route::get('{id}/crop-image', 'ImageController@crop')
+                    ->name('project.photo-crop');
+                Route::post('{id}/crop-image', 'ImageController@postCrop')
+                    ->name('project.photo-post-crop');
+                Route::get('{id}/delete-image', 'ImageController@destroy')
+                    ->name('project.photo-delete');
+                Route::put('{projectId}/toggle-featured', 'ProjectController@toggleFeatured')
+                    ->name('project.toggle-featured');
+                // Invitations
+                Route::get('{projectId}/invitation/{inviteId}/accept', 'InvitationController@acceptInvitation')
+                    ->name('dashboard.invitations.accept');
+                Route::get('{projectId}/invitation/{inviteId}/reject', 'InvitationController@rejectInvitation')
+                    ->name('dashboard.invitations.reject');
+                Route::get('{projectId}/invitation/{invitedId}/cancel', 'InvitationController@cancelInvite')
+                    ->name('dashboard.invitations.cancel');
+                Route::get('{projectId}/request', 'InvitationController@selfInvitation')
+                    ->name('project.request-to-join');
+                // IMPORTANT: Client has requested not to allow auto joining projects. Leave route alone for now.
+                // Route::get('{projectId}/join', 'InvitationController@joinProject');
+                // This is the route for when a student requests to join a project
+                Route::get('{projectId}/student-request', 'InvitationController@studentRequest')
+                    ->name('student-request-form');
+                // This route is called when the student submits the request form.
+                Route::post('{projectId}/student-request/sent', 'InvitationController@processStudentRequest')
+                    ->name('student-request-sent');
+            });
+            // route for youtube validation
+            Route::group(['prefix' => 'admin'], function () {
+                Route::get('dashboard', 'PersonController@adminPanel');
+                Route::get('dashboard/invitations', 'PersonController@dashboardInvitation')
+                    ->name('dashboard.invitations');
+                Route::get('dashboard/events', 'PersonController@universityEvents')
+                    ->name('dashboard.events');
+                Route::post('dashboard/create-event', 'PersonController@createUniversityEvent')
+                    ->name('dashboard.event.create');
+            });
+
+            Route::post('test', 'ProjectController@PostProjectCreation');
         });
-        Route::get('create', 'ProjectController@create')
-            ->name('project.create.get');
-        Route::post('create', 'ProjectController@postCreate')
-            ->name('project.create.post');
 
-        Route::get('{id}', 'ProjectController@show')
-            ->name('project.show');
-        Route::get('{id}/delete', 'ProjectController@destroy')
-            ->name('project.delete');
-        Route::get('{id}/edit', 'ProjectController@edit')
-            ->name('project.edit');
-        Route::post('{id}/edit', 'ProjectController@postCreate')
-            ->name('project.post.edit');
-        // Image upload routes
-        Route::get('{id}/upload-image', 'ImageController@create')
-            ->name('project.photo-upload');
-        Route::post('{id}/store-image', 'ImageController@store')
-            ->name('project.photo-store');
-        Route::get('{id}/crop-image', 'ImageController@crop')
-            ->name('project.photo-crop');
-        Route::post('{id}/crop-image', 'ImageController@postCrop')
-            ->name('project.photo-post-crop');
-        Route::get('{id}/delete-image', 'ImageController@destroy')
-            ->name('project.photo-delete');
-        Route::put('{projectId}/toggle-featured', 'ProjectController@toggleFeatured')
-            ->name('project.toggle-featured');
-        // Invitations
-        Route::get('{projectId}/invitation/{inviteId}/accept', 'InvitationController@acceptInvitation')
-            ->name('dashboard.invitations.accept');
-        Route::get('{projectId}/invitation/{inviteId}/reject', 'InvitationController@rejectInvitation')
-            ->name('dashboard.invitations.reject');
-        Route::get('{projectId}/invitation/{invitedId}/cancel', 'InvitationController@cancelInvite')
-            ->name('dashboard.invitations.cancel');
-        Route::get('{projectId}/request', 'InvitationController@selfInvitation')
-            ->name('project.request-to-join');
-        // IMPORTANT: Client has requested not to allow auto joining projects. Leave route alone for now.
-        // Route::get('{projectId}/join', 'InvitationController@joinProject');
-        // This is the route for when a student requests to join a project
-        Route::get('{projectId}/student-request', 'InvitationController@studentRequest')
-            ->name('student-request-form');
-        // This route is called when the student submits the request form.
-        Route::post('{projectId}/student-request/sent', 'InvitationController@processStudentRequest')
-            ->name('student-request-sent');
     });
-    // route for youtube validation
-    Route::group(['prefix' => 'admin'], function () {
-        Route::get('dashboard', 'PersonController@adminPanel');
-        Route::get('dashboard/invitations', 'PersonController@dashboardInvitation')
-            ->name('dashboard.invitations');
-        Route::get('dashboard/events', 'PersonController@universityEvents')
-            ->name('dashboard.events');
-        Route::post('dashboard/create-event', 'PersonController@createUniversityEvent')
-            ->name('dashboard.event.create');
-    });
+}
 
-    Route::post('test', 'ProjectController@PostProjectCreation');
-});
 /*
 |---------------------------------------------------------------
 | TEST ROUTES

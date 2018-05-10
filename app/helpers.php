@@ -3,6 +3,9 @@
 declare(strict_types=1);
 use Carbon\Carbon;
 use Helix\Models\Project;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Contracts\Routing\UrlGenerator;
+//use Illuminate\Http\Request;
 
 /**
  * Returns an active state if the current URL matches the provided path.
@@ -14,6 +17,8 @@ use Helix\Models\Project;
  *
  * @return string
  */
+
+
 function setActive($path, $active = 'active')
 {
     // Allows me to check for an array of paths
@@ -23,6 +28,26 @@ function setActive($path, $active = 'active')
 function getPages()
 {
     return \str_replace('/', ' ', Request::path());
+}
+
+//Use urlAppName() instead of url() in order to apply the dynamic prefix before a url
+function urlAppName($path = null, $parameters = [], $secure = null)
+{
+    if (is_null($path)) {
+        return app(UrlGenerator::class);
+    }
+
+    return app(UrlGenerator::class)->to(getAppName().$path, $parameters, $secure);
+}
+
+function getAppName()
+{
+    if(request()->route() == null)
+        return new NotFoundHttpException();
+    $uri  = request()->route()->getPrefix();
+    $uri = explode('/', $uri);
+    $appName = $uri[0];
+    return $appName;
 }
 
 /*

@@ -7,8 +7,8 @@
     <div class="row">
 
       <div class="col-sm-12">
-      <a class="btn btn-default" style="float:right;" href="{{ url('project/create') }}">Add a New Project</a>
-          @if(env('APP_NAME')=='SeniorDesign')
+      <a class="btn btn-default" style="float:right;" href="{{ urlAppName('/project/create') }}">Add a New Project</a>
+          @if(getAppName()=='SeniorDesign')
               <h1 class="type--header type--thin">Senior Design Dashboard</h1>
           @else
               <h1 class="type--header type--thin">Innovation Dashboard</h1>
@@ -37,10 +37,10 @@
 				<p>{{ str_limit($invitation->project->abstract, 150, '...') }}</p>
 				<ul class="list--inline list--unstyled">
 					<li>
-						<a title="Accept" href="{{ url('project/' . $invitation->project->project_id . '/invitation/' . $invitation->id . '/accept') }}" class="btn btn-primary">Accept</a>
+						<a title="Accept" href="{{ urlAppName('/project/' . $invitation->project->project_id . '/invitation/' . $invitation->id . '/accept') }}" class="btn btn-primary">Accept</a>
 					</li>
 					<li>
-						<a title="Reject" href="{{ url('project/' . $invitation->project->project_id . '/invitation/' . $invitation->id . '/reject') }}" class="btn btn-default">Reject</a>
+						<a title="Reject" href="{{ urlAppName('/project/' . $invitation->project->project_id . '/invitation/' . $invitation->id . '/reject') }}" class="btn btn-default">Reject</a>
 					</li>
 				</ul>
 			</div>

@@ -6,9 +6,9 @@
             @if(Auth::user()->isAdmin())
                 <div class="row">
                     <div class="col-sm-12">
-                        <a class="btn btn-default" style="float:right;" href="{{ url('project/create') }}">Add a New
+                        <a class="btn btn-default" style="float:right;" href="{{ urlAppName('/project/create') }}">Add a New
                             Project</a>
-                        @if(env('APP_NAME')=='SeniorDesign')
+                        @if(getAppName()=='SeniorDesign')
                             <h1 class="type--header type--thin">Senior Design Dashboard</h1>
                         @else
                             <h1 class="type--header type--thin">Innovation Dashboard</h1>

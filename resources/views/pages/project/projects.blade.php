@@ -28,8 +28,8 @@
                   <tr>
                     <td>{{ $project->project_title }}</td>
                     <td class="text--center width--25per>
-                      <a title="View" class="nodeco" href='{{ url('project/' . $project->project_id) }}'>View</a><span> | </span>
-                      <a title="Edit" class="nodeco" href='{{ url("") }}'> Edit</a>
+                      <a title="View" class="nodeco" href='{{ urlAppName('/project/' . $project->project_id) }}'>View</a><span> | </span>
+                      <a title="Edit" class="nodeco" href='{{ urlAppName("") }}'> Edit</a>
                     </td>
                   </tr>
               </tbody>

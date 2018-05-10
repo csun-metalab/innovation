@@ -8,8 +8,8 @@
 
       <div class="col-sm-12">
       {{-- <br> --}}
-      <a class="btn btn-default" style="float:right;" href="{{ url('project/create') }}">Add a New Project</a>
-        @if(env('APP_NAME')=='SeniorDesign')
+      <a class="btn btn-default" style="float:right;" href="{{ urlAppName('/project/create') }}">Add a New Project</a>
+        @if(getAppName()=='SeniorDesign')
           <h1 class="type--header type--thin">Senior Design Dashboard</h1>
         @else
           <h1 class="type--header type--thin">Innovation Dashboard</h1>
@@ -41,7 +41,7 @@
                     {{--</div>--}}
                   {{--</div>--}}
                   <div class="panel__content mh--400">
-                    <p><strong><a title="{{ ("$project->project_title") }}" class="color--grey" href="{{ url("project/$project->slug") }}">{{ $project->project_title }}</a></strong></p>
+                    <p><strong><a title="{{ ("$project->project_title") }}" class="color--grey" href="{{ urlAppName("/project/$project->slug") }}">{{ $project->project_title }}</a></strong></p>
                     <p>{{ str_limit($project->abstract, 140, '...') }}</p>
                   </div>
                   <div class="panel__footer height--55">

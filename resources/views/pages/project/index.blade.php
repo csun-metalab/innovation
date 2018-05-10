@@ -124,7 +124,7 @@
             </div>
             <br><br><br><br>
             <div class="col-sm-12">
-                <a href="{{ url("project") }}" class="btn btn-primary">See all Projects</a>
+                <a href="{{ urlAppName("/project") }}" class="btn btn-primary">See all Projects</a>
             </div>
         </div>
         <div style="fill:black">

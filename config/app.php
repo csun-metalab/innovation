@@ -14,6 +14,8 @@ return [
     |
     */
 
+    'appName' => 'Innovation',
+
     'name' => env('APP_NAME', 'Laravel'),
 
     'env' => env('APP_ENV', 'production'),

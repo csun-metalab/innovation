@@ -2,7 +2,7 @@
     <div class="panel bg--white">
         <div class="panel__content mh--400">
             <p><strong><a title="{{ ("$project->project_title") }}" class="color--grey"
-                          href="{{ url("project/$project->slug") }}">{!! $project->project_title !!}</a></strong></p>
+                          href="{{ urlAppName("project/$project->slug") }}">{!! $project->project_title !!}</a></strong></p>
             {{-- This is an attempt to fill up the card as much as possible. --}}
             <p>{!! str_limit($project->abstract, 450 - strlen($project->project_title), '...') !!}</p>
             <div>

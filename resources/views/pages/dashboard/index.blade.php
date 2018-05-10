@@ -8,8 +8,8 @@
 
       <div class="col-sm-12">
       {{-- <br> --}}
-      <a class="btn btn-default" style="float:right;" href="{{ url('project/create') }}">Add a New Project</a>
-        @if(env('APP_NAME')=='SeniorDesign')
+      <a class="btn btn-default" style="float:right;" href="{{ urlAppName('/project/create') }}">Add a New Project</a>
+        @if(getAppName()=='SeniorDesign')
               <h1 class="type--header type--thin">Senior Design Dashboard</h1>
         @else
               <h1 class="type--header type--thin">Innovation Dashboard</h1>
@@ -20,11 +20,11 @@
     <div class="row">
       <div class="col-lg-3">
         <ul class="nav">
-            <li class="nav__item nav__item--{{ Request::is('admin/dashboard') ? 'active' : ''}}">
-              <a title="My Projects" href="{{ url('admin/dashboard') }}" class="nav__link">My Projects</a>
+            <li class="nav__item nav__item--{{ Request::is(getAppName().'admin/dashboard') ? 'active' : ''}}">
+              <a title="My Projects" href="{{ urlAppName('/admin/dashboard') }}" class="nav__link">My Projects</a>
             </li>
-            <li class="nav__item nav__item--{{ Request::is('admin/dashboard/invitations') ? 'active' : ''}}">
-              <a title="Pending Invitations" href="{{ url('admin/dashboard/invitations') }}" class="nav__link" >Pending Invitations 
+            <li class="nav__item nav__item--{{ Request::is(getAppName().'admin/dashboard/invitations') ? 'active' : ''}}">
+              <a title="Pending Invitations" href="{{ urlAppName('/admin/dashboard/invitations') }}" class="nav__link" >Pending Invitations
                   @if($pendingInvitations > 0)
                   <p class="tag tag--danger">{{ $pendingInvitations }}</p>
                   @endif

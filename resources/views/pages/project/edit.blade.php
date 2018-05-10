@@ -106,7 +106,7 @@
   </div>
   </div>
   <div class="pull-right">
-  <a href="{{ url('project') }}" class="btn btn-default">Cancel</a>
+  <a href="{{ urlAppName('/project') }}" class="btn btn-default">Cancel</a>
   {!! Form::submit('Save', ['class' => 'btn btn-primary']) !!}
   </div>
 </div>

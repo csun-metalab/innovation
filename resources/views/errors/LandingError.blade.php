@@ -10,7 +10,7 @@
 		<br>
 		<div class="row">
 			<div class="col-sm-12">
-				 <a title="Return Home" href="{{ url("/") }}" class="btn btn-primary">Return Home</a>
+				 <a title="Return Home" href="{{ urlAppName("/") }}" class="btn btn-primary">Return Home</a>
 			</div>
 		</div>
 	</div>
