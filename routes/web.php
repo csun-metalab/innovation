@@ -13,6 +13,7 @@ declare(strict_types=1);
 |
 */
 
+//Current versions of the application will be stored here.
 $appNames = [
     'Innovation',
     'SeniorDesign',
