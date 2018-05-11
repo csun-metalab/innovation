@@ -46,7 +46,10 @@ class Project extends Model
         $this->members;
         $this->visibilityPolicy;
         $this->attribute;
-        return $this->toArray();
+        $likeCount = $this->likes();
+        $data = $this->toArray();
+        $data['likes'] = $likeCount;
+        return $data;
     }
     public function scopeSlug($query,$slug)
     {
@@ -186,6 +189,10 @@ class Project extends Model
         return $this->hasMany('Helix\Models\Invitation', 'project_id');
     }
 
+    public function likes(){
+        return ProjectLikes::where('project_id',$this->project_id)->count();
+    }
+
     public function visibilityPolicy()
     {
         return $this->hasOne('Helix\Models\ProjectPolicy', 'project_id', 'project_id')->where('policy_type', 'visibility');
@@ -308,6 +315,7 @@ class Project extends Model
     {
         return $this->invitations()->whereNull('updated_at');
     }
+
 
     /*
    |-----------------------------------------

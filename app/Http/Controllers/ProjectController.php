@@ -27,6 +27,7 @@ use Helix\Models\Role;
 use Helix\Models\Event;
 use Helix\Models\Title;
 use Helix\Models\Seeking;
+use Helix\Models\ProjectLikes;
 use Illuminate\Http\Request;
 use Searchy;
 
@@ -125,11 +126,12 @@ class ProjectController extends Controller
             return redirect("project/$project->slug");
         }
 
-        $project = Project::with('pi', 'members', 'award', 'video','url', 'image', 'visibilityPolicy','tags')->where('slug', $id)->firstOrFail();
+        $project = Project::with('pi', 'members', 'award', 'video','url','links', 'image', 'visibilityPolicy','tags')->where('slug', $id)->firstOrFail();
         // This is to check if there is a row in the attributes table corresponding to this project
         $attributes = Attribute::with('purpose')->findOrNew($project->project_id);
         $event = Event::where('id', $attributes->event_id)->pluck('event_name');
         $seeking = Seeking::where('project_id',$project->project_id)->get();
+        $likes = $project->likes();
         if ($attributes->project_id == null) {
             $attributes->project_id = $project->project_id;
             // $attributes->purpose_name = 'project';
@@ -166,7 +168,7 @@ class ProjectController extends Controller
         if ($api) {
             return $this->sendResponse($project, 'project');
         };
-        return view('pages.project.show', \compact('project', 'attributes', 'event', 'seeking'));
+        return view('pages.project.show', \compact('project', 'attributes', 'event', 'seeking', 'likes'));
     }
 
     /**
@@ -884,5 +886,36 @@ class ProjectController extends Controller
             $data = null;
         }
         return $data;
+    }
+
+    /**
+     * @param Request $request
+     */
+    public function likeProject(Request $request){
+        $user_id = Auth::user()->user_id;
+        $project_id = $request->get('project_id');
+        $type = $request->get('type');
+        if(is_null($type)){
+            $type = 'normal';
+        }
+        $like = ProjectLikes::withTrashed()->where('project_id', $project_id) -> where('user_id', $user_id)->first();
+        if(!$like){
+            $newLike = new ProjectLikes();
+            $newLike->user_id = $user_id;
+            $newLike->project_id = $project_id;
+            $newLike->type = $type;
+            $newLike->save();
+        }
+        else{
+            if($like->trashed()){
+                $like->restore();
+            }
+            else{
+                $like->delete();
+            }
+        }
+        Project::where('project_id', $project_id)->firstOrFail()->searchable();
+        dd('end');
+        return back();
     }
 }
