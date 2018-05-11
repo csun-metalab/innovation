@@ -130,7 +130,7 @@ class ProjectController extends Controller
             return redirect("project/$project->slug");
         }
 
-        $project = Project::with('pi', 'members', 'award', 'video','url','links', 'image', 'visibilityPolicy','tags','likes')->where('slug', $id)->firstOrFail();
+        $project = Project::with('pi', 'members', 'award', 'video','url','links', 'image', 'visibilityPolicy','tags')->where('slug', $id)->firstOrFail();
         // This is to check if there is a row in the attributes table corresponding to this project
         $attributes = Attribute::with('purpose')->findOrNew($project->project_id);
         $event = Event::where('id', $attributes->event_id)->pluck('event_name');
