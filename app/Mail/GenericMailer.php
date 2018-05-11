@@ -15,6 +15,7 @@ class GenericMailer extends Mailable
     public $subject;
     public $data;
     public $view;
+    public $replyTo;
 
     /**
      * Create a new message instance.
@@ -38,8 +39,9 @@ class GenericMailer extends Mailable
      */
     public function build()
     {
+
         return $this->from(config('mail.username'))
-                    ->replyTo($this->replyTo)
+                    ->replyTo($this->replyTo["address"],$this->replyTo["name"])
                     ->subject($this->subject)
                     ->view($this->view)
                     ->with($this->data);

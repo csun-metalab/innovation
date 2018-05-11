@@ -27,7 +27,7 @@ class Mailer
     */
     public function sendToMany($view, array $data, array $emails, $subject, array $replyTo = [])
     {
-        return Mail::to($emails)->send(new GenericMailer($view, $data, $subject, $from));
+        return Mail::to($emails)->send(new GenericMailer($view, $data, $subject, $replyTo));
     }
 
     /*
