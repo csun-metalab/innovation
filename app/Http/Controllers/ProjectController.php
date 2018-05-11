@@ -88,15 +88,11 @@ class ProjectController extends Controller
             'getWatsonTags'
         ]]);
 
-        // $this->middleware(['project-write', 'helix-roles'], ['only' => [
-        //     // 'create',
-        //     'step1',
-        //     'getStep2',
-        //     'step2',
-        //     'getStep3',
-        //     'store',
-        //     'destroy',
-        // ]]);
+        $this->middleware(['project-write', 'roles'], ['only' => [
+            'postCreate',
+            'edit',
+            'destroy',
+        ]]);
 
         $this->projectIdVerifier = $verifyProjectIdContract;
         $this->projectGeneralUpdater = $updateProjectGeneralContract;
