@@ -6,11 +6,15 @@ namespace Helix\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Searchable;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 //Project related details
+
 class Project extends Model
 {
     use Searchable;
+    use SoftDeletes;
+
+    protected $dates = ['deleted_at'];
 
     public static function boot()
     {
