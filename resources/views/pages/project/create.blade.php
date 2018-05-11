@@ -296,23 +296,6 @@
             return $('.project-create-form').submit();
         });
 
-        //Seeking Roles js
-        var seek_template, seek_input;
-        seek_template = seek_input = "";
-        if (collaborators.length > 0) {
-            seeking.forEach(function (seeking) {
-                // 0 = name, 1 = membersId, 2 = role_position
-                seek_template += "<tr data-id='" + seeking['title'] + "'><td>" + seeking['title'] + "</td><td style='text-align: center'> <a class='removeSeekingBtn btn btn-link'>Remove</a></td></tr>";
-
-                seek_input += "<input type='hidden' name='seeking[]' value='" + seeking['title'] + "'>";
-            });
-        }
-        else {
-            seek_template += '<tr data-id="{{ Auth::user()->display_name }}|{{ Auth::user()->user_id }}|Team Member"><td>No Open Roles</td><td style="text-align: center; width: 25%;"> <a class="removeCollabBtn btn btn-link">N/A</a></td></tr>';
-            seek_input += "<input type='hidden' name='collaborators[]' value='{{ Auth::user()->display_name }}|{{ Auth::user()->user_id }}|Team Member'>";
-        }
-        $('#seek_list tbody').append(seek_template);
-        $('.project-create-form').append(seek_input);
 
 
         function spinMe(this1) {
