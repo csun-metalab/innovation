@@ -1,3 +1,4 @@
+
 @extends('layouts.master')
 
 @section('content')
@@ -37,6 +38,13 @@
                             <div class="col-md-6">
                                 {!! Form::label('end_date', 'End Date', ['class'=>'label--default']) !!}
                                 {!! Form::text('end_date', '', ['class'=>'form-control datepicker', 'placeholder'=>'mm/dd/yyyy', 'type' => 'date', 'maxlength' => '10']) !!}
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                {!! Form::label('description', 'Event Description', ['class'=>'label--default']) !!}
+                                {!! Form::textarea('description', '', ['class'=>'form-control']) !!}
                             </div>
                         </div>
                         <br>
