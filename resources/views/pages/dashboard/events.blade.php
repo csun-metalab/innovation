@@ -26,7 +26,6 @@
                     <div class="col-lg-9">
                         <h3>Add a New Event</h3>
                         {!! Form::open(array('url' => route('dashboard.event.create'))) !!}
-                        {!! Form::hidden('originator', Auth::user()->display_name) !!}
                         {!! Form::label('event_name', 'Event Name', ['class'=>'label--default label--required']) !!}
                         {!! Form::text('event_name','', ['placeholder'=>'Enter an event name', 'maxlength' => '50']) !!}
                         <br>
@@ -79,7 +78,11 @@
                                                 </td>
                                                 <td style="text-align: center;padding: 10px;">{{ monthFormat($event->start_date) }}</td>
                                                 <td style="text-align: center;padding: 10px;">{{ monthFormat($event->end_date) }}</td>
-                                                <td style="text-align: center;padding: 10px;">{{$event->originator}}</td>
+                                                @if($event->originator == 'system')
+                                                    <td style="text-align: center;padding: 10px;">System</td>
+                                                @else
+                                                    <td style="text-align: center;padding: 10px;">{{$event->creator->display_name}}</td>
+                                                @endif
                                                 <td style="text-align: center;padding: 10px; width: 5%;">
                                                     <button id="{{ $event->id }}" role="button" class="modal-toggle btn btn-default">
                                                         <i class="fa fa-times"></i></button>

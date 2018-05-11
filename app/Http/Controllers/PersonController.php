@@ -119,7 +119,7 @@ class PersonController extends Controller
     public function createUniversityEvent(UniversityEvent $request){
         $data = [
             'application' => env('APP_NAME'),
-            'originator' => $request['originator'],
+            'originator' => Auth::user()->user_id,
             'eventName' => $request['event_name'],
             'startDate' => \Carbon\Carbon::parse($request['start_date'])->format('Y-m-d'),
             'endDate' => \Carbon\Carbon::parse($request['end_date'])->format('Y-m-d'),

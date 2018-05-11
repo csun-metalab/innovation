@@ -19,4 +19,13 @@ class Event extends Model
         'start_date',
         'end_date'
     ];
+
+    public function creator()
+    {
+        return $this->hasOne('Helix\Models\Person', 'user_id', 'originator');
+    }
+    public function scopeAppName($query,$appName)
+    {
+        return $query->where('application',$appName);
+    }
 }
