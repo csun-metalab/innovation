@@ -70,7 +70,7 @@ class FeedbackController extends Controller
 
         // if there were any errors flash the data and redirect back
         if ($validator->fails()) {
-            return redirect('feedback')->withErrors($validator)->withInput();
+            return redirect(getAppName().'/feedback')->withErrors($validator)->withInput();
         }
 
         $emailItems = [

@@ -60,14 +60,14 @@ class AuthController extends Controller
           // faculty members should be allowed to authenticate
           if(Auth::user()->isFaculty() || Auth::user()->isAdmin()) {
             // redirect back to the landing page if no original target
-            return redirect()->intended('admin/dashboard');
+            return redirect()->intended(getAppName().'/admin/dashboard');
           }
           // If not, we're going to check if they are staff
           if (Auth::user()->isStaffBasedOnAffiliation()) {
-            return redirect()->intended('/');
+            return redirect()->intended('/'.getAppName());
           }
           if (Auth::user()) {
-            return redirect()->intended('/');
+            return redirect()->intended('/'.getAppName());
           }
 
           // other individuals not matching the above cases are not
@@ -110,7 +110,7 @@ class AuthController extends Controller
     Auth::logout();
 
     // re-direct back to the landing page without HTTPS
-    $landing = str_replace('https:', 'http:', url('/'));
+    $landing = str_replace('https:', 'http:', urlAppName('/'));
     return redirect($landing);
   }
 

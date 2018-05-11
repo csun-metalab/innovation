@@ -28,7 +28,7 @@
     <div class="row">
       <div class="col-md-3">
         <ul class="nav">
-          <li class="nav__item nav__item--{{ setActive(['about/version-history']) }}">
+          <li class="nav__item nav__item--{{ setActive([getAppName().'/about/version-history']) }}">
             <a href="{{ urlAppName('/about/version-history') }}" class="nav__link">Version History</a>
           </li>
         {{-- <li class="nav__item nav__item--{{ setActive(['about/faq']) }}">
@@ -37,20 +37,20 @@
 {{--           <li class="nav__item nav__item--{{ setActive(['about/api']) }}">
             <a href="{{ url('about/api') }}" class="nav__link">API Documentation</a>
           </li> --}}
-          <li class="nav__item nav__item--{{ setActive(['about/browser-support']) }}">
+          <li class="nav__item nav__item--{{ setActive([getAppName().'/about/browser-support']) }}">
             <a href="{{ urlAppName('/about/browser-support') }}" class="nav__link">Browser Support</a>
           </li>
         </ul>
         <br>
       </div>
       <div class="col-md-9">
-            @if(Request::is('about/version-history'))
+            @if(Request::is(getAppName().'/about/version-history'))
              @includeIf('pages.about.version-history')
-            @elseif(Request::is('about/browser-support'))
+            @elseif(Request::is(getAppName().'/about/browser-support'))
              @includeIf('pages.about.browser-support')
-            @elseif(Request::is('about/faq'))
+            @elseif(Request::is(getAppName().'/about/faq'))
              @includeIf('pages.about.browser-support')
-            @elseif(Request::is('about/api'))
+            @elseif(Request::is(getAppName().'/about/api'))
              @includeIf('pages.about.api')
             @endif
       </div>

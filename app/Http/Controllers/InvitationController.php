@@ -57,7 +57,7 @@ class InvitationController extends Controller
          * Update helix.invitations table - set accepted = 1 and update timestamp
          * Create record in nemo.memberships table
          * Notify project leaders of acception if auth user is recipient
-         * url: project/{projectId}/invitation/{invitationId}/accept.
+         * url: {Application}/project/{projectId}/invitation/{invitationId}/accept.
          */
         $invitation = Invitation::findOrFail($inviteId);
         $project = Project::findOrFail($projectId);
