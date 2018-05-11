@@ -42,8 +42,10 @@ class Project extends Model
         $this->members;
         $this->visibilityPolicy;
         $this->attribute;
-        $this->countLikes;
-        return $this->toArray();
+        $likeCount = $this->likes();
+        $data = $this->toArray();
+        $data['likes'] = $likeCount;
+        return $data;
     }
     public function scopeSlug($query,$slug)
     {
@@ -310,9 +312,6 @@ class Project extends Model
         return $this->invitations()->whereNull('updated_at');
     }
 
-    public function countLikes($project_id){
-        return ProjectLikes::where('project_id',$project_id)->count();
-    }
 
     /*
    |-----------------------------------------

@@ -15,8 +15,8 @@ class CreateProjectLikesTable extends Migration
     {
         Schema::create('project_likes', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id');
-            $table->integer('project_id');
+            $table->string('user_id');
+            $table->string('project_id');
             $table->string('type');
             $table->softDeletes();
             $table->timestamps();

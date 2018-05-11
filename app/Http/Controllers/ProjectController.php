@@ -893,27 +893,30 @@ class ProjectController extends Controller
      * @param Request $request
      */
     public function likeProject(Request $request){
-        $user_id = $request->get('user_id');
+        $user_id = Auth::user()->user_id;
         $project_id = $request->get('project_id');
         $type = $request->get('type');
         if(is_null($type)){
             $type = 'normal';
         }
-        $like = ProjectLikes::where('project_id', $project_id) -> where('user_id', $user_id)->get();
-        if($like->isEmpty()){
+        $like = ProjectLikes::withTrashed()->where('project_id', $project_id) -> where('user_id', $user_id)->first();
+        if(!$like){
             $newLike = new ProjectLikes();
             $newLike->user_id = $user_id;
             $newLike->project_id = $project_id;
+            $newLike->type = $type;
+            $newLike->save();
         }
         else{
             if($like->trashed()){
-                $like->restore;
+                $like->restore();
             }
             else{
-                $like->softDeletes();
+                $like->delete();
             }
         }
-        $like->searchable();
+        Project::where('project_id', $project_id)->firstOrFail()->searchable();
+        dd('end');
         return back();
     }
 }

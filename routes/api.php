@@ -36,5 +36,3 @@ Route::post('/validateYoutube', 'ProjectController@validateYoutube')->name('vali
 
 Route::post('/watson/tags','ProjectController@getWatsonTags');
 
-Route::post('/likeProject', 'ProjectController@likeProject')
-    ->name('project.like');

@@ -58,7 +58,8 @@ Route::group(['middleware' => ['web']], function () {
             ->name('project.create.get');
         Route::post('create', 'ProjectController@postCreate')
             ->name('project.create.post');
-
+        Route::post('like', 'ProjectController@likeProject')
+            ->name('project.like');
         Route::get('{id}', 'ProjectController@show')
             ->name('project.show');
         Route::get('{id}/delete', 'ProjectController@destroy')
