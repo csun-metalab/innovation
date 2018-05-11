@@ -720,7 +720,7 @@ class SearchController extends Controller
         $results = $this
         ->browseProjectsRules($results)
                         ->paginate($paginate)
-                        ->setPath(url('search/members'));
+                        ->setPath(urlAppName('/search/members'));
 
         return $results;
     }

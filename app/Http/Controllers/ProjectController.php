@@ -187,7 +187,7 @@ class ProjectController extends Controller
             $id = Project::where('slug', $id)->firstOrFail()['project_id'];
         }
 
-        return redirect('project/create/' . $id);
+        return redirect(getAppName().'/project/create/' . $id);
     }
 
     public function create()
@@ -464,7 +464,7 @@ class ProjectController extends Controller
         }
 
         if (request('action') == 'back') {
-            return isset($projectId) ? redirect('project/step-2/' . $projectId) : redirect('project/step-2');
+            return isset($projectId) ? redirect(getAppName().'/project/step-2/' . $projectId) : redirect(getAppName().'/project/step-2');
         }
 
         // Validation for collaborators array
@@ -500,7 +500,7 @@ class ProjectController extends Controller
 
         // If project is cayuse project
         if (null !== $project->cayuse_id) {
-            return redirect('project')->with('error', 'You are unable to delete this project.');
+            return redirect(getAppName().'/project')->with('error', 'You are unable to delete this project.');
         }
 
         // Lazy load the interests to a project to iterate and decrement
@@ -523,8 +523,8 @@ class ProjectController extends Controller
         $url = 'project';
 
         // If delete route was triggered from admin dashboard, redirect them there
-        if (str_contains(url()->previous(), 'admin')) {
-            $url = 'admin/dashboard';
+        if (str_contains(urlAppName()->previous(), 'admin')) {
+            $url = getAppName().'/admin/dashboard';
         }
 
         return redirect($url)->with('success', 'Project Successfully Deleted');
