@@ -159,12 +159,12 @@
                                     <!-- Button : BEGIN -->
                                     <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" style="margin: auto">
                                         <tr>
-                                    <td id="projectTitle" style="font-family: Open Sans,Helvetica Neue,Helvetica, Arial, sans-serif;color:#D0021B; font-weight:300;font-size:25px;text-align:center;width:470px;">{{$title}}</td>
+                                    <td id="projectTitle" style="font-family: Open Sans,Helvetica Neue,Helvetica, Arial, sans-serif;color:#D0021B; font-weight:300;font-size:25px;text-align:center;width:470px;">{{$project->project_title}}</td>
                                     </tr>
                                     </table>
                                     <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" style="margin: auto">
                                         <tr>
-                                            <td style="padding: 40px; font-weight: 200; text-align: center; font-family: sans-serif; font-size: 30px; mso-height-rule: exactly; color: #555555;">{{$description}}</span>
+                                            <td style="padding: 40px; font-weight: 200; text-align: center; font-family: sans-serif; font-size: 30px; mso-height-rule: exactly; color: #555555;">{{substr($project->abstract,0,400) . '...'}} </span>
                                                 </a>
                                             </td>
                                         </tr>
@@ -172,7 +172,7 @@
                                     <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" style="margin: auto">
                                         <tr>
                                             <td style="border-radius: 3px; background: #ffffff; text-align: center;" class="button-td">
-                                                <a href="{{$link}}" style="background: #CF0A2C; border: 15px solid #CF0A2C; font-family: sans-serif; font-size: 13px; line-height: 1.1; text-align: center; text-decoration: none; display: block; border-radius: 3px; font-weight: 100; color:#ffffff;" class="button-a">
+                                                <a href="{{url('/project/'. $project->project_id)}}" style="background: #CF0A2C; border: 15px solid #CF0A2C; font-family: sans-serif; font-size: 13px; line-height: 1.1; text-align: center; text-decoration: none; display: block; border-radius: 3px; font-weight: 100; color:#ffffff;" class="button-a">
                                                     &nbsp;&nbsp;&nbsp;&nbsp;<span class="stack-column-center" style="color:#ffffff">View Project</span>&nbsp;&nbsp;&nbsp;&nbsp;
                                                 </a>
                                                 <br>
