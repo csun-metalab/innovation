@@ -1,6 +1,10 @@
+
 @extends('layouts.master')
 
 @section('content')
+    <head>
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+    </head>
     <div class="section">
         <div class="container">
             @if(Auth::user()->isAdmin())
@@ -22,7 +26,6 @@
                     <div class="col-lg-9">
                         <h3>Add a New Event</h3>
                         {!! Form::open(array('url' => route('dashboard.event.create'))) !!}
-                        {!! Form::hidden('originator', Auth::user()->display_name) !!}
                         {!! Form::label('event_name', 'Event Name', ['class'=>'label--default label--required']) !!}
                         {!! Form::text('event_name','', ['placeholder'=>'Enter an event name', 'maxlength' => '50']) !!}
                         <br>
@@ -34,6 +37,13 @@
                             <div class="col-md-6">
                                 {!! Form::label('end_date', 'End Date', ['class'=>'label--default']) !!}
                                 {!! Form::text('end_date', '', ['class'=>'form-control datepicker', 'placeholder'=>'mm/dd/yyyy', 'type' => 'date', 'maxlength' => '10']) !!}
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                {!! Form::label('description', 'Event Description', ['class'=>'label--default']) !!}
+                                {!! Form::textarea('description', '', ['class'=>'form-control']) !!}
                             </div>
                         </div>
                         <br>
@@ -60,7 +70,7 @@
                                         </thead>
                                         <tbody>
                                         @foreach($events as $event)
-                                            <tr style="border-bottom: lightgray 1px solid">
+                                            <tr style="border-bottom: lightgray 1px solid" id="{{ $event->id }}" >
                                                 <td>
                                                     <div style="padding: 10px;">
                                                         {{ $event->event_name }}
@@ -68,10 +78,13 @@
                                                 </td>
                                                 <td style="text-align: center;padding: 10px;">{{ monthFormat($event->start_date) }}</td>
                                                 <td style="text-align: center;padding: 10px;">{{ monthFormat($event->end_date) }}</td>
-                                                <td style="text-align: center;padding: 10px;">{{$event->originator}}</td>
+                                                @if($event->originator == 'system')
+                                                    <td style="text-align: center;padding: 10px;">System</td>
+                                                @else
+                                                    <td style="text-align: center;padding: 10px;">{{$event->creator->display_name}}</td>
+                                                @endif
                                                 <td style="text-align: center;padding: 10px; width: 5%;">
-                                                    <button role="button" class="btn btn-default"
-                                                            data-modal="#deleteEvent">
+                                                    <button id="{{ $event->id }}" role="button" class="modal-toggle btn btn-default">
                                                         <i class="fa fa-times"></i></button>
                                                 </td>
                                             </tr>
@@ -87,7 +100,7 @@
                                             <div class="pull-right">
                                                 <button class="btn btn-default" data-modal-close="#deleteEvent">Cancel
                                                 </button>
-                                                <button class="btn btn-primary">Delete</button>
+                                                <button class="btn btn-primary" id="confirmEventDelete" >Delete</button>
                                             </div>
                                         </div>
                                     </div>
@@ -112,12 +125,34 @@
     </div>
     {!! Html::script('js/metaphor.js') !!}
     <script>
-        $('.delete-modal-btn').on('click', function () {
-            $('#deleteModal form').attr({
-                action: $('html').data('url') + '/project/' + $(this).data('id') + '/delete',
-                method: 'GET'
+        $('.modal-toggle').click(function () {
+            $('#confirmEventDelete').data('event-id', this.id);
+            $('#deleteEvent').toggleClass('modal--show');
+        });
+        $('#confirmEventDelete').on('click', function () {
+            eventId = $(this).data('event-id');
+            $.ajax({
+                url: $('html').data('url') + '/admin/dashboard/delete-event',
+                type: "POST",
+                data: JSON.stringify(
+                    {
+                    id: eventId
+                    }
+                ),
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                contentType: "application/json; charset=utf-8",
+                dataType   : "json",
+                success    : function(data){
+                    console.log(data);
+                    if (data.success=="true"){
+                        $('#'+eventId).remove();
+                    }
+                    $('#deleteEvent').toggleClass('modal--show');
+                }
             });
-            $('#deleteModal .modal__content h3').text($(this).data('title'));
+
         })
     </script>
 @stop

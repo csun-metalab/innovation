@@ -18,6 +18,7 @@ class CreateTagsTable extends Migration
             $table->string('tag');
             $table->float('relevance');
             $table->string('category')->nullable(true);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

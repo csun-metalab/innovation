@@ -35,7 +35,7 @@ class InvitationController extends Controller
     public function __construct(Mailer $mailer)
     {
         // Checks to see if they're logged in and faculty
-        $this->middleware(['auth', 'helix-roles'])
+        $this->middleware(['auth', 'roles'])
              ->except('studentRequest', 'processStudentRequest');
         $this->mailer = $mailer;
     }

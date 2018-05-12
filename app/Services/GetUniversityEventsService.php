@@ -12,7 +12,7 @@ class GetUniversityEventsService implements GetUniversityEventsContract
 {
     public function getUniversityEvents()
     {
-        $events = Event::get();
+        $events = Event::with('creator')->appName(env('APP_NAME'))->get();
         $pendingInvitations = $this->pendingInvitations()->count();
         return view('pages.dashboard.events', compact('events', 'pendingInvitations'));
     }

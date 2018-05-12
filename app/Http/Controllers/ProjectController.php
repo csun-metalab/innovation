@@ -27,6 +27,7 @@ use Helix\Models\Role;
 use Helix\Models\Event;
 use Helix\Models\Title;
 use Helix\Models\Seeking;
+use Helix\Models\ProjectLikes;
 use Illuminate\Http\Request;
 use Searchy;
 
@@ -88,15 +89,11 @@ class ProjectController extends Controller
             'getWatsonTags'
         ]]);
 
-        // $this->middleware(['project-write', 'helix-roles'], ['only' => [
-        //     // 'create',
-        //     'step1',
-        //     'getStep2',
-        //     'step2',
-        //     'getStep3',
-        //     'store',
-        //     'destroy',
-        // ]]);
+        $this->middleware(['project-write', 'roles'], ['only' => [
+            'postCreate',
+            'edit',
+            'destroy',
+        ]]);
 
         $this->projectIdVerifier = $verifyProjectIdContract;
         $this->projectGeneralUpdater = $updateProjectGeneralContract;
@@ -129,11 +126,12 @@ class ProjectController extends Controller
             return redirect("project/$project->slug");
         }
 
-        $project = Project::with('pi', 'members', 'award', 'video','url', 'image', 'visibilityPolicy','tags')->where('slug', $id)->firstOrFail();
+        $project = Project::with('pi', 'members', 'award', 'video','url','links', 'image', 'visibilityPolicy','tags')->where('slug', $id)->firstOrFail();
         // This is to check if there is a row in the attributes table corresponding to this project
         $attributes = Attribute::with('purpose')->findOrNew($project->project_id);
         $event = Event::where('id', $attributes->event_id)->pluck('event_name');
         $seeking = Seeking::where('project_id',$project->project_id)->get();
+        $likes = $project->likes();
         if ($attributes->project_id == null) {
             $attributes->project_id = $project->project_id;
             // $attributes->purpose_name = 'project';
@@ -170,7 +168,7 @@ class ProjectController extends Controller
         if ($api) {
             return $this->sendResponse($project, 'project');
         };
-        return view('pages.project.show', \compact('project', 'attributes', 'event', 'seeking'));
+        return view('pages.project.show', \compact('project', 'attributes', 'event', 'seeking', 'likes'));
     }
 
     /**
@@ -262,6 +260,8 @@ class ProjectController extends Controller
     private function tagsDecode(array $tags)
     {
         foreach ($tags as &$tag) {
+            $stored=false;
+
             if( str_contains($tag,'watson:') || str_contains($tag,'watson-stored:') ){
                 $data = explode(':', $tag);
                 $text = $data[1];
@@ -271,7 +271,10 @@ class ProjectController extends Controller
                 $text = $tag;
                 $relevance = 1;
             }
-            $tag = compact('text','relevance');
+            if(str_contains($tag,'stored:')){
+                $stored = true;
+            }
+            $tag = compact('text','relevance','stored');
         }
         return $tags;
     }
@@ -500,20 +503,18 @@ class ProjectController extends Controller
 
         // If project is cayuse project
         if (null !== $project->cayuse_id) {
-            return redirect('project')->with('error', 'You are unable to delete this project.');
+            return redirect('project')->with('error', 'You are unable to archive this project.');
         }
 
         // Lazy load the interests to a project to iterate and decrement
-        $project->load('interests');
-
+        $project->load('tags');
         // Grabs all the projects research interests and decrements each interest
-        foreach ($project->interests as $interest) {
-            $interest->decrement('count');
+        foreach ($project->tags as $tags) {
+            $tags->delete();
         }
 
         DB::transaction(function () use ($project) {
             $project->allMembers()->detach();
-            $project->interests()->detach();
             $project->invitations()->delete();
             $project->policies()->delete();
             $project->delete();
@@ -527,7 +528,7 @@ class ProjectController extends Controller
             $url = 'admin/dashboard';
         }
 
-        return redirect($url)->with('success', 'Project Successfully Deleted');
+        return redirect($url)->with('success', 'Project Successfully Archived');
     }
 
     /**
@@ -866,16 +867,17 @@ class ProjectController extends Controller
         return $newAttributeValues->count();
     }
 
-    public function getWatsonTags(Request $request, $data = null, $relevance = 0.5)
+    public function getWatsonTags(Request $request, $data = null)
     {   
+        $relevance = env('WATSON_RELEVANCE_MIN');
+        $tagLimit = (int) env('WATSON_RESULT_LIMIT');
         if($request->filled('data')){
             $data = $request->get('data');
         }
         $nlu = new NaturalLanguageUnderstanding( WatsonCredential::initWithCredentials(env('WATSON_USER_NAME'), env('WATSON_PASSWORD')) );
-        $model = new AnalyzeModel($data, ['concepts'=>['limit'=>50]]);
+        $model = new AnalyzeModel($data, ['concepts'=>['limit'=> $tagLimit]]);
         $result = $nlu->analyze($model);
         $responseData =  json_decode($result->getContent());
-
         if($responseData){
             $data = array_filter($responseData->concepts, function ($tag) use ($relevance) { 
                 return ($tag->relevance >= $relevance);
@@ -884,5 +886,36 @@ class ProjectController extends Controller
             $data = null;
         }
         return $data;
+    }
+
+    /**
+     * @param Request $request
+     */
+    public function likeProject(Request $request){
+        $user_id = Auth::user()->user_id;
+        $project_id = $request->get('project_id');
+        $type = $request->get('type');
+        if(is_null($type)){
+            $type = 'normal';
+        }
+        $like = ProjectLikes::withTrashed()->where('project_id', $project_id) -> where('user_id', $user_id)->first();
+        if(!$like){
+            $newLike = new ProjectLikes();
+            $newLike->user_id = $user_id;
+            $newLike->project_id = $project_id;
+            $newLike->type = $type;
+            $newLike->save();
+        }
+        else{
+            if($like->trashed()){
+                $like->restore();
+            }
+            else{
+                $like->delete();
+            }
+        }
+        Project::where('project_id', $project_id)->firstOrFail()->searchable();
+        dd('end');
+        return back();
     }
 }

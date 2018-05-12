@@ -164,7 +164,7 @@
                                     </table>
                                     <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" style="margin: auto">
                                         <tr>
-                                            <td style="padding: 40px; font-weight: 200; text-align: center; font-family: sans-serif; font-size: 30px; mso-height-rule: exactly; color: #555555;">{{str_limit($description, 450, '...')}}</span>
+                                            <td style="padding: 40px; font-weight: 200; text-align: center; font-family: sans-serif; font-size: 30px; mso-height-rule: exactly; color: #555555;">{{str_limit($description, 400, '...')}}</span>
                                                 </a>
                                             </td>
                                         </tr>

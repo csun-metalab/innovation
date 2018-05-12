@@ -35,3 +35,4 @@ Route::get('init/project-attributes', 'ProjectController@createAllProjectAttribu
 Route::post('/validateYoutube', 'ProjectController@validateYoutube')->name('validateYoutube');
 
 Route::post('/watson/tags','ProjectController@getWatsonTags');
+
