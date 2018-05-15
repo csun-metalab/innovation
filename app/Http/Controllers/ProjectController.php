@@ -237,7 +237,8 @@ class ProjectController extends Controller
             'url'            => $project->url ?: NULL,
             'video'          => $project->video?: NULL,
             'collaborators'  => $project->collaborators,
-            'seeking'        => $project->seeking
+            'seeking'        => $project->seeking,
+            'type'           => env('APP_NAME') //Will be replaced with getAppName() helper
         ];
         if(!$project->tags){
             $project->tags = [];
