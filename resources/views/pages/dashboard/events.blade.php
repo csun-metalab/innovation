@@ -31,7 +31,7 @@
                         <br>
                         <div class="row">
                             <div class="col-md-6">
-                                {!! Form::label('start_date', 'Start Date', ['class'=>'label--default']) !!}
+                                {!! Form::label('start_date', 'Start Date', ['class'=>'label--default label--required']) !!}
                                 {!! Form::text('start_date', '', ['class'=>'form-control datepicker', 'placeholder'=>'mm/dd/yyyy', 'type' => 'date', 'maxlength' => '10']) !!}
                             </div>
                             <div class="col-md-6">
