@@ -296,10 +296,12 @@
             return $('.project-create-form').submit();
         });
 
+
+
         function spinMe(this1) {
             this1.disabled = true;
             this1.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Submitting';
-        }--}}
+        }
 
         //Student qualificaitons box logic
         $('#seekingStudents').change(function () {
