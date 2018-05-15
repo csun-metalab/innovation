@@ -98,7 +98,7 @@ class InvitationController extends Controller
 
             $emails = $project->authorities->pluck('email')->toArray();
 
-            $this->mailer->sendToMany('emails.new-member', $mailData, $emails, 'A new member has joined your project!');
+            $this->mailer->sendToMany('emails.new-member', $mailData, $emails, 'A new member has joined your project!', ["address" => auth()->user()->email,"name" => auth()->user()->display_name]);
         }
 
         if (!request()->ajax()) {
@@ -150,7 +150,7 @@ class InvitationController extends Controller
 
             $emails = $project->authorities->pluck('email')->toArray();
 
-            $this->mailer->sendToMany('emails.rejection', $mailData, $emails, auth()->user()->first_name . ' has declined your project invitation');
+            $this->mailer->sendToMany('emails.rejection', $mailData, $emails, auth()->user()->first_name . ' has declined your project invitation', ["address" => auth()->user()->email,"name" => auth()->user()->display_name]);
         }
 
         session()->flash('flash_message_decline', 'Thank you for considering.');
