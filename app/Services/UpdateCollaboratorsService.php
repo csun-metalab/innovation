@@ -94,7 +94,6 @@ class UpdateCollaboratorsService implements UpdateCollaboratorsContract
                     'feedbackurl' => url('feedback'),
                     'link' => url('project/' . $project->project_id),
                 ];
-
                 // Send out emails to new collaborators
                 $this->mailer->sendToMany('emails.project_invite', $mailData, $emails, 'You have been invited to join a project!', ["address" => auth()->user()->email,"name" => auth()->user()->display_name]);
 
