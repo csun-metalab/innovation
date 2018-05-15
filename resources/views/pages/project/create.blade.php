@@ -128,7 +128,7 @@
             </div>
         </div>
 
-        <div class="row">
+{{--         <div class="row">
             <div class="col-xs-8 col-md-11">
                 <div class="form__group">
                     {{Form::label('role','Seeking Roles',['class'=>'type--left'])}}
@@ -146,7 +146,7 @@
                     <i class="fa fa-plus" aria-hidden="true"></i> Add
                 </a>
             </div>
-        </div>
+        </div> --}}
         <div class="row">
             <div class="col-sm-12">
                 <table id="seek_list" class="table table--padded table--bordered table--striped">
@@ -276,18 +276,11 @@
         //Team Members js
         var template, input;
         template = input = "";
-        if (collaborators.length > 1) {
-            collaborators.forEach(function (member) {
-                // 0 = name, 1 = membersId, 2 = role_position
-                template += "<tr data-id='" + member['display_name'] + '|' + member['user_id'] + '|' + member['pivot']['role_position'] + "'><td>" + member['display_name'] + "</td><td>" + member['pivot']['role_position'] + "</td><td>Active</td><td style='text-align: center'> <a class='removeCollabBtn btn btn-link'>Remove</a></td></tr>";
 
-                input += "<input type='hidden' name='collaborators[]' value='" + member['display_name'] + '|' + member['user_id'] + '|' + member['pivot']['role_position'] + "'>";
-            });
-        }
-        else {
+
             template += '<tr data-id="{{ Auth::user()->display_name }}|{{ Auth::user()->user_id }}|Team Member"><td>{{ Auth::user()->display_name }} &#183 <span style="opacity: .5;">You</span></td><td>Team Member</td><td>Active</td><td style="text-align: center"> <a class="removeCollabBtn btn btn-link">Remove</a></td></tr>';
             input += "<input type='hidden' name='collaborators[]' value='{{ Auth::user()->display_name }}|{{ Auth::user()->user_id }}|Team Member'>";
-        }
+
         $('#list tbody').append(template);
         $('.project-create-form').append(input);
 
