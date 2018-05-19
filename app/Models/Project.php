@@ -6,11 +6,15 @@ namespace Helix\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Searchable;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 //Project related details
+
 class Project extends Model
 {
     use Searchable;
+    use SoftDeletes;
+
+    protected $dates = ['deleted_at'];
 
     public static function boot()
     {
@@ -42,7 +46,10 @@ class Project extends Model
         $this->members;
         $this->visibilityPolicy;
         $this->attribute;
-        return $this->toArray();
+        $likeCount = $this->likes();
+        $data = $this->toArray();
+        $data['likes'] = $likeCount;
+        return $data;
     }
     public function scopeSlug($query,$slug)
     {
@@ -118,7 +125,7 @@ class Project extends Model
 
     public function tags()
     {
-        return $this->hasMany('Helix\Models\Tag', 'project_id', 'project_id');
+        return $this->hasMany('Helix\Models\Tag', 'project_id', 'project_id')->where('relevance','>=',env('WATSON_RELEVANCE_MIN'));
     }
 
     public function department()
@@ -180,6 +187,10 @@ class Project extends Model
     public function invitations()
     {
         return $this->hasMany('Helix\Models\Invitation', 'project_id');
+    }
+
+    public function likes(){
+        return ProjectLikes::where('project_id',$this->project_id)->count();
     }
 
     public function visibilityPolicy()
@@ -304,6 +315,7 @@ class Project extends Model
     {
         return $this->invitations()->whereNull('updated_at');
     }
+
 
     /*
    |-----------------------------------------

@@ -9,10 +9,20 @@ use Helix\Models\Tag;
 
 class CreateTagService implements CreateTagContract
 {
-    public function createTag($project_id, $tags)
+    public function createTag($project_id, $updatedTags)
     {
-        foreach ($tags as $tag) {
-            if(!is_numeric($tag['text'])){
+        $oldTags = Tag::where('project_id',$project_id)
+                        ->where('relevance', '>' , env('WATSON_RELEVANCE_MIN'))
+                        ->pluck('id')->toArray();
+
+        $updatedTagText = array_column($updatedTags, 'text');
+        $deleteTagIds = array_diff($oldTags, $updatedTagText);
+
+        if(count($deleteTagIds)){
+            Tag::whereIn('id',$deleteTagIds)->delete();
+        }
+        foreach ($updatedTags as $tag) {
+            if( !$tag['stored'] && !in_array($tag['text'], $oldTags)){
                 $newTag = new Tag();
                 $newTag->project_id = $project_id;
                 $newTag->tag = $tag['text'];
