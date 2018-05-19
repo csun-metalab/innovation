@@ -18,6 +18,7 @@ class ProjectWriteMiddleware
             {
                 $project = Project::findOrFail($request->route('projectId'));
 
+                // if auth user is not owner
                 if(Gate::denies('is-owner', $project))
                 {
                     abort(403);

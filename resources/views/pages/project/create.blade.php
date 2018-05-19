@@ -5,8 +5,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm-12">
-                    <h1 class="type--white type--thin type--marginless">{{$projectStatus?"Edit":"Create a"}}
-                        Project</h1>
+                    <h1 class="type--white type--thin type--marginless">{{$projectStatus?"Edit":"Create a"}} Project</h1>
                 </div>
             </div>
         </div>
@@ -67,7 +66,7 @@
         <br>
         <hr>
         <div class="row">
-            <div class="col-lg-6 col-md-5">
+            <div class="col-xs-12 col-md-6">
                 <div class="form__group">
                     {{Form::label('collaborators','Team Members',['class'=>'type--left'])}}
                     {{Form::select('collaborators',[],null,['id'=>'collab','class'=>'select2-collaborator','placeholder'=>'Add a new member...'])}}
@@ -75,9 +74,11 @@
             </div>
             <div class="col-xs-8 col-md-5">
                 <div class="form__group">
-                    {{Form::label('role','Title',['class'=>'type--left'])}}
+
+                    {{Form::label('role','Role',['class'=>'type--left'])}}
                     {{ Form::select ('roles', $titles, null,['class'=>'roles select2-roles', 'id'=>'roleID'] ) }}
-                    <div class="tooltip" style="float:right"><i class="fa fa-question-circle" aria-hidden="true"></i>
+
+                    <div class="tooltip" style="display: inline-block"><i class="fa fa-question-circle" aria-hidden="true"></i>
                         <span class="tooltiptext">You may use name, email or student ID to select team member.<br>
                     </span>
                     </div>
@@ -122,20 +123,19 @@
                     @endif
                     </tbody>
                 </table>
-                {{--<div id="research-collabs">
+                {{-- <div id="research-collabs">
                   <collaborators project_status="create"></collaborators>
-                </div>--}}
+                </div> --}}
             </div>
         </div>
-
-{{--         <div class="row">
+{{-- 
+        <div class="row">
             <div class="col-xs-8 col-md-11">
                 <div class="form__group">
                     {{Form::label('role','Seeking Roles',['class'=>'type--left'])}}
                     {{ Form::select ('roles', $titles, null,['class'=>'roles select2-roles', 'id'=>'roleID'] ) }}
 
-                    <div class="tooltip" style="display: inline-block"><i class="fa fa-question-circle"
-                                                                          aria-hidden="true"></i>
+                    <div class="tooltip" style="display: inline-block"><i class="fa fa-question-circle" aria-hidden="true"></i>
                         <span class="tooltiptext">Looking for a specific role? Select the role you need or create your own.<br>
                     </span>
                     </div>
@@ -147,7 +147,7 @@
                 </a>
             </div>
         </div> --}}
-        <div class="row">
+{{--         <div class="row">
             <div class="col-sm-12">
                 <table id="seek_list" class="table table--padded table--bordered table--striped">
                     <thead>
@@ -167,9 +167,27 @@
                     </tbody>
                 </table>
             </div>
-        </div>
+        </div> --}}
         <hr>
-
+        {{--      <hr>
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <div class="uploader type--center" id="upload-image">
+                        <form class="type--center">
+                          <span id="upload">
+                          <h1 class="fa fa-upload mega"></h1>
+                          <br>
+                          <strong >Upload a cover photo</strong>
+                          </span>
+                          <!-- <img src="" id="hide"/> -->
+                          <br>
+                          <input id="photoLoad" type="file" accept="image/*" onload="fileName()">
+                          <div id="filePreview"></div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                  <hr> --}}
         <div class="row">
             <div class="col-xs-12">
                 <div class="form__group">
@@ -209,9 +227,7 @@
             return $('.project-create-form').submit();
         })
         $('.select2-tags option').each(function (index) {
-            if(this.value.search('watson-stored:') > -1){
-                $(this).addClass('watson');
-            }
+            $(this).addClass('watson');
         });
     </script>
     <script type="text/javascript">
@@ -276,11 +292,18 @@
         //Team Members js
         var template, input;
         template = input = "";
+        if (collaborators.length > 1) {
+            collaborators.forEach(function (member) {
+                // 0 = name, 1 = membersId, 2 = role_position
+                template += "<tr data-id='" + member['display_name'] + '|' + member['user_id'] + '|' + member['pivot']['role_position'] + "'><td>" + member['display_name'] + "</td><td>" + member['pivot']['role_position'] + "</td><td>Active</td><td style='text-align: center'> <a class='removeCollabBtn btn btn-link'>Remove</a></td></tr>";
 
-
+                input += "<input type='hidden' name='collaborators[]' value='" + member['display_name'] + '|' + member['user_id'] + '|' + member['pivot']['role_position'] + "'>";
+            });
+        }
+        else {
             template += '<tr data-id="{{ Auth::user()->display_name }}|{{ Auth::user()->user_id }}|Team Member"><td>{{ Auth::user()->display_name }} &#183 <span style="opacity: .5;">You</span></td><td>Team Member</td><td>Active</td><td style="text-align: center"> <a class="removeCollabBtn btn btn-link">Remove</a></td></tr>';
             input += "<input type='hidden' name='collaborators[]' value='{{ Auth::user()->display_name }}|{{ Auth::user()->user_id }}|Team Member'>";
-
+        }
         $('#list tbody').append(template);
         $('.project-create-form').append(input);
 
@@ -289,6 +312,23 @@
             return $('.project-create-form').submit();
         });
 
+        //Seeking Roles js
+        var seek_template, seek_input;
+        seek_template = seek_input = "";
+        if (collaborators.length > 0) {
+            seeking.forEach(function (seeking) {
+                // 0 = name, 1 = membersId, 2 = role_position
+                seek_template += "<tr data-id='" + seeking['title'] + "'><td>" + seeking['title'] + "</td><td style='text-align: center'> <a class='removeSeekingBtn btn btn-link'>Remove</a></td></tr>";
+
+                seek_input += "<input type='hidden' name='seeking[]' value='" + seeking['title'] + "'>";
+            });
+        }
+        else {
+            seek_template += '<tr data-id="{{ Auth::user()->display_name }}|{{ Auth::user()->user_id }}|Team Member"><td>No Open Roles</td><td style="text-align: center; width: 25%;"> <a class="removeCollabBtn btn btn-link">N/A</a></td></tr>';
+            seek_input += "<input type='hidden' name='collaborators[]' value='{{ Auth::user()->display_name }}|{{ Auth::user()->user_id }}|Team Member'>";
+        }
+        $('#seek_list tbody').append(seek_template);
+        $('.project-create-form').append(seek_input);
 
 
         function spinMe(this1) {

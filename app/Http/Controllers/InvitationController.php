@@ -35,7 +35,7 @@ class InvitationController extends Controller
     public function __construct(Mailer $mailer)
     {
         // Checks to see if they're logged in and faculty
-        $this->middleware(['auth', 'roles'])
+        $this->middleware(['auth', 'helix-roles'])
              ->except('studentRequest', 'processStudentRequest');
         $this->mailer = $mailer;
     }
@@ -98,7 +98,7 @@ class InvitationController extends Controller
 
             $emails = $project->authorities->pluck('email')->toArray();
 
-            $this->mailer->sendToMany('emails.new-member', $mailData, $emails, 'A new member has joined your project!', ["address" => auth()->user()->email,"name" => auth()->user()->display_name]);
+            $this->mailer->sendToMany('emails.new-member', $mailData, $emails, 'A new member has joined your project!');
         }
 
         if (!request()->ajax()) {
@@ -150,7 +150,7 @@ class InvitationController extends Controller
 
             $emails = $project->authorities->pluck('email')->toArray();
 
-            $this->mailer->sendToMany('emails.rejection', $mailData, $emails, auth()->user()->first_name . ' has declined your project invitation', ["address" => auth()->user()->email,"name" => auth()->user()->display_name]);
+            $this->mailer->sendToMany('emails.rejection', $mailData, $emails, auth()->user()->first_name . ' has declined your project invitation');
         }
 
         session()->flash('flash_message_decline', 'Thank you for considering.');

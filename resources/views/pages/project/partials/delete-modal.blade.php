@@ -1,11 +1,12 @@
 <div id="deleteModal" class="modal__outer">
   <div class="modal">
     <div class="modal__header">
-      <strong>Archive Project?</strong>
+      <strong>Delete Project?</strong>
     </div>
     <div class="modal__content">
-      <p>Are you sure you want to archive the project:</p>
+      <p>Are you sure you want to delete the project:</p>
       <h3></h3>
+      <p>This change is irreversible.</p>
     </div>
     <div class="modal__footer">
       <div class="pull-right">

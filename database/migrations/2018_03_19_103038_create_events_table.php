@@ -19,7 +19,6 @@ class CreateEventsTable extends Migration
             $table->date('end_date')->nullable();
             $table->string('originator');
             $table->string('application');
-            $table->text('description')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

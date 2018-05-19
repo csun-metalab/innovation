@@ -48,7 +48,6 @@
         "custom"
     ],
     "customRanking": [
-        "desc(likes)",
         "desc(updated_at)"
     ],
     "separatorsToIndex": "",

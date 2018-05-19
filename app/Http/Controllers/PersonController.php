@@ -13,8 +13,6 @@ use Illuminate\Support\Collection;
 use Helix\Models\Event;
 use Helix\Contracts\GetUniversityEventsContract;
 use Helix\Contracts\CreateUniversityEventContract;
-use Illuminate\Support\Facades\Redirect;
-use Helix\Http\Requests\UniversityEvent;
 
 /**
  * Handles the functionality of a logged in faculty member which includes
@@ -36,7 +34,7 @@ class PersonController extends Controller
     {
         $this->universityEventsRetriever = $universityEventsContract;
         $this->universityEventCreator = $createUniversityEventContract;
-        $this->middleware(['auth', 'roles']);
+        $this->middleware(['auth', 'helix-roles']);
     }
 
     /**
@@ -116,31 +114,14 @@ class PersonController extends Controller
        return $this->universityEventsRetriever->getUniversityEvents();
     }
 
-    public function createUniversityEvent(UniversityEvent $request){
-        $data = [
-            'application' => env('APP_NAME'),
-            'originator' => Auth::user()->user_id,
-            'eventName' => $request['event_name'],
-            'startDate' => \Carbon\Carbon::parse($request['start_date'])->format('Y-m-d'),
-            'endDate' => \Carbon\Carbon::parse($request['end_date'])->format('Y-m-d'),
-            'description' => $request['description']?:null
-        ];
-        return $this->universityEventCreator->createUniversityEvent($data);
-    }
-
-    public function deleteUniversityEvent(Request $request){
-        $event_id = $request['id'];
-        $event = Event::where('id',$event_id)->first();
-        if(is_null($event)){
-            return ([
-                'message'=>'Event could not be deleted.',
-                'success' => 'false'
-            ]);
-        }
-        $event->delete();
-        return ([
-            'message'=>'Event "'.$event->event_name.'" has been deleted.',
-            'success' => 'true'
-        ]);
+    public function createUniversityEvent(Request $request){
+        $eventName = $request['event_name'];
+        $startDate = $request['start_date'];
+        $endDate = $request['end_date'];
+        $originator = $request['originator'];
+        $startDate = \Carbon\Carbon::parse($startDate)->format('Y-m-d');
+        $endDate = \Carbon\Carbon::parse($endDate)->format('Y-m-d');
+        $application = env('APP_NAME');
+        return $this->universityEventCreator->createUniversityEvent($eventName,$startDate,$endDate,$originator,$application);
     }
 }

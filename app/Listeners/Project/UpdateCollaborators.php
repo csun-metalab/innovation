@@ -95,7 +95,7 @@ class UpdateCollaborators
                 ];
 
                 // Send out emails to new collaborators
-                $this->mailer->sendToMany('emails.project_invite', $mailData, $emails, 'You have been invited to join a project!', ["address" => auth()->user()->email,"name" => auth()->user()->display_name]);
+                $this->mailer->sendToMany('emails.project_invite', $mailData, $emails, 'You have been invited to join a project!');
 
                 // Save invitations to helix.invitations
                 $event->project->invitations()->saveMany($invitations);

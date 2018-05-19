@@ -58,8 +58,7 @@ Route::group(['middleware' => ['web']], function () {
             ->name('project.create.get');
         Route::post('create', 'ProjectController@postCreate')
             ->name('project.create.post');
-        Route::post('like', 'ProjectController@likeProject')
-            ->name('project.like');
+
         Route::get('{id}', 'ProjectController@show')
             ->name('project.show');
         Route::get('{id}/delete', 'ProjectController@destroy')
@@ -98,7 +97,6 @@ Route::group(['middleware' => ['web']], function () {
         // This route is called when the student submits the request form.
         Route::post('{projectId}/student-request/sent', 'InvitationController@processStudentRequest')
             ->name('student-request-sent');
-
     });
     // route for youtube validation
     Route::group(['prefix' => 'admin'], function () {
@@ -109,7 +107,6 @@ Route::group(['middleware' => ['web']], function () {
             ->name('dashboard.events');
         Route::post('dashboard/create-event', 'PersonController@createUniversityEvent')
             ->name('dashboard.event.create');
-        Route::post('dashboard/delete-event', 'PersonController@deleteUniversityEvent');
     });
 
     Route::post('test', 'ProjectController@PostProjectCreation');

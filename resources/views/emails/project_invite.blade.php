@@ -8,7 +8,7 @@
         <tr>
        
             <td  valign="top" style="background-color: #F3F1F1; height: 400px; padding-left: 40px; padding-right: 40px; padding-bottom: 90px; padding-top: 30px;box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.50)">
-                <img style="width:60px;" src="https://auth.csun.edu/cas/images/csun_208_56.png"><span style="margin-bottom: 10px;font-family: Open Sans,Helvetica Neue,Helvetica, Arial, sans-serif; font-weight: 200;font-size:17px;color: #4A4A4A;"><span style="font-size:23px;"> |</span> {{env('APP_NAME')=='SeniorDesign'?'Senior Design':'Innovation'}}</span>
+                <img style="width:60px;" src="https://auth.csun.edu/cas/images/csun_208_56.png"><span style="margin-bottom: 10px;font-family: Open Sans,Helvetica Neue,Helvetica, Arial, sans-serif; font-weight: 200;font-size:17px;color: #4A4A4A;"><span style="font-size:23px;"> |</span> Faculty</span>
        
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -164,7 +164,7 @@
                                     </table>
                                     <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" style="margin: auto">
                                         <tr>
-                                            <td style="padding: 40px; font-weight: 200; text-align: center; font-family: sans-serif; font-size: 30px; mso-height-rule: exactly; color: #555555;">{{str_limit($description, 400, '...')}}</span>
+                                            <td style="padding: 40px; font-weight: 200; text-align: center; font-family: sans-serif; font-size: 30px; mso-height-rule: exactly; color: #555555;">{{$description}}</span>
                                                 </a>
                                             </td>
                                         </tr>

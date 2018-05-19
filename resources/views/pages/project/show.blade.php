@@ -45,11 +45,11 @@
                         <a class="btn btn-default btn--full-width" href="{{ url('project/' . $project->slug . '/edit') }}"><i class="fa fa-pencil"></i> Edit Project</a>
                     <br>
                     </div>
-                    @if(is_null($project->cayuse_id))
-                        <a href="#" data-modal="#deleteModal" data-title="{{ $project->project_title }}" data-id="{{ $project->project_id }}" class="btn btn-primary delete-modal-btn btn--full-width"><i class="fa fa-archive"></i> Archive Project</a>
+{{--                     @if(is_null($project->cayuse_id))
+                        <a href="#" data-modal="#deleteModal" data-title="{{ $project->project_title }}" data-id="{{ $project->project_id }}" class="btn btn-primary delete-modal-btn btn--full-width"><i class="fa fa-trash-o"></i> Delete Project</a>
                         @include('pages.project.partials.delete-modal')
                         <br>
-                    @endif
+                    @endif --}}
                   <div class="type--header"></div>
                 @endcan
                   {{-- Managing the button and messagess for requesting to join the project. --}}

@@ -39,7 +39,5 @@
 @else
     <a title="Filters" class="cd-filter-trigger"><i class="fa fa-filter"></i> Filters</a>
 @endif
-@auth
 <a title="Add New Project" href="{{ url('project/create') }}" class="cd-filter-trigger-right"><i
             class="fa fa-plus"></i> Add a new project</a>
-@endauth

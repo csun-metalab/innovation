@@ -12,6 +12,5 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call(SeniorDesignTitlesSeeder::class);
-        $this->call(SeniorDesignTermsSeeder::class);
     }
 }

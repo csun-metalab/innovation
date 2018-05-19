@@ -63,6 +63,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'invitation' => \Helix\Http\Middleware\InvitationMiddleware::class,
         'project-write' => \Helix\Http\Middleware\ProjectWriteMiddleware::class,
-        'roles' => \Helix\Http\Middleware\HelixMiddleware::class,
+        'helix-roles' => \Helix\Http\Middleware\HelixMiddleware::class,
     ];
 }
