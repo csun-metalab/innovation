@@ -87,6 +87,39 @@ $("#list tbody").on('click', '.removeCollabBtn', function(e){
 	$(this).parents('tr').remove();
 })
 
+
+// Append the hidden input and tr whenever user adds new collaborator
+$("#addSeekingBtn").on('click',function(e){
+    e.preventDefault();
+    var error = $('#roleID').siblings('strong');
+
+    if($('#roleID option:selected').length == 0)
+    {
+        return error.text('Choose your desired position.');
+    }
+    else if($('#list tbody tr[data-id*="'+ $('#roleID option:selected').val() +'"]').length == 1)
+    {
+        return error.text('This role has already been added.');
+    }
+    else
+    {
+        $('#roleID').siblings('strong').text('');
+    }
+
+    var displayName = $("#roleID option:selected").val() == $('#auid').val() ? $('#roleID option:selected').text() + '<span style="opacity: .5;"> &#183 You</span> ' : $('#collab option:selected').text(),
+        template = "<tr data-id='"+ $("#roleID option:selected").text()+"'><td>" + $("#roleID option:selected").text() + "</td><td style='text-align: center;'> <a class='removeCollabBtn btn btn-link'> Remove </a> </td></tr>";
+
+    $('<input/>', {
+        value: $("#roleID option:selected").text() + '|' + $("#roleID option:selected").val() + '|' + $("#roleID option:selected").val(),
+        name: 'collaborators[]',
+        type: 'hidden'
+
+    }).appendTo($('.project-create-form'));
+
+    $(template).appendTo("#list tbody");
+})
+
+
 var collaborators = $(".select2-collaborator");
 $( ".select2-collaborator" ).select2({     
 	width:'100%', 

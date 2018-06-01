@@ -128,7 +128,7 @@
             </div>
         </div>
 
-{{--         <div class="row">
+         <div class="row">
             <div class="col-xs-8 col-md-11">
                 <div class="form__group">
                     {{Form::label('role','Seeking Roles',['class'=>'type--left'])}}
@@ -146,7 +146,7 @@
                     <i class="fa fa-plus" aria-hidden="true"></i> Add
                 </a>
             </div>
-        </div> --}}
+        </div>
         <div class="row">
             <div class="col-sm-12">
                 <table id="seek_list" class="table table--padded table--bordered table--striped">
