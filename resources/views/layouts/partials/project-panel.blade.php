@@ -1,6 +1,19 @@
+<style>
+#count{
+    float: right;
+    position: absolute;
+    bottom: 8px;
+    right: 16px;
+}
+
+#projectContent{
+    position: relative;
+}
+</style>
+
 <div class="col-sm-6 col-md-6 col-lg-4 mw--250">
     <div class="panel bg--white">
-        <div class="panel__content mh--400">
+        <div id="projectContent" class="panel__content mh--400">
             <p><strong><a title="{{ ("$project->project_title") }}" class="color--grey"
                           href="{{ url("project/$project->slug") }}">{!! $project->project_title !!}</a></strong></p>
             {{-- This is an attempt to fill up the card as much as possible. --}}
@@ -15,6 +28,13 @@
                     </p>
                 @endif
             </div>
+            <span id="count">{{$project->likes()}}
+            @if($project->likes() != 1)
+            likes
+            @else
+            like
+            @endif
+            </span>
         </div>
         <div class="panel__footer mh--58">
             @if($project->pi )
@@ -52,4 +72,7 @@
         </div>
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+
 
