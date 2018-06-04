@@ -27,13 +27,13 @@
             </div>
         </div> --}}
         <br>
-        <div id="toggle-featuerd-row" hidden class="row">
+        <div id="toggle-featured-row" hidden class="row">
           {{-- Displays flash messages associated with interests --}}
           <div class="flash-message">
             <div role="alertdialog" aria-labelledby="featured projects alert">
               <div id="toggle-featured-alert" class="alert">
                   <span id="toggle-featured-message"></span>
-                  <a href="#" class="alert__close" onclick="$('#toggle-featuerd-row').attr('hidden','hidden')">&times;</a>
+                  <a href="#" class="alert__close" onclick="$('#toggle-featured-row').attr('hidden','hidden')">&times;</a>
               </div>
             </div>
           </div>
@@ -177,23 +177,12 @@
                 @endif
             </div>
             <div class="col-md-9">
-
-              <h1 class="kilo type--thin type--marginless">
-                {{-- Button for featuring the project.--}}
-                @if(auth()->user() && auth()->user()->hasRole('admin'))
-                  @if($attributes->is_featured)
-                    <span id="toggle-featured-button" class="btn-default" style="background-color:inherit;" title="Un-Feature This Project">
-                      <i id ="featured-star-icon" class="type--red fa fa-star" alt="filled-star-icon"></i>
-                    </span>
-                  @else
-                    <span id="toggle-featured-button" class="btn-default" style="background-color:inherit;" title="Feature This Project">
-                      <i id ="featured-star-icon" class="type--red fa fa-star-o" alt="hollow-star-icon"></i>
-                    </span>
-                  @endif
-                @endif
-                {{$project->project_title}}
-              </h1>
-
+                <div class="row">
+                    <h1 class="kilo type--thin type--marginless">
+                        {{-- Button for featuring the project.--}}
+                        {{$project->project_title}}
+                    </h1>
+                </div>
                 <hr>
                 <div class="hidden-md-up">
                         @can('is-owner', $project)
@@ -351,25 +340,66 @@
                         </div>
                     @endif
                 </div>
+            <div class="col-md-10">
                 <div class="article">
-                    <p class="intro">{!! nl2br(e($project->abstract)) !!}</p>
+                    <div class="row"><p class="intro">{!! nl2br(e($project->abstract)) !!}</p></div>
                     @if(count($project->tags))
-                    <div>
+                    <div class="row">
                         <p><strong>Project Tags:</strong></p>
                         @foreach($project->tags as $tag)
-                            <a 
+                            <a
                                title="{{ $tag->tag }}"
                                class="btn btn-primary btn-sm">
                               {{$tag->tag}}
                             </a>
                         @endforeach
                     </div>
-                    <br><br><br><br><br>
-                @endif
+                        <br><br><br><br><br>
+                    @endif
+                </div>
+                </div>
+            <div class="col-md-2">
+                            <div class="row">
+                                <span id="likeCount" style="float: right;">{{$likes}} Likes</span>
+                            </div>
+                            <div class="row">
+                        @if(auth()->user())
+                            <span style="float: right;">
+                            @if($liked)
+                                <span id="toggle-like-button" class="btn-default" style="background-color:inherit;" title="Unlike This Project">
+                                    <span id="likeText"> Unlike</span><i id="like-icon" class="fa fa-thumbs-up type--red" style="margin-left: 5px;" aria-hidden="true" alt="filled-thumbs-up-icon"></i>
+                                    </span>
+                            @else
+                                <span id="toggle-like-button" class="btn-default" style="background-color:inherit;" title="Like This Project">
+                                    <span id="likeText"> Like</span><i id="like-icon" class="fa fa-thumbs-o-up" style="margin-left: 5px;" aria-hidden="true" alt="hollow-thumbs-up-icon"></i>
+                                </span>
+                            @endif
+                            </span>
+                            </div>
+                            <div class="row">
+                            <span style="float: right;">
+                                @if(auth()->user()->hasRole('admin'))
+                                    @if($attributes->is_featured)
+                                        <span id="toggle-featured-button" class="btn-default"
+                                              style="background-color:inherit;" title="Un-Feature This Project">
+                                        <span id="featureText"> Un-Feature </span><i id="featured-star-icon" class="type--red fa fa-star" alt="filled-star-icon"></i>
+                                        </span>
+                                    @else
+                                        <span id="toggle-featured-button" class="btn-default" style="background-color:inherit;" title="Feature This Project">
+                                        <span id="featureText"> Feature </span><i id="featured-star-icon" class="fa fa-star-o" alt="hollow-star-icon"></i>
+                                        </span>
+                                    @endif
+                                @endif
+                        @else 
+                        <a href="/login" id="logIn-like-button" class="btn-default" style="background-color:inherit; float: right;" title="Sign in to like this project">
+                                <span id="likeText"> Like</span><i id="like-icon" class="fa fa-thumbs-o-up" style="margin-left: 5px;" aria-hidden="true" alt="hollow-thumbs-up-icon"></i>
+                            </a>
+                        @endif
+                        </span>
+                            </div>
                 </div>
                 <br><br><br><br><br>
             </div>
-        </div>
     </div>
 @stop
 @section('scripts')
@@ -391,27 +421,80 @@
   <script type="text/javascript">
     // on focus out
 
+    var likes = JSON.parse("{!! json_encode($likes) !!}");
+
     function toggleStar(data)
     {
       var buttonText = "Feature This Project";
       if (data.is_featured) {
         buttonText = "Un-" + buttonText;
         //Fill in the star
-        $('#featured-star-icon').removeClass('fa-star-o').addClass('fa-star').attr('alt','filled-star-icon');
+        $('#featured-star-icon').removeClass('fa-star-o').addClass('fa-star').addClass('type--red').attr('alt','filled-star-icon');
+        $('#featureText').html(" Un-Feature ");
       }
       else {
         //Make the star hollow
-        $('#featured-star-icon').removeClass('fa-star').addClass('fa-star-o').attr('alt','hollow-star-icon');
+        $('#featured-star-icon').removeClass('fa-star').removeClass('type--red').addClass('fa-star-o').attr('alt','hollow-star-icon');
+        $('#featureText').html(" Feature ");
       }
       $('#toggle-featured-button').attr("title",buttonText);
 
       //Show message
       $('#toggle-featured-alert').removeClass('alert--danger').addClass('alert--success');
     }
+    
+    $('#toggle-like-button').click(function(){
+        //$("#toggle-like-button").prop("disabled",true);   
+        
+        var buttonText = "Like this Project";
+        if ($('#like-icon').hasClass('fa-thumbs-o-up')){
+            buttonText = "Unlike this Project";
+            //Fill in the like
+            $('#like-icon').removeClass('fa-thumbs-o-up').addClass('fa-thumbs-up').addClass('type--red').attr('alt','filled-thumbs-up-icon');
+            $('#likeText').html(" Unlike");
+            likes += 1;
+            $('#likeCount').html(likes + " Likes");
+        }
+        else {
+            //Make the like hollow
+            $('#like-icon').removeClass('fa-thumbs-up').removeClass('type--red').addClass('fa-thumbs-o-up').attr('alt','hollow-thumbs-up-icon');
+            $('#likeText').html(" Like");
+            likes -= 1;
+            if(likes == 1)
+            $('#likeCount').html(likes + " Like");
+            else
+            $('#likeCount').html(likes + " Like");
+        }
+        $('#toggle-like-button').attr("title",buttonText);
+     
+        //Ajax call to back end to update likes
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }});
+        $.ajax({
+            url: '{{route('project.like')}}',
+            type: "POST",
+            data: JSON.stringify(
+                {
+                    project_id:"{{$project->project_id}}"
+                }
+            ),
+            contentType: "application/json; charset=utf-8",
+            dataType   : "json",
+            success    : function(data){
+                console.log(data);
+            },
+            //complete : function(){
+            //    $("#toggle-like-button").prop("disabled",false);
+            //} 
+    });
+
     function displayErrorMessage()
     {
       $('#toggle-featured-alert').addClass('alert--danger').removeClass('alert--success');
     }
+
     $("#toggle-featured-button").click(function() {
       $.ajaxSetup({
         headers: {
@@ -434,14 +517,15 @@
           {
               toggleStar(data);
           }
-          $('#toggle-featuerd-row').removeAttr('hidden');
+          $('#toggle-featured-row').removeAttr('hidden');
           $('#toggle-featured-message').text(data.message);
         }
       })
     });
+
+    });
   </script>
 @stop
-
 
 {{-- Section for cleaning up session storage:
 I have to do the following ugly php command because of a bug in Laravel 5.2 regarding flash messages.
