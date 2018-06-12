@@ -173,7 +173,7 @@
             </div>
         </div>
         <div class="type--center">
-            {!!Form::submit('Submit',['class'=>'btn btn-primary'])!!}
+            {!!Form::submit('Submit',['class'=>'btn btn-primary', 'onclick'=>'this.disabled=true'])!!}
         </div>
     </div>
     {!!Form::close()!!}
