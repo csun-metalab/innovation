@@ -243,7 +243,6 @@ class ProjectController extends Controller
         if(!$project->tags){
             $project->tags = [];
         }
-
         $tags = $this->tagsDecode($project->tags);
         $projectId = $this->projectIdVerifier->verifyId($projectId);
         $this->projectGeneralUpdater->updateProjectGeneral($projectId, $projectData);
@@ -251,9 +250,10 @@ class ProjectController extends Controller
         $this->collaboratorsUpdater->updateCollaborators($projectId, $projectData);
         $this->projectAttributesUpdater->updateProjectAttributes($projectId,$projectData);
         $this->createTagContract->createTag($projectId, $tags);
-        // foreach($projectData->seeking as $seeking){
-        //         $this->createSeekingContract->createSeeking($projectId,$seeking);
-        // }
+        if(!is_null($projectData['seeking']))
+         foreach($projectData['seeking'] as $seeking){
+                 $this->createSeekingContract->createSeeking($projectId,$seeking);
+         }
         $project = Project::find($projectId)->firstOrFail();
         $project->searchable();
         return redirect('project/' . $projectId);
