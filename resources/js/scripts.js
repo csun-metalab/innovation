@@ -87,6 +87,43 @@ $("#list tbody").on('click', '.removeCollabBtn', function(e){
 	$(this).parents('tr').remove();
 })
 
+
+// Append the hidden input and tr whenever user adds new collaborator
+$("#addSeekingBtn").on('click',function(e){
+    e.preventDefault();
+    var error = $('#seeking').siblings('strong');
+
+    if($("#seeking").val().length == 0)
+    {
+        return error.text('Choose your desired position.');
+    }
+    else if($('#seek_list tbody tr[data-id*="'+ $("#seeking").val() +'"]').length == 1)
+    {
+        return error.text('This role has already been added.');
+    }
+    else
+    {
+        $('#seeking').siblings('strong').text('');
+    }
+
+        template = "<tr data-id='"+ $("#seeking").val()+"'><td>"+$("#seeking").val()+"</td><td style='text-align: center;'> <a class='removeSeekBtn btn btn-link'> Remove </a> </td></tr>";
+
+    $('<input/>', {
+        value: $("#seeking").val(),
+        name: 'seeking[]',
+        type: 'hidden'
+
+    }).appendTo($('.project-create-form'));
+
+    $(template).appendTo("#seek_list tbody");
+})
+// Remove the tr and hidden input whenever a user removes the seeking from the list
+$("#seek_list tbody").on('click', '.removeSeekBtn', function(e){
+    e.preventDefault();
+    $('input[value="'+ $(this).parents('tr').attr('data-id') +'"]').remove();
+    $(this).parents('tr').remove();
+})
+
 var collaborators = $(".select2-collaborator");
 $( ".select2-collaborator" ).select2({     
 	width:'100%', 

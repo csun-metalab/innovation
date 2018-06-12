@@ -107,7 +107,7 @@
                                 <td>{{ $invitation->invitee->display_name }}</td>
                                 <td>{{ $invitation->role_position }}</td>
                                 <td>Pending</td>
-                                <td class="text--center">
+                                 <td class="text--center">
                                     @if(is_null($invitation->from_id))
                                         <a class="collaboratorActionBtn"
                                            data-url="{{ url('project/' . $project->project_id . '/invitation/' . $invitation->id . '/accept') }}">Approve</a>
@@ -128,11 +128,11 @@
             </div>
         </div>
 
-{{--         <div class="row">
+         <div class="row">
             <div class="col-xs-8 col-md-11">
                 <div class="form__group">
-                    {{Form::label('role','Seeking Roles',['class'=>'type--left'])}}
-                    {{ Form::select ('roles', $titles, null,['class'=>'roles select2-roles', 'id'=>'roleID'] ) }}
+                    {{Form::label('seeking','Seeking Roles',['class'=>'type--left'])}}
+                    {{ Form::text ('seeking','', array('id'=>'seeking')) }}
 
                     <div class="tooltip" style="display: inline-block"><i class="fa fa-question-circle"
                                                                           aria-hidden="true"></i>
@@ -146,7 +146,7 @@
                     <i class="fa fa-plus" aria-hidden="true"></i> Add
                 </a>
             </div>
-        </div> --}}
+        </div>
         <div class="row">
             <div class="col-sm-12">
                 <table id="seek_list" class="table table--padded table--bordered table--striped">
@@ -157,13 +157,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @if(isset($invitations) && count($invitations))
-                        @foreach($invitations as $invitation)
-                            <tr data-id="{{ $invitation->role_position }}">
-                                <td>{{ $invitation->role_position }}</td>
-                            </tr>
-                        @endforeach
-                    @endif
+
                     </tbody>
                 </table>
             </div>
