@@ -121,7 +121,7 @@
                         <li><a href={{$project->video->link}}>View Video</a></li>
                     </ul>
                 @endif
-                &mdash;<br><br>
+                <br>
                 @if($seeking->count())
 
                             <p class="milli type--marginless"><strong>Seeking Collaborators:</strong>
