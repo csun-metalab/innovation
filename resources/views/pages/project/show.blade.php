@@ -2,6 +2,7 @@
 @extends('layouts.master')
 @section('content')
     <div class="container">
+        {{--{{dd($seeking[0]->title)}}--}}
         <br>
         {{-- <div class="row">
             <div class="col-md-12">
@@ -103,10 +104,11 @@
                         <li>${{$project->awardTotal()}}</li>
                     </ul>
                 @endif
-                {{-- @if($project->pi)
-                    <p class="milli type--marginless"><strong>Project Timeline:</strong></p>
-                    <p>{{$project->project_begin_date}} &ndash; {{$project->project_end_date}}</p>
-                @endif --}}
+
+                    {{-- @if($project->pi)
+                        <p class="milli type--marginless"><strong>Project Timeline:</strong></p>
+                        <p>{{$project->project_begin_date}} &ndash; {{$project->project_end_date}}</p>
+                    @endif --}}
                 @if($project->url)
                     <p class="milli type--marginless"><strong>Project Web Page:</strong></p>
                     <ul class="list--unstyled">
@@ -120,29 +122,48 @@
                     </ul>
                 @endif
                 &mdash;<br><br>
-{{--                 @if($project->pi)
-                    <p class="milli type--marginless"><strong>Lead Principal Investigator:</strong></p>
-                    <div class="dropdown footer-styling">
-                        <a title="{{ $project->pi->display_name }}" class="color--grey nodeco"><img
-                                    class="profile--icon" src="{{$project->pi->profile_image()}}" alt="{{$project->pi->display_name}}'s profile icon"/>
-                                    &nbsp;&nbsp;{{ $project->pi->display_name }}
-                        </a>
-                        <div class="dropdown-content">
-                            <li>
-                                <a title="See {{ $project->pi->display_name }}'s projects"
-                                   href="{{ url("project?member=".$project->pi->user_id)}}"
-                                   class="color--grey nodeco">View <b>{{ $project->pi->display_name }}</b>'s
-                                    Projects</a>
-                            </li>
-                            <li>
-                                <a title="See {{ $project->pi->display_name }}'s profile"
-                                   href="{{$project->pi->profile_url()}}" target="_blank"
-                                   class="color--grey nodeco">View <b>{{ $project->pi->display_name }}</b>'s Profile</a>
-                            </li>
-                        </div>
-                    </div>
-                @endif --}}
-                <br><br>
+                @if($seeking->count())
+
+                            <p class="milli type--marginless"><strong>Seeking Collaborators:</strong>
+
+                                <span class="tooltip"><i class="fa fa-question-circle" aria-hidden="true"></i>
+                                <span class="tooltiptext">
+                                            This project is looking for members with the following titles. If you wish to join, contact the team.<br>
+                                </span>
+                            </span>
+
+                            </p>
+
+                            <ul>
+                                @foreach($seeking as $item)
+                                <li>{{$item->title}}</li>
+                                @endforeach
+                            </ul>
+                        @endif
+
+
+                        {{--                 @if($project->pi)
+                                            <p class="milli type--marginless"><strong>Lead Principal Investigator:</strong></p>
+                                            <div class="dropdown footer-styling">
+                                                <a title="{{ $project->pi->display_name }}" class="color--grey nodeco"><img
+                                                            class="profile--icon" src="{{$project->pi->profile_image()}}" alt="{{$project->pi->display_name}}'s profile icon"/>
+                                                            &nbsp;&nbsp;{{ $project->pi->display_name }}
+                                                </a>
+                                                <div class="dropdown-content">
+                                                    <li>
+                                                        <a title="See {{ $project->pi->display_name }}'s projects"
+                                                           href="{{ url("project?member=".$project->pi->user_id)}}"
+                                                           class="color--grey nodeco">View <b>{{ $project->pi->display_name }}</b>'s
+                                                            Projects</a>
+                                                    </li>
+                                                    <li>
+                                                        <a title="See {{ $project->pi->display_name }}'s profile"
+                                                           href="{{$project->pi->profile_url()}}" target="_blank"
+                                                           class="color--grey nodeco">View <b>{{ $project->pi->display_name }}</b>'s Profile</a>
+                                                    </li>
+                                                </div>
+                                            </div>
+                                        @endif --}}
                 @if($project->members)
                     <p class="milli"><strong>Project Team:</strong></p>
                     <ul class="list">
