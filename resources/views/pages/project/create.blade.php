@@ -131,9 +131,10 @@
          <div class="row">
             <div class="col-xs-8 col-md-11">
                 <div class="form__group">
-                    {{Form::label('seeking','Seeking Roles',['class'=>'type--left'])}}
-                    {{ Form::text ('seeking','', array('id'=>'seeking')) }}
 
+                    {{Form::label('seeking','Seeking Roles',['class'=>'type--left'])}}
+                    {{--<input id="seeking" value="Some text..">--}}
+                    {{ Form::text ('seeking','', array('id'=>'seeking')) }}
                     <div class="tooltip" style="display: inline-block"><i class="fa fa-question-circle"
                                                                           aria-hidden="true"></i>
                         <span class="tooltiptext">Looking for a specific role? Select the role you need or create your own.<br>
@@ -262,6 +263,18 @@
         //     var fileName = input.files[0].name;
         //     infoArea.textContent = 'Uploaded ' + fileName + '!';
         // }
+    </script>
+
+    <script>
+
+        document.getElementById("seeking").onkeypress = function(e) {
+            var key = e.charCode || e.keyCode || 0;
+            if (key == 13) {
+                document.getElementById("addSeekingBtn").click();
+                $('#seeking').val("");
+                e.preventDefault();
+            }
+        }
     </script>
 
     <script>var collaborators = {!! json_encode($project->members)!!};</script>
