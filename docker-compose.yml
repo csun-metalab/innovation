@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  webserver:
+    container_name: innovation
+    image: csunmetalab/environment:innovation
+    ports:
+      - '8080:80'
+    volumes:
+      - .:/var/www/
+
+  composer:
+    restart: 'no'
+    container_name: innovation_composer
+    image: composer:latest
+    command: install --ignore-platform-reqs
+    volumes:
+      - .:/app/
