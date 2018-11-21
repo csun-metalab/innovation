@@ -16,6 +16,6 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
 # Define Bashrc source
   && . ~/.bashrc \
 # Install NPM v9.11.2
-  && nvm install 9.11.2 && npm install \
+  && nvm install 9.11.2 \
 # Clean image
   && npm cache clean --force && apt-get clean && apt-get autoremove && rm -rf /var/lib/apt/lists/* \
