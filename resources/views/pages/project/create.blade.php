@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('content')
-    {{Form::open(['class' => 'project-create-form'])}}
+    {{Form::open(array('url' => 'project/create', 'method' => 'post', 'class' => 'project-create-form'))}}
     <div class="section" style="background-color: #252525;">
         <div class="container">
             <div class="row">
@@ -174,7 +174,7 @@
             </div>
         </div>
         <div class="type--center">
-            {!!Form::submit('Submit',['class'=>'btn btn-primary', 'onclick'=>'this.disabled=true'])!!}
+            {!!Form::submit('Submit',['class'=>'btn btn-primary'])!!}
         </div>
     </div>
     {!!Form::close()!!}
